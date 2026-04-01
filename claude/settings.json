@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(**)",
+      "Edit(**)",
+      "Write(**)",
+      "Bash(python3*)",
+      "Bash(pip3*)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git add*)",
+      "Bash(git commit*)",
+      "Bash(pgrep*)",
+      "Bash(pkill*)",
+      "Bash(ps aux*)",
+      "Bash(sleep*)",
+      "Bash(cat *)",
+      "Bash(tail *)",
+      "Bash(grep *)",
+      "Bash(ls*)",
+      "Bash(find *)",
+      "Bash(which *)"
+    ],
+    "deny": [
+      "Bash(git push*)",
+      "Bash(git reset --hard*)",
+      "Bash(rm -rf*)",
+      "Bash(chmod 777*)",
+      "Bash(sudo rm*)"
+    ]
+  }
+}
