@@ -4,6 +4,7 @@
 
 ## Komunikace
 
+- Když odpovím **"y"** — znamená to "ano", "pokračuj", nebo "instalaci/krok jsem již udělal, pokračuj dál". Rovnou pokračuj s dalším krokem bez ptaní.
 - Vždy odpovídej **česky**
 - Buď stručný — jeden správný příklad je lepší než tři alternativy
 - Vysvětluj **proč**, nejen co — cílem je pochopení, ne jen funkční kód
