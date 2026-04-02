@@ -20,7 +20,9 @@
       "Bash(grep *)",
       "Bash(ls*)",
       "Bash(find *)",
-      "Bash(which *)"
+      "Bash(which *)",
+      "Bash(cd *)",
+      "Bash(mkdir *)"
     ],
     "deny": []
   }
