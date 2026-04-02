@@ -42,3 +42,12 @@
 - Po každé korekci → zapiš poučení do `tasks/lessons.md` projektu
 - Na začátku session → přečti `tasks/lessons.md` pokud existuje
 - Vždy používej TodoWrite pro sledování průběhu — aktualizuj po každém dokončeném kroku
+
+## Visual Review
+
+Po každé změně která ovlivní UI/web:
+1. Uprav kód
+2. Commitni a pushni na deployment platform (Railway nebo jiná)
+3. Počkej na deploy (~60s)
+4. Otevři web přes Chrome extension a udělej screenshot
+5. Zkontroluj vizuálně a reportuj výsledek

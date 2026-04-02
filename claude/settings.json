@@ -22,12 +22,6 @@
       "Bash(find *)",
       "Bash(which *)"
     ],
-    "deny": [
-      "Bash(git push*)",
-      "Bash(git reset --hard*)",
-      "Bash(rm -rf*)",
-      "Bash(chmod 777*)",
-      "Bash(sudo rm*)"
-    ]
+    "deny": []
   }
 }
