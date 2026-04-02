@@ -1,77 +1,30 @@
 ---
 name: sync-claude-config
-description: Synchronizuje globální konfiguraci Clauda (~/.claude/) s git repem ~/ai-prompts-and-skills/claude/. Použij když uživatel napíše "sync claude", "pushni config", "pullni config", "synchronizuj nastavení", nebo "aktualizuj claude config". Podporuje dva módy — push (local → git) a pull (git → local).
+description: Synchronizuje globální konfiguraci Clauda na GitHub. ~/.claude/CLAUDE.md a settings.json jsou symlinky do ~/ai-prompts-and-skills/claude/ — stačí git push/pull. Použij když uživatel napíše "sync push", "sync pull", "pushni claude config", "pullni config", nebo "synchronizuj nastavení".
 ---
 
 # Sync Claude Config
 
-Synchronizuje soubory mezi `~/.claude/` a `~/ai-prompts-and-skills/claude/`.
+`~/.claude/CLAUDE.md` a `~/.claude/settings.json` jsou symlinky přímo do `~/ai-prompts-and-skills/claude/`.
+Žádné kopírování není potřeba — soubory jsou jedno a to samé.
 
-**Soubory k synchronizaci:**
-- `CLAUDE.md`
-- `settings.json`
-
-**Repo cesta:** `~/ai-prompts-and-skills/`
-
----
-
-## PUSH mód (local → git)
-
-Použij když uživatel chce uložit aktuální konfiguraci do gitu.
-
-```bash
-REPO=~/ai-prompts-and-skills/claude
-SRC=~/.claude
-CHANGED=()
-
-for f in CLAUDE.md settings.json; do
-  if ! diff -q "$SRC/$f" "$REPO/$f" > /dev/null 2>&1; then
-    cp "$SRC/$f" "$REPO/$f"
-    CHANGED+=("$f")
-  fi
-done
-
-if [ ${#CHANGED[@]} -eq 0 ]; then
-  echo "Vše je aktuální, nic ke commitu."
-else
-  cd ~/ai-prompts-and-skills
-  git add claude/CLAUDE.md claude/settings.json
-  git commit -m "Sync Claude config: ${CHANGED[*]}"
-  git push
-  echo "Pushnuté: ${CHANGED[*]}"
-fi
-```
-
-## PULL mód (git → local)
-
-Použij když uživatel chce stáhnout konfiguraci z gitu do aktuálního počítače.
+## PUSH (uložit na GitHub)
 
 ```bash
 cd ~/ai-prompts-and-skills
-git pull
-
-REPO=~/ai-prompts-and-skills/claude
-DST=~/.claude
-CHANGED=()
-
-for f in CLAUDE.md settings.json; do
-  if ! diff -q "$REPO/$f" "$DST/$f" > /dev/null 2>&1; then
-    cp "$REPO/$f" "$DST/$f"
-    CHANGED+=("$f")
-  fi
-done
-
-if [ ${#CHANGED[@]} -eq 0 ]; then
-  echo "Vše je aktuální, žádné změny."
-else
-  echo "Aktualizováno: ${CHANGED[*]}"
-fi
+git add claude/CLAUDE.md claude/settings.json
+git diff --cached --quiet && echo "Nic ke commitu." || (git commit -m "Sync Claude config" && git push && echo "Pushnuté.")
 ```
 
----
+## PULL (stáhnout z GitHubu na tento počítač)
+
+```bash
+cd ~/ai-prompts-and-skills
+git pull && echo "Aktualizováno."
+```
 
 ## Postup
 
 1. Zjisti z kontextu zda jde o push nebo pull
-2. Spusť příslušný bash blok výše
-3. Reportuj co bylo změněno (nebo že vše je aktuální)
+2. Spusť příslušný bash blok
+3. Reportuj výsledek
