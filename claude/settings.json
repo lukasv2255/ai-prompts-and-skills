@@ -1,36 +1,18 @@
 {
   "permissions": {
     "allow": [
-      "Read(**)",
-      "Edit(**)",
-      "Write(**)",
-      "Bash(python3*)",
-      "Bash(pip3*)",
-      "Bash(git status*)",
-      "Bash(git diff*)",
-      "Bash(git log*)",
-      "Bash(git add*)",
-      "Bash(git commit*)",
-      "Bash(pgrep*)",
-      "Bash(pkill*)",
-      "Bash(ps aux*)",
-      "Bash(sleep*)",
-      "Bash(cat *)",
-      "Bash(tail *)",
-      "Bash(grep *)",
-      "Bash(ls*)",
-      "Bash(find *)",
-      "Bash(which *)",
-      "Bash(cd *)",
-      "Bash(mkdir *)",
-      "Bash(railway run*)",
-      "Bash(railway up*)",
-      "Bash(railway logs*)",
-      "Bash(railway variables*)",
-      "Bash(railway status*)",
-      "Bash(railway whoami*)",
-      "Bash(railway link*)"
+      "Bash(*)"
     ],
-    "deny": []
+    "deny": [],
+    "ask": [
+      "Bash(rm -rf*)",
+      "Bash(rm -r*)",
+      "Bash(sudo rm*)",
+      "Bash(git push --force*)",
+      "Bash(git reset --hard*)",
+      "Bash(chmod -R 777*)",
+      "Bash(dd *)",
+      "Bash(mkfs*)"
+    ]
   }
 }

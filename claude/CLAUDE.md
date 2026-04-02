@@ -51,3 +51,4 @@ Po každé změně která ovlivní UI/web:
 3. Počkej na deploy (~60s)
 4. Otevři web přes Chrome extension a udělej screenshot
 5. Zkontroluj vizuálně a reportuj výsledek
+6. Pokud problém přetrvává — postni screenshot do chatu, zkus jiný přístup k opravě a opakuj celý cyklus od kroku 1
