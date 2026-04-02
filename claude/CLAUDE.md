@@ -5,6 +5,7 @@
 ## Komunikace
 
 - Když odpovím **"y"** — znamená to "ano", "pokračuj", nebo "instalaci/krok jsem již udělal, pokračuj dál". Rovnou pokračuj s dalším krokem bez ptaní.
+- Pokud zpráva končí **"?"** — okamžitě přeruš aktuální činnost a odpověz na dotaz nebo proveď požadovaný úkol. Nic jiného nedělej dokud neodpovíš.
 - Vždy odpovídej **česky**
 - Buď stručný — jeden správný příklad je lepší než tři alternativy
 - Vysvětluj **proč**, nejen co — cílem je pochopení, ne jen funkční kód
@@ -42,6 +43,12 @@
 - Po každé korekci → zapiš poučení do `tasks/lessons.md` projektu
 - Na začátku session → přečti `tasks/lessons.md` pokud existuje
 - Vždy používej TodoWrite pro sledování průběhu — aktualizuj po každém dokončeném kroku
+
+## Skills
+
+- Všechny skilly jsou v `~/ai-prompts-and-skills/shared-skills/`
+- `~/.claude/skills/` obsahuje pouze symlinky na tuto složku
+- Při vytvoření nového skillu vždy ihned vytvoř symlink: `ln -s ~/ai-prompts-and-skills/shared-skills/NAZEV ~/.claude/skills/NAZEV`
 
 ## Visual Review
 
