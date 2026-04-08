@@ -7,12 +7,12 @@ description: Nahraje aktuální stav AI Prompts and Skills repozitáře na GitHu
 
 > ⚠️ Před prvním použitím uprav cestu k repozitáři níže!
 
-Cesta k repozitáři na tomto Macu: **`/Users/tommy/ai-prompts-and-skills`** *(uprav pokud je jiná)*
+Cesta k repozitáři na tomto Macu: **`/Users/lukas/ai-prompts-and-skills`**
 
 ```bash
-git -C "/Users/tommy/ai-prompts-and-skills" add -A
-git -C "/Users/tommy/ai-prompts-and-skills" commit -m "sync: update prompts and skills"
-git -C "/Users/tommy/ai-prompts-and-skills" push
+git -C "/Users/lukas/ai-prompts-and-skills" add -A
+git -C "/Users/lukas/ai-prompts-and-skills" commit -m "sync: update prompts and skills"
+git -C "/Users/lukas/ai-prompts-and-skills" push
 ```
 
 Pokud není co commitovat, jen to oznam. Po dokončení oznam co bylo pushnuté.

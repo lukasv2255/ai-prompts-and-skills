@@ -7,10 +7,10 @@ description: Stáhne nejnovější verzi globálního Claude nastavení z Gitu (
 
 > ⚠️ Před prvním použitím uprav cestu k repozitáři níže!
 
-Cesta k repozitáři na tomto Macu: **`/Users/tommy/ai-prompts-and-skills`** *(uprav pokud je jiná)*
+Cesta k repozitáři na tomto Macu: **`/Users/lukas/ai-prompts-and-skills`**
 
 ```bash
-git -C "/Users/tommy/ai-prompts-and-skills" pull
+git -C "/Users/lukas/ai-prompts-and-skills" pull
 ```
 
 Po dokončení oznam co bylo staženo. Změny se přes symlinky propíší do `~/.claude/`.
