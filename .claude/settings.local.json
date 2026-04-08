@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(git -C \"C:/Users/tommy/ai-prompts-and-skills\" add -A)",
-      "Bash(git -C \"C:/Users/tommy/ai-prompts-and-skills\" commit -m \"sync: update prompts and skills\")",
-      "Bash(git -C \"C:/Users/tommy/ai-prompts-and-skills\" push)"
-    ]
-  }
-}

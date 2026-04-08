@@ -3,3 +3,4 @@ Thumbs.db
 *.log
 *.tmp
 *.bak
+.claude/settings.local.json
