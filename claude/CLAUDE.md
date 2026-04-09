@@ -50,6 +50,43 @@
 - Na začátku session → přečti `tasks/lessons.md` pokud existuje
 - Vždy používej TodoWrite pro sledování průběhu — aktualizuj po každém dokončeném kroku
 
+## Plánování nového projektu
+
+Před zahájením implementace projdi tyto fáze:
+
+**Fáze 1 — Pochop systém**
+- Nakresli pipeline: `[Vstup A] → [Zpracování] → [Výstup]`
+- Identifikuj všechny externí služby (API, databáze, scrapy)
+
+**Fáze 2 — Zmapuj přístupy k externím službám**
+- Tabulka: Služba | Přístup (✅/❌/❓) | Jak obejít bez přístupu
+- Přístup určuje pořadí kroků a co lze testovat bez závislostí
+
+**Fáze 3 — Urči správné pořadí kroků**
+- DB schema vždy první
+- Vstupy před zpracováním (nejdřív získej data, pak analyzuj)
+- Logika před integrací (otestuj výpočty izolovaně)
+- Deployment vždy poslední a volitelný
+
+**Fáze 4 — Pro každý krok rozpiš:**
+- Co se staví (soubor + jednověté shrnutí)
+- Proč v tomto pořadí
+- Potenciální problémy + řešení
+- Testovací strategie bez externích závislostí
+- Blocker (co musíš mít/rozhodnout než začneš)
+
+**Testovací strategie podle typu závislosti:**
+| Závislost | Jak testovat |
+|---|---|
+| DB | SQLite lokálně |
+| Externí feed/API | statický soubor `fixtures/` |
+| Scraping | HTML snapshot v `fixtures/` |
+| Placené API | mock server (FastAPI localhost) |
+| Produkční systém | DRY_RUN mode |
+| Produkční API (test) | jeden testovací záznam |
+
+**Pravidlo deploymentu:** Projekt musí fungovat lokálně před tím než řešíš Railway nebo jiný cloud.
+
 ## Skills
 
 - Všechny skilly jsou v `~/ai-prompts-and-skills/shared-skills/`
