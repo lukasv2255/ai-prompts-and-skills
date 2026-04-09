@@ -1,8 +1,7 @@
 {
   "permissions": {
-    "allow": [
-      "Bash(*)"
-    ],
+    "defaultMode": "acceptEdits",
+    "allow": ["Bash(*)"],
     "deny": [],
     "ask": [
       "Bash(rm -rf*)",
