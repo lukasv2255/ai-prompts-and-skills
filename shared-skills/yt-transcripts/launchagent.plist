@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  macOS LaunchAgent — spustí watchdog při přihlášení a drží ho naživu.
+
+  Instalace:
+    1. Zkopíruj do ~/Library/LaunchAgents/
+    2. Uprav <string>CESTA_K_PROJEKTU</string> na skutečnou cestu
+    3. launchctl load ~/Library/LaunchAgents/cz.lukas.transcript-watchdog.plist
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>cz.lukas.transcript-watchdog</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>CESTA_K_PROJEKTU/watchdog.sh</string>
+    </array>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>CESTA_K_PROJEKTU/watchdog.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>CESTA_K_PROJEKTU/watchdog.log</string>
+</dict>
+</plist>
