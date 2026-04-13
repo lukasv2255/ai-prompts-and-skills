@@ -109,7 +109,14 @@ cp cz.lukas.transcript-watchdog.plist ~/Library/LaunchAgents/
 launchctl load ~/Library/LaunchAgents/cz.lukas.transcript-watchdog.plist
 ```
 
-### 4. Sleduj průběh
+### 4. Nastav cron hlídač (Claude session)
+
+Spusť CronCreate každých 5 minut:
+```
+Zkontroluj jestli běží download_transcripts.py v /cesta/k/projektu — pokud ne, spusť ho znovu na pozadí. Jinak nedělej nic.
+```
+
+### 5. Sleduj průběh
 
 ```bash
 tail -f download.log
