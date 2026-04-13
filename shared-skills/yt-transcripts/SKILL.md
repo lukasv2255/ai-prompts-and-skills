@@ -10,6 +10,31 @@ description: >
   - "chci texty ze všech videí kanálu"
   - "přidej YouTube kanál ke stahování"
   - "jak to jde se stahováním"
+  - "stav" (pokud právě běží stahování transkriptů)
+  - jakýkoliv dotaz na aktuální stav stahování
+
+## Stav stahování — jak reportovat
+
+Pokud uživatel napíše "stav" nebo se ptá na průběh stahování, spusť tyto příkazy
+a vrať přehledný report:
+
+```bash
+pgrep -f download_transcripts.py && echo "bezi" || echo "nespi"
+cat transcript_progress.json | python3 -c "import json,sys; d=json.load(sys.stdin); [print(k, 'done:', len(v['done']), 'failed:', len(v['failed'])) for k,v in d.items()]"
+ls transcripts/*/*.txt 2>/dev/null | wc -l
+tail -2 download.log
+```
+
+Formát odpovědi:
+
+📊 **Stav**
+
+| Kanál | Staženo | Selhalo |
+|---|---|---|
+| Název kanálu | X / celkem | Y |
+| **Celkem na disku** | **N** | |
+
++ jedna věta co se aktuálně děje (běží/zaseknutý/hotovo).
 ---
 
 # YT Transcripts — hromadné stahování transkriptů
