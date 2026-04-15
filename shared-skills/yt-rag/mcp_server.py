@@ -29,6 +29,44 @@ metadata = json.loads(META_FILE.read_text())
 norms    = np.linalg.norm(vectors, axis=1, keepdims=True)
 vectors_norm = vectors / np.maximum(norms, 1e-9)
 
+# Načti articles.md a rozděl na sekce podle nadpisů (## nebo ###)
+ARTICLES_FILE = BASE_DIR / "articles.md"
+_articles_sections = []
+if ARTICLES_FILE.exists():
+    current_title = ""
+    current_body  = []
+    for line in ARTICLES_FILE.read_text(encoding="utf-8").splitlines():
+        if line.startswith("## ") or line.startswith("### "):
+            if current_title and current_body:
+                _articles_sections.append({
+                    "title": current_title,
+                    "text":  "\n".join(current_body).strip(),
+                })
+            current_title = line.lstrip("#").strip()
+            current_body  = []
+        else:
+            current_body.append(line)
+    if current_title and current_body:
+        _articles_sections.append({
+            "title": current_title,
+            "text":  "\n".join(current_body).strip(),
+        })
+
+
+def _search_articles(query: str, k: int = 3) -> list:
+    """Najde nejrelevantnější sekce z articles.md podle keyword překryvu."""
+    if not _articles_sections:
+        return []
+    words = set(query.lower().split())
+    scored = []
+    for sec in _articles_sections:
+        haystack = (sec["title"] + " " + sec["text"]).lower()
+        score = sum(1 for w in words if w in haystack)
+        if score > 0:
+            scored.append((score, sec))
+    scored.sort(key=lambda x: x[0], reverse=True)
+    return [s for _, s in scored[:k]]
+
 
 def _search(query: str, k: int = TOP_K) -> list:
     vec = client_oai.embeddings.create(model=EMBED_MODEL, input=[query]).data[0].embedding
@@ -110,6 +148,24 @@ def ask_nick_saraev(question: str) -> str:
     )
 
     answer = response.content[0].text
+
+    # Přidej citace z articles.md
+    article_hits = _search_articles(question)
+    if article_hits:
+        article_parts = []
+        for sec in article_hits:
+            # Zobraz max 600 znaků ze sekce
+            preview = sec["text"][:600].strip()
+            if len(sec["text"]) > 600:
+                preview += "..."
+            article_parts.append(f"**{sec['title']}**\n{preview}")
+        articles_block = "\n\n".join(article_parts)
+        return (
+            f"{answer}\n\n"
+            f"---\n**Zdroje ({len(seen_titles)} videí):**\n{sources}\n\n"
+            f"---\n**📄 Citace z articles.md:**\n\n{articles_block}"
+        )
+
     return f"{answer}\n\n---\n**Zdroje ({len(seen_titles)} videí):**\n{sources}"
 
 
