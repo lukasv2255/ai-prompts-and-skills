@@ -1,5 +1,5 @@
 ---
-name: sync-pull
+name: sync-pull-pc
 description: Stáhne nejnovější verzi globálního Claude nastavení z Gitu na Windows PC (AI Prompts and Skills repozitář). Přes symlinky se automaticky aktualizuje ~/.claude/. Použij kdykoliv uživatel říká "sync pull", "sync pull pc", "synchronizuj", "stáhni prompty", nebo chce stáhnout globální Claude nastavení z GitHubu na PC.
 ---
 

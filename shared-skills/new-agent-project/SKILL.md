@@ -6,26 +6,145 @@ allowed-tools: Read, Write, Edit, Glob, Bash
 
 # New Agent Project Scaffold
 
-Vytvoř kompletní strukturu nového Python AI projektu.
+Vytvoř kompletní strukturu nového Python AI projektu a projdi všechny fáze plánování.
 
-## Co udělat
+---
 
-1. **Vytvoř složku projektu** v `C:\Users\tommy\claude-code\<nazev-projektu>\`
+## Fáze 1 — Průzkum (vždy specifický pro projekt)
 
-2. **Struktura:**
+Zeptej se (nebo zjisti z kontextu):
+
+- Jaký problém firma/uživatel řeší a co teď dělá ručně?
+- Nakresli pipeline: `[Vstup] → [Zpracování] → [Výstup]`
+- Jaké typy vstupů systém dostává? (e-maily, formuláře, zprávy...)
+- Jaké externí systémy jsou zapojeny? (API, DB, CRM, inbox...)
+- Kdo bude systém provozovat — vývojář nebo klient sám?
+
+---
+
+## Fáze 2 — Zmapuj přístupy k externím službám
+
+Sestav tabulku:
+
+| Služba | Přístup (✅/❌/❓) | Jak obejít bez přístupu |
+| ------ | ------------------ | ----------------------- |
+| ...    | ...                | ...                     |
+
+Přístup určuje pořadí kroků a co lze testovat bez závislostí.
+
+---
+
+## Fáze 3 — Architektura
+
+- Identifikuj **pevné části** (sdílené mezi projekty) vs. **variabilní** (mění se per klient)
+- Rozhraní vstupního systému = jediný soubor který se mění mezi projekty
+- DB schema vždy první, deployment vždy poslední
+
+---
+
+## Fáze 4 — Knowledge Base / data
+
+- Nejdřív KB, pak kód — agent je tak dobrý jako data která má
+- Malá KB → textové soubory v `prompts/`
+- Velká KB → vektorová databáze (RAG/ChromaDB)
+- `prompts/` = produkční data, `tests/` = simulovaná testovací data (fixtures)
+
+---
+
+## Fáze 5 — Schvalovací kanál
+
+- Vývojář/test → Telegram
+- Klient bez IT → Web dashboard
+- Firma se Slackem → Slack s tlačítky
+- Ověřená produkce → auto-send pro low-risk, schválení jen pro citlivé typy
+
+---
+
+## Fáze 6 — Chybějící informace
+
+- Systém neeskaluje rovnou — navrhne výstup nebo se zeptá na doplnění
+- Člověk doplní → systém vygeneruje nový výstup ke schválení
+- Timeout bez reakce → zalogovat jako `needs_human`
+
+---
+
+## Fáze 7 — Testování bez reálného prostředí
+
+Fixtures = vymyšlená data simulující reálný systém (`tests/`).
+
+| Závislost            | Jak testovat                    |
+| -------------------- | ------------------------------- |
+| DB                   | SQLite lokálně                  |
+| Externí feed/API     | statický soubor `fixtures/`     |
+| Scraping             | HTML snapshot v `fixtures/`     |
+| Placené API          | mock server (FastAPI localhost) |
+| Produkční systém     | DRY_RUN mode                    |
+| Produkční API (test) | jeden testovací záznam          |
+
+---
+
+## Fáze 8 — Nasazení postupně (shadow mode)
+
+- `DRY_RUN=true` → jen logy, žádné notifikace
+- Shadow mode → systém generuje výstupy, člověk pracuje paralelně, porovnání
+- Produkce → nejdřív low-risk typy, pak rozšiřovat
+
+---
+
+## Fáze 9 — Pricing
+
+- Jednoduchá integrace → nižší setup fee
+- Složitá integrace (OAuth, třetí systémy, routing) → vyšší setup fee
+- Měsíční provoz = infrastruktura + monitoring + drobné úpravy
+
+---
+
+## Fáze 10 — Správa po nasazení
+
+- KB aktualizuje klient nebo vývojář na vyžádání
+- Credentials a tokeny mají expiraci → nastavit připomenutí
+- Logy monitoruje vývojář, klient hlásí problémy
+
+---
+
+## Scaffold — Vytvoř strukturu projektu
+
+**Pravidlo:** Projekt musí fungovat lokálně před tím než řešíš Railway nebo jiný cloud.
+
+### Cesta projektu (cross-platform)
+
+```python
+import os, platform
+base = os.path.expanduser("~")
+# Mac:     ~/claude-code/<nazev>/
+# Windows: C:\Users\tommy\claude-code\<nazev>\
+project_path = os.path.join(base, "claude-code", "<nazev-projektu>")
+```
+
+### Adresářová struktura
+
 ```
 <projekt>/
   src/
     __init__.py
-  prompts/
+    classifier.py       ← klasifikace vstupů
+    responder.py        ← generování odpovědí
+    notifier.py         ← Telegram / Slack / web
+    mail_client.py      ← variabilní: Gmail / IMAP / Graph / Helpdesk
+  prompts/              ← produkční KB (systémové prompty, ceník, FAQ...)
+  tests/
+    fixtures/           ← vymyšlená data pro testování bez reálného inboxu
+    projekt_XX/         ← per-projekt testovací emaily a KB
   docs/
-    project_notes/
-      key_facts.md
-      decisions.md
-      bugs.md
+    key_facts.md        ← API klíče, porty, Railway IDs
+    decisions.md        ← co a proč jsme zvolili
+    bugs.md             ← problémy které jsme řešili
+    issues.md           ← otevřené otázky
   tasks/
+    todo.md
     lessons.md
-  logs/         ← prázdná složka, přidej .gitkeep
+  logs/
+    .gitkeep
   main.py
   requirements.txt
   .env.example
@@ -34,15 +153,16 @@ Vytvoř kompletní strukturu nového Python AI projektu.
   README.md
 ```
 
-3. **requirements.txt** — základ:
+### requirements.txt (základ)
+
 ```
 python-telegram-bot==20.7
 openai==1.12.0
 python-dotenv==1.0.0
 ```
-Přidej další podle potřeby projektu.
 
-4. **.env.example:**
+### .env.example
+
 ```
 OPENAI_API_KEY=
 TELEGRAM_BOT_TOKEN=
@@ -50,7 +170,8 @@ TELEGRAM_CHAT_ID=
 DRY_RUN=true
 ```
 
-5. **.gitignore:**
+### .gitignore
+
 ```
 .env
 token.json
@@ -61,14 +182,14 @@ __pycache__/
 .DS_Store
 ```
 
-6. **Procfile:**
+### Procfile
+
 ```
 worker: python main.py
 ```
 
-7. **logs/.gitkeep** — prázdný soubor aby složka existovala na Railway
+### main.py skeleton
 
-8. **main.py** — základní skeleton s loggingem:
 ```python
 import asyncio
 import logging
@@ -98,24 +219,30 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-9. **key_facts.md** — vyplň hned co víš:
+### key_facts.md
+
 ```markdown
 # Key Facts — <Název projektu>
 
 ## Stack
+
 - Jazyk: Python 3.11+
 - AI: OpenAI GPT-4o-mini
 - Deployment: Railway + GitHub
 
 ## Infrastructure
+
 - Railway token: [doplnit]
 - Railway Project ID: [doplnit po vytvoření]
 - Railway Service ID: [doplnit po vytvoření]
 - GitHub repo: [doplnit]
 ```
 
+---
+
 ## Po scaffoldu
 
-- Inicializuj git: `git init && git add . && git commit -m "init"`
-- Vytvoř GitHub repo a pushni
-- Připomeň uživateli nainstalovat Railway CLI: `npm install -g @railway/cli`
+1. Inicializuj git: `git init && git add . && git commit -m "init"`
+2. Vytvoř GitHub repo a pushni
+3. Připomeň uživateli: `npm install -g @railway/cli`
+4. Vrať se k Fázi 1 a projdi plánování pokud ještě neproběhlo

@@ -1,5 +1,5 @@
 ---
-name: sync-push
+name: sync-push-pc
 description: Nahraje aktuální stav AI Prompts and Skills repozitáře na GitHub (git add, commit, push) na Windows PC. Použij kdykoliv uživatel říká "sync push", "sync push pc", "pushni prompty", "ulož skills na git", nebo chce nahrát globální Claude nastavení na GitHub z PC.
 ---
 

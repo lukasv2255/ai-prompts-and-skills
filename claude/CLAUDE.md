@@ -19,12 +19,28 @@
 - Cíl: nasazené, prezentovatelné projekty (portfolio, klienti, zaměstnavatelé)
 - Rychle se učím — nemusíš vysvětlovat základy Pythonu
 
+## Prostředí — dvě zařízení
+
+Pracuji na **dvou počítačích**:
+
+- **Mac** — primární, cesta projektů: `~/claude-code/`
+- **Windows** — druhé PC, cesta projektů: `C:\Users\tommy\claude-code\`
+
+**Pravidla pro cesty v kódu a skillech:**
+
+- Nikdy nepoužívej hardcoded absolutní cestu pro jedno zařízení
+- Vždy používej `os.path.expanduser("~")` nebo relativní cesty
+- Pokud skill nebo kód vyžaduje cestu k projektu, zjisti aktuální OS: `platform.system()` → `"Darwin"` = Mac, `"Windows"` = Windows
+- Při scaffoldu nebo generování cest vždy nabídni variantu pro obě zařízení nebo použij cross-platform zápis
+
 ## Přístup k práci
 
 - Preferuji **jedno správné řešení** před výběrem z pěti možností
 - Každý projekt musí být nasazený a funkční — ne jen proof-of-concept
 - Jednoduchost nad složitostí — méně kódu, které funguje
 - Kód musí být čitelný po měsíci bez kontextu
+- **Ukazuj průběh** — při delším úkolu průběžně reportuj co děláš, ne až na konci
+- **Testuj po každém kroku** — po každé změně ověř že funguje, nespoj víc kroků bez ověření
 
 ## Bezpečnost (vždy)
 
@@ -54,36 +70,77 @@
 
 Před zahájením implementace projdi tyto fáze:
 
-**Fáze 1 — Pochop systém**
-- Nakresli pipeline: `[Vstup A] → [Zpracování] → [Výstup]`
-- Identifikuj všechny externí služby (API, databáze, scrapy)
+**Fáze 1 — Průzkum** _(vždy specifický pro projekt)_
+
+- Jaký problém firma/uživatel řeší a co teď dělá ručně?
+- Nakresli pipeline: `[Vstup] → [Zpracování] → [Výstup]`
+- Jaké typy vstupů systém dostává?
+- Jaké externí systémy jsou zapojeny? (API, DB, CRM...)
+- Kdo bude systém provozovat — vývojář nebo klient sám?
 
 **Fáze 2 — Zmapuj přístupy k externím službám**
+
 - Tabulka: Služba | Přístup (✅/❌/❓) | Jak obejít bez přístupu
 - Přístup určuje pořadí kroků a co lze testovat bez závislostí
 
-**Fáze 3 — Urči správné pořadí kroků**
-- DB schema vždy první
-- Vstupy před zpracováním (nejdřív získej data, pak analyzuj)
-- Logika před integrací (otestuj výpočty izolovaně)
-- Deployment vždy poslední a volitelný
+**Fáze 3 — Architektura** _(kostra stejná, části se mění)_
 
-**Fáze 4 — Pro každý krok rozpiš:**
-- Co se staví (soubor + jednověté shrnutí)
-- Proč v tomto pořadí
-- Potenciální problémy + řešení
-- Testovací strategie bez externích závislostí
-- Blocker (co musíš mít/rozhodnout než začneš)
+- Identifikuj pevné části (sdílené mezi projekty) vs. variabilní (mění se per klient)
+- Rozhraní vstupního systému = jediný soubor který se mění mezi projekty
+- DB schema vždy první, deployment vždy poslední
 
-**Testovací strategie podle typu závislosti:**
-| Závislost | Jak testovat |
-|---|---|
-| DB | SQLite lokálně |
-| Externí feed/API | statický soubor `fixtures/` |
-| Scraping | HTML snapshot v `fixtures/` |
-| Placené API | mock server (FastAPI localhost) |
-| Produkční systém | DRY_RUN mode |
-| Produkční API (test) | jeden testovací záznam |
+**Fáze 4 — Knowledge Base / data** _(pokud projekt pracuje s daty klienta)_
+
+- Nejdřív KB, pak kód — agent je tak dobrý jako data která má
+- Malá KB → textové soubory v `prompts/`
+- Velká KB → vektorová databáze (RAG/ChromaDB)
+- `prompts/` = produkční data, `tests/` = simulovaná testovací data (fixtures)
+
+**Fáze 5 — Schvalovací kanál** _(pokud člověk schvaluje výstupy)_
+
+- Vývojář/test → Telegram
+- Klient bez IT → Web dashboard
+- Firma se Slackem → Slack s tlačítky
+- Ověřená produkce → auto-send pro low-risk, schválení jen pro citlivé typy
+
+**Fáze 6 — Chybějící informace**
+
+- Systém neeskaluje rovnou — navrhne výstup nebo se zeptá na doplnění
+- Člověk doplní → systém vygeneruje nový výstup ke schválení
+- Timeout bez reakce → zalogovat jako `needs_human`
+
+**Fáze 7 — Testování bez reálného prostředí**
+
+- Fixtures = vymyšlená data simulující reálný systém (`tests/`)
+- Testovací vstupy = konkrétní případy s očekávaným výsledkem
+- Výsledková tabulka: klasifikace správná? Výstup správný? Eskalace správná?
+
+| Závislost            | Jak testovat                    |
+| -------------------- | ------------------------------- |
+| DB                   | SQLite lokálně                  |
+| Externí feed/API     | statický soubor `fixtures/`     |
+| Scraping             | HTML snapshot v `fixtures/`     |
+| Placené API          | mock server (FastAPI localhost) |
+| Produkční systém     | DRY_RUN mode                    |
+| Produkční API (test) | jeden testovací záznam          |
+
+**Fáze 8 — Nasazení postupně (shadow mode)**
+
+- `DRY_RUN=true` → jen logy, žádné notifikace
+- Shadow mode → systém generuje výstupy, člověk pracuje paralelně, porovnání
+- Produkce → nejdřív low-risk typy, pak rozšiřovat
+
+**Fáze 9 — Pricing** _(škáluje podle složitosti integrace)_
+
+- Jednoduchá integrace → nižší setup fee
+- Složitá integrace (OAuth, třetí systémy, routing) → vyšší setup fee
+- Měsíční provoz = infrastruktura + monitoring + drobné úpravy
+
+**Fáze 10 — Správa po nasazení**
+
+- KB aktualizuje klient nebo vývojář na vyžádání
+- Credentials a tokeny mají expiraci → nastavit připomenutí
+- Logy monitoruje vývojář, klient hlásí problémy
 
 **Pravidlo deploymentu:** Projekt musí fungovat lokálně před tím než řešíš Railway nebo jiný cloud.
 
@@ -96,6 +153,7 @@ Před zahájením implementace projdi tyto fáze:
 ## Visual Review
 
 Po každé změně která ovlivní UI/web:
+
 1. Uprav kód
 2. Commitni a pushni na deployment platform (Railway nebo jiná)
 3. Počkej na deploy (~60s)
