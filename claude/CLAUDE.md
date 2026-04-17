@@ -5,6 +5,7 @@
 ## Komunikace
 
 - Když odpovím **"y"** — znamená to "ano", "pokračuj", nebo "instalaci/krok jsem již udělal, pokračuj dál". Rovnou pokračuj s dalším krokem bez ptaní.
+- Když odpovím **"go"** jako reakci na oznámení že je potřeba restartovat proces nebo agenta — rovnou proveď restart bez ptaní. Zjisti správný příkaz z kontextu projektu (např. `pkill` + spuštění `main.py`) a spusť ho.
 - Pokud zpráva končí **"?"** — okamžitě přeruš aktuální činnost a odpověz na dotaz nebo proveď požadovaný úkol. Nic jiného nedělej dokud neodpovíš.
 - Vždy odpovídej **česky**
 - Buď stručný — jeden správný příklad je lepší než tři alternativy
@@ -47,6 +48,7 @@ Pracuji na **dvou počítačích**:
 - Nikdy necommituj `.env` soubory
 - API klíče vždy přes env proměnné
 - Před git operacemi zkontroluj co commituju
+- **Před vytvořením `.env` vždy zkontroluj jestli existuje** — `Write` ho přepíše bez varování a obsah nelze obnovit (není v gitu)
 
 ## Spouštění procesů a serverů
 
@@ -66,97 +68,13 @@ Pracuji na **dvou počítačích**:
 - Na začátku session → přečti `tasks/lessons.md` pokud existuje
 - Vždy používej TodoWrite pro sledování průběhu — aktualizuj po každém dokončeném kroku
 
-## Plánování nového projektu
+## MCP nástroje
 
-Před zahájením implementace projdi tyto fáze:
-
-**Fáze 1 — Průzkum** _(vždy specifický pro projekt)_
-
-- Jaký problém firma/uživatel řeší a co teď dělá ručně?
-- Nakresli pipeline: `[Vstup] → [Zpracování] → [Výstup]`
-- Jaké typy vstupů systém dostává?
-- Jaké externí systémy jsou zapojeny? (API, DB, CRM...)
-- Kdo bude systém provozovat — vývojář nebo klient sám?
-
-**Fáze 2 — Zmapuj přístupy k externím službám**
-
-- Tabulka: Služba | Přístup (✅/❌/❓) | Jak obejít bez přístupu
-- Přístup určuje pořadí kroků a co lze testovat bez závislostí
-
-**Fáze 3 — Architektura** _(kostra stejná, části se mění)_
-
-- Identifikuj pevné části (sdílené mezi projekty) vs. variabilní (mění se per klient)
-- Rozhraní vstupního systému = jediný soubor který se mění mezi projekty
-- DB schema vždy první, deployment vždy poslední
-
-**Fáze 4 — Knowledge Base / data** _(pokud projekt pracuje s daty klienta)_
-
-- Nejdřív KB, pak kód — agent je tak dobrý jako data která má
-- Malá KB → textové soubory v `prompts/`
-- Velká KB → vektorová databáze (RAG/ChromaDB)
-- `prompts/` = produkční data, `tests/` = simulovaná testovací data (fixtures)
-
-**Fáze 5 — Schvalovací kanál** _(pokud člověk schvaluje výstupy)_
-
-- Vývojář/test → Telegram
-- Klient bez IT → Web dashboard
-- Firma se Slackem → Slack s tlačítky
-- Ověřená produkce → auto-send pro low-risk, schválení jen pro citlivé typy
-
-**Fáze 6 — Chybějící informace**
-
-- Systém neeskaluje rovnou — navrhne výstup nebo se zeptá na doplnění
-- Člověk doplní → systém vygeneruje nový výstup ke schválení
-- Timeout bez reakce → zalogovat jako `needs_human`
-
-**Fáze 7 — Testování bez reálného prostředí**
-
-- Fixtures = vymyšlená data simulující reálný systém (`tests/`)
-- Testovací vstupy = konkrétní případy s očekávaným výsledkem
-- Výsledková tabulka: klasifikace správná? Výstup správný? Eskalace správná?
-
-| Závislost            | Jak testovat                    |
-| -------------------- | ------------------------------- |
-| DB                   | SQLite lokálně                  |
-| Externí feed/API     | statický soubor `fixtures/`     |
-| Scraping             | HTML snapshot v `fixtures/`     |
-| Placené API          | mock server (FastAPI localhost) |
-| Produkční systém     | DRY_RUN mode                    |
-| Produkční API (test) | jeden testovací záznam          |
-
-**Fáze 8 — Nasazení postupně (shadow mode)**
-
-- `DRY_RUN=true` → jen logy, žádné notifikace
-- Shadow mode → systém generuje výstupy, člověk pracuje paralelně, porovnání
-- Produkce → nejdřív low-risk typy, pak rozšiřovat
-
-**Fáze 9 — Pricing** _(škáluje podle složitosti integrace)_
-
-- Jednoduchá integrace → nižší setup fee
-- Složitá integrace (OAuth, třetí systémy, routing) → vyšší setup fee
-- Měsíční provoz = infrastruktura + monitoring + drobné úpravy
-
-**Fáze 10 — Správa po nasazení**
-
-- KB aktualizuje klient nebo vývojář na vyžádání
-- Credentials a tokeny mají expiraci → nastavit připomenutí
-- Logy monitoruje vývojář, klient hlásí problémy
-
-**Pravidlo deploymentu:** Projekt musí fungovat lokálně před tím než řešíš Railway nebo jiný cloud.
+- Playwright MCP preferuj před Chrome MCP pro automatizaci prohlížeče.
+- **PRAVIDLO: MCP Telegram vůbec neovládá.** Žádné odesílání příkazů, žádné `/check`, `/yes`, `/no` ani nic jiného. Uživatel ovládá Telegram kompletně sám.
 
 ## Skills
 
 - Všechny skilly jsou v `~/ai-prompts-and-skills/shared-skills/`
 - `~/.claude/skills/` obsahuje pouze symlinky na tuto složku
 - Při vytvoření nového skillu vždy ihned vytvoř symlink: `ln -s ~/ai-prompts-and-skills/shared-skills/NAZEV ~/.claude/skills/NAZEV`
-
-## Visual Review
-
-Po každé změně která ovlivní UI/web:
-
-1. Uprav kód
-2. Commitni a pushni na deployment platform (Railway nebo jiná)
-3. Počkej na deploy (~60s)
-4. Otevři web přes Chrome extension a udělej screenshot
-5. Zkontroluj vizuálně a reportuj výsledek
-6. Pokud problém přetrvává — postni screenshot do chatu, zkus jiný přístup k opravě a opakuj celý cyklus od kroku 1

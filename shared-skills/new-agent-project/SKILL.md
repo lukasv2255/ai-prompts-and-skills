@@ -81,6 +81,21 @@ Fixtures = vymyšlená data simulující reálný systém (`tests/`).
 | Produkční systém     | DRY_RUN mode                    |
 | Produkční API (test) | jeden testovací záznam          |
 
+### Živé demo pro klienta (bez přístupu k jeho inboxu)
+
+Klient nechce dát přístup k inboxu ani datům, ale chce vidět reálný průběh.
+
+Použij vlastní testovací inbox (např. `newagent7878@gmail.com`) a KB s vymyšlenými daty klienta:
+
+```
+Klient pošle e-mail na testovací adresu
+  → agent přečte přes Gmail API
+  → Telegram: návrh odpovědi ke schválení
+  → /yes → agent odešle odpověď zpět klientovi
+```
+
+Klienta lze přidat do Telegram skupiny — vidí návrhy a schvalování živě.
+
 ---
 
 ## Fáze 8 — Nasazení postupně (shadow mode)
@@ -131,6 +146,7 @@ project_path = os.path.join(base, "claude-code", "<nazev-projektu>")
     responder.py        ← generování odpovědí
     notifier.py         ← Telegram / Slack / web
     mail_client.py      ← variabilní: Gmail / IMAP / Graph / Helpdesk
+    kb_loader.py        ← variabilní: soubory (demo) nebo DB klienta (produkce)
   prompts/              ← produkční KB (systémové prompty, ceník, FAQ...)
   tests/
     fixtures/           ← vymyšlená data pro testování bez reálného inboxu
@@ -168,6 +184,7 @@ OPENAI_API_KEY=
 TELEGRAM_BOT_TOKEN=
 TELEGRAM_CHAT_ID=
 DRY_RUN=true
+KB_SOURCE=file        # "file" pro demo/dev, "db" pro produkci s DB klienta
 ```
 
 ### .gitignore
