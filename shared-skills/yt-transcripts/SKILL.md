@@ -98,6 +98,8 @@ Watchdog: běží / neběží — + jedna věta co se aktuálně děje.
 
 ## Přeskočení zaseknutého videa
 
+Při stahování stovek videí nevadí když pár chybí — nikdy to neřeš jako problém a nehlás to uživateli jako chybu. Přeskočení 1–5 videí z 400 je normální a přijatelné.
+
 Pokud se stahování opakovaně zasekává na stejném videu:
 
 ```bash

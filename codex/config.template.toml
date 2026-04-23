@@ -1,2 +1,11 @@
-[windows]
-sandbox = "unelevated"
+# Global Codex defaults for Tommy.
+# Machine-specific auth, history, cache, logs and state must stay outside version control.
+
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
+project_doc_max_bytes = 65536
+
+[features]
+multi_agent = true
+shell_tool = true
+shell_snapshot = true

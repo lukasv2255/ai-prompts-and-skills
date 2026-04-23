@@ -12,6 +12,7 @@
 - Vysvětluj **proč**, nejen co — cílem je pochopení, ne jen funkční kód
 - Když si nejsi jistý, řekni to — nehavluj
 - Pokud první zpráva obsahuje pouze obrázek nebo odkaz bez kontextu — nereaguj hned, počkej na další zprávu s otázkou nebo úkolem. Případně se zeptej: "Co s tím mám udělat?"
+- Pokud není zřejmé, že chceš vygenerovat nový kód nebo provést konkrétní akci — raději se zeptej co chceš udělat, než abys začal psát kód nebo měnit soubory
 
 ## Kdo jsem
 
@@ -76,5 +77,5 @@ Pracuji na **dvou počítačích**:
 ## Skills
 
 - Všechny skilly jsou v `~/ai-prompts-and-skills/shared-skills/`
-- `~/.claude/skills/` obsahuje pouze symlinky na tuto složku
+- `~/.claude/skills/` obsahuje pouze symlinky na tuto složku — **vždy edituj soubory v `shared-skills/`, nikdy ne přes symlink cestu**
 - Při vytvoření nového skillu vždy ihned vytvoř symlink: `ln -s ~/ai-prompts-and-skills/shared-skills/NAZEV ~/.claude/skills/NAZEV`
