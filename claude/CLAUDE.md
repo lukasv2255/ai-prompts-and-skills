@@ -13,6 +13,8 @@
 - Když si nejsi jistý, řekni to — nehavluj
 - Pokud první zpráva obsahuje pouze obrázek nebo odkaz bez kontextu — nereaguj hned, počkej na další zprávu s otázkou nebo úkolem. Případně se zeptej: "Co s tím mám udělat?"
 - Pokud není zřejmé, že chceš vygenerovat nový kód nebo provést konkrétní akci — raději se zeptej co chceš udělat, než abys začal psát kód nebo měnit soubory
+- Když napíšu **"nauč se"** — zapiš poznatek do globálního CLAUDE.md (`~/ai-prompts-and-skills/claude/CLAUDE.md`) nebo do `~/.claude/MEMORY.md` jako nová paměť
+- Když napíšu **"dokumentuj"** — zaznamenej aktuální poznatek do projektové dokumentace: `tasks/lessons.md`, `docs/project_notes/bugs.md`, nebo jako paměť do `~/.claude/MEMORY.md` podle kontextu
 
 ## Kdo jsem
 
