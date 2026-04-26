@@ -1,85 +1,128 @@
-# YT RAG — Knowledge Base z YouTube kanálu
-
-Stáhne transktipty YouTube kanálu, embeduje je a zpřístupní jako MCP nástroj
-v Claude Code. Primární use-case: **ptát se na obsah videí a získávat shrnutí témat**.
-
+---
+name: yt-rag
+description: Vytvor knowledge base z YouTube transkriptu a priprav ji pro dotazovani pres RAG. Pouzij kdyz uzivatel chce ptat se na obsah kanalu, shrnovat temata napric videi, pripravit embeddingy z transkriptu nebo vystavit YouTube archiv pro AI dotazy.
 ---
 
-## Kdy použít
+# YT RAG
 
-- Chceš se ptát "co říká [kanál] o X?"
-- Chceš shrnutí tématu napříč stovkami videí
-- Chceš mít obsah kanálu dostupný přímo v Claude chatu
+Tento skill stavi knowledge base z YouTube kanalu: transkripty prevede na dokumenty,
+naembeduje je a pripravi vrstvu pro vyhledavani a odpovidani nad obsahem videi.
 
----
+Primarni use-case:
+
+- ptat se "co rika kanal o X?"
+- shrnout tema napric desitkami nebo stovkami videi
+- pripravit archiv videi pro dalsi AI workflow
+
+## Kdy ho pouzit
+
+- uz mas transkripty a chces z nich udelat vyhledavatelnou knowledge base
+- chces delat tematicka shrnuti napric celym kanalem
+- potrebujes embeddingy a metadata pro dalsi aplikaci, chat nebo MCP server
+- chces rychle postavit RAG vrstvu bez ChromaDB nebo tezke infrastruktury
 
 ## Závislosti
 
+Zaklad:
+
 ```bash
 pip3 install yt-dlp youtube-transcript-api openai anthropic tiktoken python-frontmatter numpy
-/opt/homebrew/bin/pip3 install "mcp[cli]" --break-system-packages  # Python 3.14 pro MCP
 ```
 
-**Vyžaduje:**
-- OpenAI API klíč (embeddingy — ~$0.002 na celý ingest)
-- Anthropic API klíč (generování odpovědí — ~$0.001 na dotaz)
-- VPN při stahování transkriptů (YouTube blokuje hromadné stahování)
+Pro MCP integraci navic:
 
----
+```bash
+/opt/homebrew/bin/pip3 install "mcp[cli]" --break-system-packages
+```
+
+Vyžaduje:
+
+- OpenAI API key pro embeddingy
+- model nebo provider pro finalni odpovedi
+- casto VPN pri hromadnem stahovani z YouTube
 
 ## Postup
 
-### 1. Stáhni transktipty
+### 1. Ziskej transkripty
 
-Použij skill `yt-transcripts`. Nastaví kanál, spustí stahování, uloží do `transcripts/<slug>/`.
+Kdyz transkripty jeste nemas, pouzij nejdriv skill `yt-transcripts`.
 
-### 2. Převeď na .md soubory
+Ocekavany vstup:
 
-Zkopíruj `build_rag_docs.py` z tohoto skillu do projektu. Nastav kanál:
+- `transcripts/<slug>/...`
+
+### 2. Preved transkripty na dokumenty
+
+Pouzij `build_rag_docs.py` z tohoto skillu. Nastav kanal:
 
 ```python
-CHANNEL_NAME = "Název kanálu"
+CHANNEL_NAME = "Nazev kanalu"
 CHANNEL_SLUG = "slug"
 CHANNEL_URL  = "https://www.youtube.com/@handle"
 ```
 
-Spusť:
+Spust:
+
 ```bash
 python3 build_rag_docs.py
 ```
 
-Výstup: `docs/<slug>/<video_id>.md` — každý soubor má YAML frontmatter (title, video_id, url) a čistý text transkriptu.
+Vystup:
 
-### 3. Embeduj a ulož vektory
+- `docs/<slug>/<video_id>.md`
 
-Zkopíruj `ingest.py` z tohoto skillu. Nastav:
+Kazdy soubor ma metadata a cisty text transkriptu.
+
+### 3. Naembeduj a uloz index
+
+Pouzij `ingest.py` a nastav:
 
 ```python
 DOCS_DIR = Path("docs/<slug>")
 ```
 
-Spusť:
+Spust:
+
 ```bash
 source .env && python3 ingest.py
 ```
 
-Výstup:
-- `vectors.npy` — matice embeddingů (N × 1536)
-- `metadata.json` — texty a metadata chunků
-- `ingest_done.json` — progress (bezpečné přerušení a pokračování)
+Vystup:
 
-**Pozn.:** Při rate limitu (429) skript automaticky čeká a zkouší znovu.
+- `vectors.npy`
+- `metadata.json`
+- `ingest_done.json`
 
-### 4. MCP server
+Tohle je jadro skillu. Od tehle chvile uz mas lokalni RAG index, ktery muzes
+napojit na libovolne dotazovaci rozhrani.
 
-Zkopíruj `mcp_server.py` a `run_mcp.sh` z tohoto skillu. Nastav `.env`:
+### 4. Vyber rozhrani pro dotazovani
 
-```
+Moznosti:
+
+- vlastni Python skript nebo web app
+- agent nebo chatbot nad lokalnimi soubory
+- MCP server pro Claude Code nebo Codex desktop workflow
+
+Pro MCP variantu pouzij:
+
+- `mcp_server.py`
+- `run_mcp.sh`
+
+To je jen jeden adapter, ne podstata celeho skillu.
+
+## MCP / chat integrace
+
+Pokud chces obsah vystavit jako MCP server, nastav `.env`:
+
+```text
 OPENAI_API_KEY=sk-...
 ANTHROPIC_API_KEY=sk-ant-...
 ```
 
-Vytvoř `.mcp.json` v kořeni projektu:
+Pak vytvor `.mcp.json` nebo jiny odpovidajici config pro prostredi, ktere
+MCP server nacita:
+
 ```json
 {
   "mcpServers": {
@@ -91,58 +134,28 @@ Vytvoř `.mcp.json` v kořeni projektu:
 }
 ```
 
-Otevři projekt v Claude Code desktop — server se načte automaticky.
+Kdyz uzivatel nepouziva MCP, tenhle krok preskoc.
 
----
+## Dulezite poznamky
 
-## Dostupné nástroje v Claude chatu
+- `ask` nebo podobny dotazovaci endpoint typicky pracuje jen s omezenym poctem
+  nejrelevantnejsich chunku. Kdyz odpoved tvrdi, ze video nebo tema "chybi",
+  muze jit jen o nepresny retrieval.
+- Pro ověření existence videa je lepsi mit i listovaci nebo sumarizacni nastroj.
+- Tohle reseni je lehke a lokalni: `numpy` + soubory, bez tezke DB vrstvy.
 
-| Nástroj | Použití |
-|---|---|
-| `search_<slug>` | Rychlé vyhledání nejrelevantnějších úryvků (surové chunky) |
-| `ask_<slug>` | Odpověď na otázku ze všech videí najednou (sémantické hledání) |
-| `summarize_video` | Shrnutí **konkrétního videa** — zadej část názvu |
-| `list_videos` | Výpis dostupných videí, volitelně filtrovaný |
+## Technicke detaily
 
-### Jak správně dotazovat
-
-**Otázka napříč kanálem** → `ask_nick_saraev`
-- *"Co říká Nick o cold emailech?"*
-- *"Jak vydělávat s n8n?"*
-- *"Jaký je rozdíl mezi n8n a Claude Code?"*
-
-**Shrnutí konkrétního videa** → `summarize_video`
-- *"Shrň video CLAUDE SKILLS FULL COURSE"*
-- *"Sumarizuj video o cold email kurzu"*
-- *"Co je v kurzu o n8n?"*
-
-**Nevíš jak se video jmenuje?** → `list_videos`
-- *"Jaká videa mám v databázi?"*
-- *"Vypiš videa která mají 'skills' v názvu"*
-
-### Důležité upozornění
-
-`ask` vrací jen **8 nejrelevantnějších chunků** — pokud říká "video chybí", neverit mu.
-Databáze může mít video, ale dotaz nebyl dost přesný. Vždy použij `summarize_video`
-nebo `list_videos` pro ověření.
-
----
-
-## Technické detaily
-
-- **Chunking:** 600 tokenů, 100 overlap — vhodné pro plynulý řečový text bez odstavců
-- **Embedding model:** `text-embedding-3-small` (1536 dimenzí, $0.02/1M tokenů)
-- **Vyhledávání:** cosine similarity přes numpy (bez ChromaDB — segfaultuje na macOS)
-- **Generování:** Claude Haiku (~$0.001/dotaz)
-
----
+- chunking: cca 600 tokenu, 100 overlap
+- embedding model: `text-embedding-3-small`
+- vyhledavani: cosine similarity nad `numpy`
+- generovani odpovedi: libovolny vhodny model podle prostredi
 
 ## Soubory tohoto skillu
 
-- `SKILL.md` — tento průvodce
-- `build_rag_docs.py` — převod transkriptů na .md
-- `ingest.py` — embedování a ukládání vektorů
-- `mcp_server.py` — MCP server se čtyřmi nástroji
-- `run_mcp.sh` — wrapper pro spuštění MCP serveru
-
-ARGUMENTS: <channel_url>
+- `SKILL.md` — workflow
+- `README.md` — kratke lidske vysvetleni
+- `build_rag_docs.py` — prevod transkriptu na dokumenty
+- `ingest.py` — embeddingy a index
+- `mcp_server.py` — volitelny MCP adapter
+- `run_mcp.sh` — spousteci wrapper pro MCP adapter

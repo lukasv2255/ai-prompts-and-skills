@@ -4,15 +4,21 @@ description: >
   Systémový tray (menu bar) pro dlouhodobě běžící Python skripty na macOS.
   Start/stop z ikony v menu baru, logování do souboru, správný Python (Homebrew).
 
+  Toto je alternativní special-case workflow. Pro běžné dlouhodobé běhy agentů,
+  collectorů a botů na macOS preferuj `launchd-agent`; `tray-app` používej hlavně
+  když je explicitně potřeba GUI ovládání přes menu bar.
+
   Použij PROAKTIVNĚ kdykoliv projekt potřebuje:
-  - "spusť na pozadí", "běží pořád", "collector na pozadí"
   - "tray ikona", "menu bar", "systémová lišta"
   - "spusť přes tray", "tray.py"
-  - dlouhodobě běžící Python skript na macOS
-  - ovládání skriptu bez terminálu
+  - ovládání skriptu přes ikonku bez terminálu
+  - desktopový helper nebo osobní nástroj s ručním start/stop
 ---
 
 # Tray App — macOS menu bar pro Python skripty
+
+Používej jen když je skutečně potřeba klikací GUI ovládání v menu baru.
+Pro standardní dlouhodobý background běh na macOS preferuj skill `launchd-agent`.
 
 Odzkoušeno na spread-monitor: collector běží na pozadí, ovládá se z menu baru.
 

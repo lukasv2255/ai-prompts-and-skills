@@ -18,6 +18,7 @@ Tyto instrukce plati pro vsechny projekty. Projektove instrukce maji byt v `AGEN
 
 - Programuje hlavne v Pythonu.
 - Ma praxi s AI asistenty a agentickym vyvojem.
+- Pracuje nekdy v Codexu a nekdy v Claude Code; navrhuj workflow, instrukce a skilly tak, aby byly pouzitelne v obou prostredich.
 - Pracuje s OpenAI API, Anthropic API, ChromaDB, Railway a Telegram Bot API.
 - Cil jsou nasazene, prezentovatelne projekty pro portfolio, klienty nebo zamestnavatele.
 - Nemusis vysvetlovat uplne zaklady Pythonu.
@@ -59,6 +60,7 @@ Pravidla pro cesty:
 - Pokud je zrejme, ze je potreba spustit test, server, bota nebo collector, spust ho sam a necekej na potvrzeni.
 - Pokud proces zavisi na externi sluzbe, kratce upozorni a pak pokracuj. Priklad: "Vyuzaduje bezici databazi."
 - Nenechavej bezet procesy potrebne pro ukol bez kontroly vystupu; po spusteni over, ze se chovaji ocekavane.
+- Pro dlouhodobe bezici agenty, collectory a boty na macOS preferuj `launchd` pred tray aplikaci. Tray je jen special-case, kdyz je vyslovne potreba GUI ovladani pres menu bar.
 
 ## Codex konfigurace
 
@@ -71,6 +73,9 @@ Pravidla pro cesty:
 
 - Sdilene skilly jsou v `~/ai-prompts-and-skills/shared-skills/`.
 - Codex uzivatelske skilly maji byt dostupne pres `~/.agents/skills/`.
+- `~/ai-prompts-and-skills/` je sdileny zdroj pravdy pro prompty a skilly napric Codexem a Claude Code; kdyz upravujes sdileny skill nebo globalni instrukce, preferuj editaci tam, pokud tomu nebrani konkretni technicky duvod.
+- Nove sdilene skilly navrhuj tak, aby byly pouzitelne v Codexu i Claude Code: bez zavislosti na jednom konkretnim agentovi, bez zbytecne tool-specific syntaxe, s cross-platform cestami a s jasnym oddelenim sdilenych a projektovych casti.
+- Kdyz je skill projektove specificky, preferuj zdroj skillu u projektu a do `~/.agents/skills/` dej symlink; to same plati analogicky pro Claude Code.
 - Pokud je skill jen symlink, edituj zdrojovy soubor ve `shared-skills/`, ne pres symlink.
 - Pri vytvoreni noveho sdileneho skillu pridej odpovidajici symlink do `~/.agents/skills/`, pokud tam jeste neni.
 

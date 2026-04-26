@@ -19,6 +19,7 @@
 ## Kdo jsem
 
 - Programuji v **Pythonu**, ~1 měsíc intenzivní praxe s AI a Claude Code
+- Pracuji někdy v **Claude Code** a někdy v **Codexu**; workflow, instrukce a skilly mají být navržené tak, aby šly používat v obou prostředích
 - Pracuji s: OpenAI API, Anthropic API, ChromaDB, Railway, Telegram Bot API
 - Cíl: nasazené, prezentovatelné projekty (portfolio, klienti, zaměstnavatelé)
 - Rychle se učím — nemusíš vysvětlovat základy Pythonu
@@ -57,6 +58,7 @@ Pracuji na **dvou počítačích**:
 
 - Příkazy (collector, server, bot...) spouštěj vždy sám — neptej se "mám to spustit?"
 - Pokud proces závisí na externí službě (TWS, databáze, API...), zobraz krátké upozornění (např. "⚠ Vyžaduje běžící TWS") a rovnou spusť — nečekej na potvrzení
+- Pro dlouhodobě běžící agenty, collectory a boty na macOS preferuj `launchd` před tray aplikací. Tray je jen special-case, když je výslovně potřeba GUI ovládání přes menu bar.
 
 ## Konfigurace a CLAUDE.md soubory
 
@@ -79,5 +81,8 @@ Pracuji na **dvou počítačích**:
 ## Skills
 
 - Všechny skilly jsou v `~/ai-prompts-and-skills/shared-skills/`
+- `~/ai-prompts-and-skills/` je sdílený zdroj pravdy pro prompty a skilly napříč Claude Code a Codexem; když upravuješ sdílený skill nebo globální instrukce, preferuj editaci tam, pokud tomu nebrání konkrétní technický důvod
+- Nové sdílené skilly navrhuj tak, aby byly použitelné v Claude Code i Codexu: bez vazby na jedno konkrétní prostředí, bez zbytečně tool-specific syntaxe, s cross-platform cestami a s jasným oddělením sdílených a projektových částí
+- Když je skill projektově specifický, preferuj zdroj skillu u projektu a do `~/.claude/skills/` dej symlink; pro Codex platí analogicky `~/.agents/skills/`
 - `~/.claude/skills/` obsahuje pouze symlinky na tuto složku — **vždy edituj soubory v `shared-skills/`, nikdy ne přes symlink cestu**
 - Při vytvoření nového skillu vždy ihned vytvoř symlink: `ln -s ~/ai-prompts-and-skills/shared-skills/NAZEV ~/.claude/skills/NAZEV`
