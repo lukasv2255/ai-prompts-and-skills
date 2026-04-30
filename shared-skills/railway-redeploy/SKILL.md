@@ -14,26 +14,46 @@ Po buildu je nutné vždy zavolat `railway redeploy --yes`.
 
 ## Postup
 
-1. Zkontroluj že jsi ve správném adresáři projektu
-2. Build + upload (streamuje logy, čeká na dokončení):
+### KROK 1 — Git commit + push (VŽDY povinný)
+
+Railway deployuje výhradně z Gitu. Bez pushe se změny nenasadí.
+
+```bash
+git status
+git diff --stat
+```
+
+Pokud jsou uncommitted změny nebo nepushnuté commity:
+
+```bash
+git add <soubory>
+git commit -m "popis změn"
+git push
+```
+
+Nikdy nepřeskakuj tento krok. `railway redeploy` bez pushe nasadí **starý** commit.
+
+### KROK 2 — Zkontroluj správný adresář projektu
+
+### KROK 3 — Build + upload
 
 ```bash
 railway up --ci
 ```
 
-3. Po dokončení buildu restartuj container s novým image:
+### KROK 4 — Restart containeru s novým image
 
 ```bash
 railway redeploy --yes
 ```
 
-4. Počkej ~60 sekund a ověř logy:
+### KROK 5 — Ověř logy
 
 ```bash
 railway logs 2>&1 | tail -10
 ```
 
-5. Potvrď uživateli — v logu hledej `Starting Container` s novým timestampem.
+Potvrď uživateli — v logu hledej `Starting Container` s novým timestampem.
 
 ## Poznámky
 
