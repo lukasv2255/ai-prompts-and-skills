@@ -7,6 +7,7 @@
 - Když odpovím **"y"** — znamená to "ano", "pokračuj", nebo "instalaci/krok jsem již udělal, pokračuj dál". Rovnou pokračuj s dalším krokem bez ptaní.
 - Když odpovím **"go"** jako reakci na oznámení že je potřeba restartovat proces nebo agenta — rovnou proveď restart bez ptaní. Zjisti správný příkaz z kontextu projektu (např. `pkill` + spuštění `main.py`) a spusť ho.
 - Pokud zpráva končí **"?"** — okamžitě přeruš aktuální činnost a odpověz na dotaz nebo proveď požadovaný úkol. Nic jiného nedělej dokud neodpovíš.
+- Pokud je zpráva **oznamovací věta** (nekončí `?`) — ber ji primárně jako dotaz na **stav / analýzu**. Nic neprováděj automaticky; maximálně navrhni další krok a zeptej se na explicitní pokyn.
 - Vždy odpovídej **česky**
 - Buď stručný — jeden správný příklad je lepší než tři alternativy
 - Vysvětluj **proč**, nejen co — cílem je pochopení, ne jen funkční kód
@@ -29,7 +30,7 @@
 Pracuji na **dvou počítačích**:
 
 - **Mac** — primární, cesta projektů: `~/claude-code/`
-- **Windows** — druhé PC, cesta projektů: `C:\Users\tommy\claude-code\`
+- **Windows** — druhé PC, cesta projektů: `C:\Users\<username>\claude-code\`
 
 **Pravidla pro cesty v kódu a skillech:**
 
@@ -53,6 +54,12 @@ Pracuji na **dvou počítačích**:
 - API klíče vždy přes env proměnné
 - Před git operacemi zkontroluj co commituju
 - **Před vytvořením `.env` vždy zkontroluj jestli existuje** — `Write` ho přepíše bez varování a obsah nelze obnovit (není v gitu)
+- Soubory **nemaž ani neobnovuj** bez výslovného pokynu: žádné automatické `git restore` pro smazané soubory; nejdřív se zeptej / upozorni, a akci proveď až po explicitním „smaž“ / „obnov“
+
+## Railway Deploy
+
+- **Nikdy neprováděj deploy ani redeploy na Railway sám** — vždy se zeptej uživatele a počkej na explicitní pokyn.
+- Platí pro: `railway up`, force redeploy, nastavení env proměnných přes CLI/API, restart služby, změny na Volume.
 
 ## Spouštění procesů a serverů
 
@@ -85,4 +92,8 @@ Pracuji na **dvou počítačích**:
 - Nové sdílené skilly navrhuj tak, aby byly použitelné v Claude Code i Codexu: bez vazby na jedno konkrétní prostředí, bez zbytečně tool-specific syntaxe, s cross-platform cestami a s jasným oddělením sdílených a projektových částí
 - Když je skill projektově specifický, preferuj zdroj skillu u projektu a do `~/.claude/skills/` dej symlink; pro Codex platí analogicky `~/.agents/skills/`
 - `~/.claude/skills/` obsahuje pouze symlinky na tuto složku — **vždy edituj soubory v `shared-skills/`, nikdy ne přes symlink cestu**
-- Při vytvoření nového skillu vždy ihned vytvoř symlink: `ln -s ~/ai-prompts-and-skills/shared-skills/NAZEV ~/.claude/skills/NAZEV`
+- Při vytvoření nového skillu vždy ihned vytvoř **oba** symlinky (Claude Code i Codex):
+  ```
+  ln -s ~/ai-prompts-and-skills/shared-skills/NAZEV ~/.claude/skills/NAZEV
+  ln -s ~/ai-prompts-and-skills/shared-skills/NAZEV ~/.agents/skills/NAZEV
+  ```

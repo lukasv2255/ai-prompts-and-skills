@@ -38,7 +38,7 @@ For Codex this means especially:
 Clone this repo somewhere stable, for example:
 
 ```powershell
-git clone https://github.com/lukasv2255/ai-prompts-and-skills.git C:\Users\tommy\ai-prompts-and-skills
+git clone https://github.com/lukasv2255/ai-prompts-and-skills.git C:\Users\<username>\ai-prompts-and-skills
 ```
 
 Then run:

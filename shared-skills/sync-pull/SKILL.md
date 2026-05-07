@@ -25,7 +25,7 @@ git -C "$HOME/ai-prompts-and-skills" pull
 ```
 
 Kdyz shell nebo prostredi nepouziva `$HOME`, odvod cestu z domovske slozky daneho
-uzivatele misto natvrdo zapsaneho `lukas` nebo `tommy`.
+uzivatele misto natvrdo zapsaneho username.
 
 ## Co udelat po pullu
 

@@ -132,7 +132,7 @@ Klienta lze přidat do Telegram skupiny — vidí návrhy a schvalování živě
 import os, platform
 base = os.path.expanduser("~")
 # Mac:     ~/claude-code/<nazev>/
-# Windows: C:\Users\tommy\claude-code\<nazev>\
+# Windows: C:\Users\<username>\claude-code\<nazev>\
 project_path = os.path.join(base, "claude-code", "<nazev-projektu>")
 ```
 

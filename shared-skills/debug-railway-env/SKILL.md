@@ -166,9 +166,9 @@ conn = psycopg2.connect(url, sslmode=ssl)
 
 | Klíč | Hodnota |
 |------|---------|
-| Project ID | `REDACTED_PROJECT_ID` |
-| Environment ID | `REDACTED_ENV_ID` |
-| Web service ID | `REDACTED_SERVICE_ID` |
-| Postgres service ID | `REDACTED_POSTGRES_ID` |
-| Token | `REDACTED_RAILWAY_TOKEN` |
-| DATABASE_URL (interní) | `postgresql://postgres:REDACTED_PASSWORD@postgres.railway.internal:5432/spreads` |
+| Project ID | viz Railway dashboard |
+| Environment ID | viz Railway dashboard |
+| Web service ID | viz Railway dashboard |
+| Postgres service ID | viz Railway dashboard |
+| Token | viz railway.app/account/tokens |
+| DATABASE_URL (interní) | viz Railway → Postgres → Variables |

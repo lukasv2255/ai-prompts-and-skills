@@ -22,14 +22,14 @@ Místo toho zapiš token přímo do konfiguračního souboru CLI:
 
 ```python
 import json, os
-config_dir = 'C:/Users/tommy/.railway'  # ~/.railway — NIKOLI AppData/Roaming
+config_dir = 'C:/Users/<username>/.railway'  # ~/.railway — NIKOLI AppData/Roaming
 os.makedirs(config_dir, exist_ok=True)
 config = {'projects': {}, 'user': {'token': 'TOKEN_ZDE'}}
 with open(f'{config_dir}/config.json', 'w') as f:
     json.dump(config, f, indent=2)
 ```
 
-Ověření: `C:/Users/tommy/railway.exe whoami` → musí vrátit email.
+Ověření: `C:/Users/<username>/railway.exe whoami` → musí vrátit email.
 
 > **Proč AppData nefunguje:** Railway CLI v4 (Rust) používá `dirs::home_dir()` → `~/.railway/config.json`.
 > AppData/Roaming je jiná cesta. `RAILWAY_TOKEN` env var nefunguje spolehlivě na Windows přes bash.
@@ -45,7 +45,7 @@ assets = data['assets']
 url = next(a['browser_download_url'] for a in assets if 'x86_64-pc-windows-msvc.zip' in a['name'])
 print(url)
 "
-# Stáhni zip, rozbal, zkopíruj railway.exe do C:/Users/tommy/railway.exe
+# Stáhni zip, rozbal, zkopíruj railway.exe do C:/Users/<username>/railway.exe
 ```
 
 ## 3. Vytvoření projektu a nasazení
@@ -69,7 +69,7 @@ curl -s -X POST https://backboard.railway.app/graphql/v2 \
 ### Deploy lokálního kódu
 ```bash
 cd /projekt
-"C:/Users/tommy/railway.exe" up \
+"C:/Users/<username>/railway.exe" up \
   --project PROJECT_ID \
   --environment ENV_ID \
   --service SERVICE_ID \
@@ -78,7 +78,7 @@ cd /projekt
 
 ### Propojení projektu (pro příkazy bez --project)
 ```bash
-"C:/Users/tommy/railway.exe" link \
+"C:/Users/<username>/railway.exe" link \
   --project PROJECT_ID \
   --environment ENV_ID \
   --service SERVICE_ID
@@ -105,7 +105,7 @@ Pozor: v bash shell expansion — předej přes Python script, ne přes bash her
 
 ```bash
 # Po railway link:
-cd /projekt && "C:/Users/tommy/railway.exe" logs
+cd /projekt && "C:/Users/<username>/railway.exe" logs
 
 # Nebo přes GraphQL API
 ```
@@ -121,7 +121,7 @@ cd /projekt && "C:/Users/tommy/railway.exe" logs
 ## 7. Veřejná URL
 
 ```bash
-"C:/Users/tommy/railway.exe" domain
+"C:/Users/<username>/railway.exe" domain
 ```
 
 ## Časté chyby
