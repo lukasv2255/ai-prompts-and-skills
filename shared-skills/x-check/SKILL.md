@@ -32,9 +32,13 @@ Zapamatuj si tabId. Pokud tab neexistuje, vytvoří se nový.
 Vždy: `navigate` → počkej → `javascript_tool` extrakce.
 
 **Profily:**
-- `https://x.com/marekl`
-- `https://x.com/DavidGrudl`
-- `https://x.com/JiriCoufal77`
+- `https://x.com/marekl` — Marek Lutonský, tech novinář
+- `https://x.com/DavidGrudl` — PHP/tech developer, velká CZ komunita
+- `https://x.com/filippodstavec` — Filip Podstavec, AI/tech
+- `https://x.com/machal` — Martin Michálek, Vzhůru dolů, frontend/AI
+- `https://x.com/lukasersil` — Lukáš Eršil, AI/tech/video, hodně vlastního CZ obsahu
+- `https://x.com/tangero` — Patrick Zandl, vibecoding.cz, AI/vývoj, 27k followers
+- `https://x.com/JiriCoufal77` — spíš finance, AI občas
 
 **Live search (záloha pokud profily nepřinesou dost):**
 - `https://x.com/search?q=%22um%C4%9Bl%C3%A1+inteligence%22+OR+%22AI%22+lang%3Acs+min_faves%3A20&f=live`

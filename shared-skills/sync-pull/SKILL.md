@@ -36,3 +36,18 @@ uzivatele misto natvrdo zapsaneho username.
 
 - Je to osobni synchronizacni skill pro repozitar `ai-prompts-and-skills`, ne obecny git skill pro libovolny projekt.
 - Pokud je worktree spinavy a `git pull` by kolidoval, nejdriv se zastav a rekni proc.
+
+## Copy-paste: update instance z template (git)
+
+Kdyz v klientske instanci plati konvence:
+
+- `origin` = klientsky/instancni repo (tam pushujes)
+- `template` = template upstream repo (odtud beres update)
+
+pak update aktualni instance z template udelas takto:
+
+```bash
+git fetch template
+git merge template/main
+git push origin main
+```

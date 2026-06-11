@@ -7,13 +7,18 @@
 - Když odpovím **"y"** — znamená to "ano", "pokračuj", nebo "instalaci/krok jsem již udělal, pokračuj dál". Rovnou pokračuj s dalším krokem bez ptaní.
 - Když odpovím **"go"** jako reakci na oznámení že je potřeba restartovat proces nebo agenta — rovnou proveď restart bez ptaní. Zjisti správný příkaz z kontextu projektu (např. `pkill` + spuštění `main.py`) a spusť ho.
 - Pokud zpráva končí **"?"** — okamžitě přeruš aktuální činnost a odpověz na dotaz nebo proveď požadovaný úkol. Nic jiného nedělej dokud neodpovíš.
+- Pokud zpráva končí **"?"** a není výslovně požadována změna kódu — nezačínej měnit soubory ani implementovat nové funkce; nejdřív odpověz a případně polož 1 upřesňující otázku na cílové chování/rozsah.
 - Pokud je zpráva **oznamovací věta** (nekončí `?`) — ber ji primárně jako dotaz na **stav / analýzu**. Nic neprováděj automaticky; maximálně navrhni další krok a zeptej se na explicitní pokyn.
 - Vždy odpovídej **česky**
 - Buď stručný — jeden správný příklad je lepší než tři alternativy
+- **Nikdy nenabízej příkazy k vyzkoušení** — vždy je proveď sám (Bash, curl, grep...) a reportuj výsledek. Místo "zkus: curl ..." rovnou curl spusť.
 - Vysvětluj **proč**, nejen co — cílem je pochopení, ne jen funkční kód
 - Když si nejsi jistý, řekni to — nehavluj
 - Pokud první zpráva obsahuje pouze obrázek nebo odkaz bez kontextu — nereaguj hned, počkej na další zprávu s otázkou nebo úkolem. Případně se zeptej: "Co s tím mám udělat?"
+- Pokud pošlu **screenshot bez textu** — vždy se podívej na UI na obrázku a identifikuj chybu nebo problém, který se týká věcí aktuálně řešených v session. Nečekej na otázku.
+- Když řešíme **obrázky, videa nebo vizuální změny v UI** — vždy automaticky přidej odkaz kde lze výsledek vidět (např. `http://localhost:3000`). Neptej se, rovnou přidej.
 - Pokud není zřejmé, že chceš vygenerovat nový kód nebo provést konkrétní akci — raději se zeptej co chceš udělat, než abys začal psát kód nebo měnit soubory
+- **Dělej přesně to co je napsáno** — nepřidávej novou logiku, moduly ani kód pokud o tom není explicitní zmínka. "Přidej panel" = přidej panel, ne nový backend modul.
 - Když napíšu **"nauč se"** — zapiš poznatek do globálního CLAUDE.md (`~/ai-prompts-and-skills/claude/CLAUDE.md`) nebo do `~/.claude/MEMORY.md` jako nová paměť
 - Když napíšu **"dokumentuj"** — zaznamenej aktuální poznatek do projektové dokumentace: `tasks/lessons.md`, `docs/project_notes/bugs.md`, nebo jako paměť do `~/.claude/MEMORY.md` podle kontextu
 
@@ -48,6 +53,13 @@ Pracuji na **dvou počítačích**:
 - **Ukazuj průběh** — při delším úkolu průběžně reportuj co děláš, ne až na konci
 - **Testuj po každém kroku** — po každé změně ověř že funguje, nespoj víc kroků bez ověření
 
+## Python — cesty v skriptech
+
+- **Nikdy nepoužívej relativní `Path("data/...")` nebo `Path("output/...")` v produkčních skriptech** — rozbije se, jakmile se skript přesune do podsložky (např. `src/`)
+- Vždy kotvi cesty přes `__file__`: `_ROOT = Path(__file__).resolve().parent.parent`
+- Pokud v projektu najdeš relativní cesty bez `__file__` kotvy, oprav je ihned — nezeptej se, jen oprav
+- Výjimka: `--out` argumenty předané uživatelem z CLI (ty zůstávají relativní k CWD)
+
 ## Bezpečnost (vždy)
 
 - Nikdy necommituj `.env` soubory
@@ -66,10 +78,15 @@ Pracuji na **dvou počítačích**:
 - Příkazy (collector, server, bot...) spouštěj vždy sám — neptej se "mám to spustit?"
 - Pokud proces závisí na externí službě (TWS, databáze, API...), zobraz krátké upozornění (např. "⚠ Vyžaduje běžící TWS") a rovnou spusť — nečekej na potvrzení
 - Pro dlouhodobě běžící agenty, collectory a boty na macOS preferuj `launchd` před tray aplikací. Tray je jen special-case, když je výslovně potřeba GUI ovládání přes menu bar.
+- **Když je port obsazený, vezmi jiný — nikdy nekillni cizí proces.** Souběžně mám rozjeto víc serverů z různých projektů. Když `lsof -i:PORT` ukáže obsazený port, prostě zvol vyšší volný (`8001`, `8002`...) a sděl uživateli na jakém portu server běží. Žádný `kill -9 $(lsof -ti:PORT)`, žádný `pkill -f uvicorn`. Killovat smíš jen procesy, které jsi sám spustil v aktuální session.
 
-## Konfigurace a CLAUDE.md soubory
+## Odkazy na soubory (autolink)
 
-- Existují pouze dva typy CLAUDE.md: **globální** (`~/.claude/CLAUDE.md`) a **projektový** (v kořeni projektu)
+- Když požádám o úpravu souboru a vložím cestu / název souboru, v odpovědi vždy automaticky přidej klikací odkaz na ten soubor ve tvaru `file:///...`.
+- Vždy přidej i plnou cestu v monospace (kvůli snadnému kopírování a kompatibilitě napříč prostředími).
+
+## Konfigurace a CLAUDE.md soubory- Existují pouze dva typy CLAUDE.md: **globální** (`~/.claude/CLAUDE.md`) a **projektový** (v kořeni projektu)
+
 - **Nikdy nevytvářej** `CLAUDE.local.md` ani žádnou lokální variantu vázanou na konkrétní počítač — je to zbytečné a žádná nastavení ani skills se takhle nevytvářejí
 - Kdykoliv požádám o zapsání do **globálního CLAUDE.md**, znamená to: uprav soubor `~/ai-prompts-and-skills/claude/CLAUDE.md`, poté zkontroluj jestli se změna zrcadlí do `~/.claude/CLAUDE.md` (přes symlink nebo jiný mechanismus), a potvrď mi výsledek
 

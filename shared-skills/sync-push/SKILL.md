@@ -33,3 +33,11 @@ Kdyz neni co commitovat, jen to oznam.
 - Pred commitem zkontroluj `git status`, at je jasne, co se pushuje.
 - Je to osobni synchronizacni skill pro `ai-prompts-and-skills`, ne obecny release workflow.
 - Pokud uzivatel chce jinou commit message, nech ji upravit.
+
+## Copy-paste: push instance po merge z template
+
+Po `git merge template/main` v klientske instanci typicky jen:
+
+```bash
+git push origin main
+```

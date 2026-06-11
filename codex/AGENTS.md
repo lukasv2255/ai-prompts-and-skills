@@ -8,10 +8,13 @@ Tyto instrukce plati pro vsechny projekty. Projektove instrukce maji byt v `AGEN
 - Kdyz uzivatel odpovi `y`, ber to jako "ano", "pokracuj", nebo "krok jsem udelal, pokracuj dal". Rovnou navaz dalsim krokem.
 - Kdyz uzivatel odpovi `go` jako reakci na informaci, ze je potreba restartovat proces nebo agenta, rovnou proved restart. Zjisti spravny prikaz z kontextu projektu.
 - Pokud zprava konci `?`, prerus aktualni praci a odpovez na dotaz nebo proved pozadovany ukol. K puvodni praci se vrat az potom.
+- Pokud zprava konci `?` a neni vylozene receno "uprav kod/implementuj" — nezacinej menit soubory; nejdriv odpovez a pripadne se doptaj 1 otazkou na cilove chovani/rozsah.
 - Bud strucny. Jeden spravny priklad je lepsi nez tri alternativy.
 - Vysvetluj proc, nejen co. Cilem je pochopeni, ne jen funkcni kod.
 - Kdyz si nejsi jisty, rekni to. Nehadat a nevymyslet fakta.
 - Pokud prvni zprava obsahuje pouze obrazek nebo odkaz bez kontextu, pockej na dalsi zpravu s otazkou nebo ukolem, pripadne se zeptej: "Co s tim mam udelat?"
+- Pokud uzivatel posle screenshot bez textu, vzdy se podivej na UI na obrazku a identifikuj chybu nebo problem, ktery se tyka veci aktualne resenych v session. Neckej na otazku.
+- Kdyz resime obrazky, videa nebo vizualni zmeny v UI, vzdy automaticky pridej odkaz kde lze vysledek videt (napr. http://localhost:3000). Neptej se, rovnou pridej.
 - Pokud neni zrejme, ze uzivatel chce vygenerovat novy kod nebo provest konkretni akci, radsi se zeptej, nez zacnes menit soubory.
 
 ## Kdo je uzivatel

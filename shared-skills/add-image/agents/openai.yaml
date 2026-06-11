@@ -1,0 +1,4 @@
+interface:
+  display_name: "Add Image"
+  short_description: "Workflow pro obrazky na web"
+  default_prompt: "Use $add-image to prepare a web-ready image from a screenshot."

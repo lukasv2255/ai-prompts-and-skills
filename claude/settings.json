@@ -14,5 +14,70 @@
       "Bash(mkfs*)"
     ]
   },
-  "hooks": {}
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/lukas/.local/share/claude-leverage/scripts/hooks/stack-freshness.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/lukas/.local/share/claude-leverage/scripts/hooks/bare-repo-nudge.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/lukas/.local/share/claude-leverage/scripts/hooks/skill-cheatsheet.sh"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/lukas/.local/share/claude-leverage/scripts/hooks/block-secrets-precommit.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/lukas/.local/share/claude-leverage/scripts/hooks/block-dangerous-git.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Read|Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/lukas/.local/share/claude-leverage/scripts/hooks/context-surface.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/lukas/.local/share/claude-leverage/scripts/hooks/ai-first-nudge.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/lukas/.local/share/claude-leverage/scripts/hooks/security-nudge.sh"
+          }
+        ]
+      }
+    ]
+  }
 }
