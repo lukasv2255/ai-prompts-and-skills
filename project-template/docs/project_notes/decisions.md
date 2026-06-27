@@ -1,7 +1,7 @@
 # Architecture Decision Records (ADRs)
 
 > Claude: před navrhováním nové technologie zkontroluj tento soubor.
-> Pokud navrhovaná změna konfliktuje s rozhodnutím zde, upozorni Tommyho.
+> Pokud navrhovaná změna konfliktuje s rozhodnutím zde, upozorni Lukáše.
 
 ---
 
@@ -12,7 +12,7 @@
 
 **Rozhodnutí:** Všechny projekty píšeme v Pythonu.
 
-**Důvod:** Tommy programuje v Pythonu, ekosystém AI knihoven je v Pythonu nejsilnější (LangChain, ChromaDB, OpenAI SDK, atd.). Zbytečné přecházet na jiný jazyk.
+**Důvod:** Lukáš programuje v Pythonu, ekosystém AI knihoven je v Pythonu nejsilnější (LangChain, ChromaDB, OpenAI SDK, atd.). Zbytečné přecházet na jiný jazyk.
 
 **Vyhýbáme se:** Přepisu projektů do TypeScript/Node.js bez jasného důvodu.
 

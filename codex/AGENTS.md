@@ -1,4 +1,4 @@
-# Tommy - globalni preference pro Codex
+# Lukas - globalni preference pro Codex
 
 Tyto instrukce plati pro vsechny projekty. Projektove instrukce maji byt v `AGENTS.md` v koreni konkretniho projektu nebo v blizsim podadresari.
 
@@ -40,10 +40,13 @@ Tyto instrukce plati pro vsechny projekty. Projektove instrukce maji byt v `AGEN
 
 ## Prostredi - dve zarizeni
 
-Uzivatel pracuje na dvou pocitacich:
+Uzivatel pracuje na dvou pocitacich a projekty drzi na sdilenem Google Drive
+(tak se synchronizuji mezi obema stroji):
 
-- Mac: primarni stroj, projekty typicky pod `~/claude-code/`.
-- Windows: druhe PC, projekty typicky pod `C:\Users\<username>\claude-code\`.
+- Mac: primarni stroj. Google Drive je mountnuty jako `~/Můj disk/` (`/Users/lukas/Můj disk/...`).
+  Nektere starsi/lokalni projekty mohou byt i v `~/claude-code/`.
+- Windows: druhe PC, stejny Google Drive; lokalne pripadne `C:\Users\<username>\claude-code\`.
+- Projekt hledej primarne na Google Drive (`~/Můj disk/`), pak v `~/claude-code/`.
 
 Pravidla pro cesty:
 

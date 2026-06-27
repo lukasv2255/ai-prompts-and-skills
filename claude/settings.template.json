@@ -13,7 +13,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash C:/Users/tommy/.claude/hooks/check-project-structure.sh"
+            "command": "bash C:/Users/<username>/.claude/hooks/check-project-structure.sh"
           }
         ]
       }

@@ -5,9 +5,9 @@
 
 ---
 
-## Obecné principy práce s Tommym
+## Obecné principy práce s Lukášem
 
-- Tommy se **učí**, nejen kopíruje — vždy vysvětli proč, nejen co
+- Lukáš se **učí**, nejen kopíruje — vždy vysvětli proč, nejen co
 - Preferuje **jedno správné řešení** před výběrem z pěti možností
 - Rychle pochopí koncepty — nemusíš vysvětlovat základy Pythonu
 - Cílí na **nasazené, prezentovatelné projekty** — vyhni se over-engineeringu

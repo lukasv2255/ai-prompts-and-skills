@@ -1,4 +1,4 @@
-# Tommy — Globální preference
+# Lukáš — Globální preference
 
 > Platí pro všechny projekty. Projektové instrukce jsou v CLAUDE.md každého projektu.
 
@@ -30,12 +30,15 @@
 - Cíl: nasazené, prezentovatelné projekty (portfolio, klienti, zaměstnavatelé)
 - Rychle se učím — nemusíš vysvětlovat základy Pythonu
 
-## Prostředí — dvě zařízení
+## Prostředí — dvě zařízení + sdílený disk
 
-Pracuji na **dvou počítačích**:
+Pracuji na **dvou počítačích** a projekty držím na **sdíleném Google Drive**
+(tak se synchronizují mezi oběma stroji):
 
-- **Mac** — primární, cesta projektů: `~/claude-code/`
-- **Windows** — druhé PC, cesta projektů: `C:\Users\<username>\claude-code\`
+- **Mac** — primární. Google Drive je mountnutý jako `~/Můj disk/` (`/Users/lukas/Můj disk/...`).
+  Některé starší/lokální projekty mohou být i v `~/claude-code/`.
+- **Windows** — druhé PC, stejný Google Drive; lokálně případně `C:\Users\<username>\claude-code\`.
+- Projekt hledej primárně na Google Drive (`~/Můj disk/`), pak v `~/claude-code/`.
 
 **Pravidla pro cesty v kódu a skillech:**
 
