@@ -19,8 +19,8 @@
 - Když řešíme **obrázky, videa nebo vizuální změny v UI** — vždy automaticky přidej odkaz kde lze výsledek vidět (např. `http://localhost:3000`). Neptej se, rovnou přidej.
 - Pokud není zřejmé, že chceš vygenerovat nový kód nebo provést konkrétní akci — raději se zeptej co chceš udělat, než abys začal psát kód nebo měnit soubory
 - **Dělej přesně to co je napsáno** — nepřidávej novou logiku, moduly ani kód pokud o tom není explicitní zmínka. "Přidej panel" = přidej panel, ne nový backend modul.
-- Když napíšu **"nauč se"** — zapiš poznatek do globálního CLAUDE.md (`~/ai-prompts-and-skills/claude/CLAUDE.md`) nebo do `~/.claude/MEMORY.md` jako nová paměť
-- Když napíšu **"dokumentuj"** — zaznamenej aktuální poznatek do projektové dokumentace: `tasks/lessons.md`, `docs/project_notes/bugs.md`, nebo jako paměť do `~/.claude/MEMORY.md` podle kontextu
+- Když napíšu **"nauč se"** — zapiš poznatek do globálního CLAUDE.md (`~/ai-prompts-and-skills/claude/CLAUDE.md`, zrcadlí se do `~/.claude/CLAUDE.md`). To je jediná globální paměť, kterou Claude Code automaticky načítá.
+- Když napíšu **"dokumentuj"** — zaznamenej poznatek do projektové dokumentace podle kontextu: `tasks/lessons.md`, `docs/project_notes/bugs.md` nebo `docs/project_notes/decisions.md`
 
 ## Kdo jsem
 
@@ -85,8 +85,9 @@ Pracuji na **dvou počítačích**:
 - Když požádám o úpravu souboru a vložím cestu / název souboru, v odpovědi vždy automaticky přidej klikací odkaz na ten soubor ve tvaru `file:///...`.
 - Vždy přidej i plnou cestu v monospace (kvůli snadnému kopírování a kompatibilitě napříč prostředími).
 
-## Konfigurace a CLAUDE.md soubory- Existují pouze dva typy CLAUDE.md: **globální** (`~/.claude/CLAUDE.md`) a **projektový** (v kořeni projektu)
+## Konfigurace a CLAUDE.md soubory
 
+- Existují pouze dva typy CLAUDE.md: **globální** (`~/.claude/CLAUDE.md`) a **projektový** (v kořeni projektu)
 - **Nikdy nevytvářej** `CLAUDE.local.md` ani žádnou lokální variantu vázanou na konkrétní počítač — je to zbytečné a žádná nastavení ani skills se takhle nevytvářejí
 - Kdykoliv požádám o zapsání do **globálního CLAUDE.md**, znamená to: uprav soubor `~/ai-prompts-and-skills/claude/CLAUDE.md`, poté zkontroluj jestli se změna zrcadlí do `~/.claude/CLAUDE.md` (přes symlink nebo jiný mechanismus), a potvrď mi výsledek
 
