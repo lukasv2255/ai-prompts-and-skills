@@ -24,6 +24,7 @@ Pokud chybí, zeptej se uživatele na cestu k mail-agent projektu a přejdi tam 
 | "send campaign" / "spusť kampaň" | `` (default test mode, vše ready, interval do 18:00)            |
 | "...one"                         | `--one` (1 email okamžitě, ignoruje window)                     |
 | "...fast"                        | `--fast` (vše během 10 minut)                                   |
+| "...week"                        | `--week` (40 mailů/den, max 7 dní, rovnoměrně v okně 06–18 CET) |
 | "...live"                        | `--live` (ostrý provoz, jinak test mode na TEST_REDIRECT_EMAIL) |
 | "...dry-run" / "...zobraz"       | `--dry-run`                                                     |
 | "...report" / "...stav kampaně"  | `--report`                                                      |
@@ -39,6 +40,26 @@ Skript rozprostře leady do okna **06:00–18:00 CET** podle aktuálního času:
 - Mimo window: čeká do 06:00, pak rozprostře přes celých 12 h
 
 Pokud uživatel chce začít teď a je mimo window, upozorni že skript bude čekat do dalšího 06:00.
+
+## Týdenní režim (`--week`)
+
+Použij když uživatel řekne **"send campaign week"** / **"týdenní kampaň"** / `/send-campaign week`:
+
+- Posílá max **40 mailů/den**, max **7 dní**, rovnoměrně v okně 06:00–18:00 CET.
+- Denní counter čte z `sent_emails.first_sent_at = dnes` v DB → restart procesu pokračuje od dosaženého počtu (odolné vůči pádu, sleep, killu).
+- Když `load_leads()` vrátí 0 ready → kampaň skončí dřív (vyčerpán pool).
+- Po naplnění denní kvóty spí do dalších 06:00 CET.
+- `--week` nelze kombinovat s `--one` / `--fast` / `--dry-run`.
+
+Spouštění (vždy detached + caffeinate, kampaň běží dny):
+
+```bash
+nohup caffeinate -i python3 scripts/send_campaign.py --week --live \
+  > logs/campaign/week_$(date +%Y%m%d_%H%M%S).out 2>&1 &
+disown
+```
+
+Bez `nohup` + `disown` kampaň umře se zavřením shellu/Claude Code session. Upozorni uživatele.
 
 ## Spouštění
 

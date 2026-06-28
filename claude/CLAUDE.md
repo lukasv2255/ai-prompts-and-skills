@@ -17,10 +17,14 @@
 - Pokud první zpráva obsahuje pouze obrázek nebo odkaz bez kontextu — nereaguj hned, počkej na další zprávu s otázkou nebo úkolem. Případně se zeptej: "Co s tím mám udělat?"
 - Pokud pošlu **screenshot bez textu** — vždy se podívej na UI na obrázku a identifikuj chybu nebo problém, který se týká věcí aktuálně řešených v session. Nečekej na otázku.
 - Když řešíme **obrázky, videa nebo vizuální změny v UI** — vždy automaticky přidej odkaz kde lze výsledek vidět (např. `http://localhost:3000`). Neptej se, rovnou přidej.
+- **Kdykoliv chci vidět, jak vypadá nějaká webová stránka / UI** — vždy mi dej funkční klikací odkaz na `http://localhost:<port>`. Když server neběží, sám ho spusť (nebo naserviruj statický build na volném portu) a teprve pak pošli odkaz. Nikdy mě neodkazuj na soubor na disku ani `file://` — vždy localhost.
+- **Nedávej odkazy, které se otevírají v preview panelu.** Vždy naserviruj na localhostu jako reálný server, ať se odkaz otevře jako nové okno prohlížeče. Žádné `mcp__*_preview` ani embedded preview odkazy.
+- **Nedělej žádné vizuální kontroly sám** (Playwright, screenshoty, preview snapshoty), pokud o to výslovně nepožádám. Stačí spustit server na localhostu a poslat mi odkaz — vizuální kontrolu si udělám já.
 - Pokud není zřejmé, že chceš vygenerovat nový kód nebo provést konkrétní akci — raději se zeptej co chceš udělat, než abys začal psát kód nebo měnit soubory
 - **Dělej přesně to co je napsáno** — nepřidávej novou logiku, moduly ani kód pokud o tom není explicitní zmínka. "Přidej panel" = přidej panel, ne nový backend modul.
 - Když napíšu **"nauč se"** — zapiš poznatek do globálního CLAUDE.md (`~/ai-prompts-and-skills/claude/CLAUDE.md`) nebo do `~/.claude/MEMORY.md` jako nová paměť
 - Když napíšu **"dokumentuj"** — zaznamenej aktuální poznatek do projektové dokumentace: `tasks/lessons.md`, `docs/project_notes/bugs.md`, nebo jako paměť do `~/.claude/MEMORY.md` podle kontextu
+- **Mailové texty / texty k odeslání kopíruji přímo z chatu** — kdykoli připravuješ mail, zprávu na LinkedIn, SMS nebo jakýkoli text určený k odeslání jinému člověku, vždy ho do chatu vypiš jako **plain text** v code blocku (` ``` `), bez markdown bulletů (`-`, `*`, `1.`). Místo bulletů použij em dash (`—`) nebo dlouhé pomlčky a hard newlines. Důvod: markdown bullety se v mailových klientech (Gmail, Outlook) renderují jako sloupce vedle sebe a rozbijou layout. Tučný text raději vůbec — ať to vypadá stejně po vložení. Bonus: připoj 1-2 řádky instrukce „v Gmailu vlož přes Ctrl+Shift+V (paste without formatting)".
 
 ## Kdo jsem
 
@@ -79,11 +83,18 @@ Pracuji na **dvou počítačích**:
 - Pokud proces závisí na externí službě (TWS, databáze, API...), zobraz krátké upozornění (např. "⚠ Vyžaduje běžící TWS") a rovnou spusť — nečekej na potvrzení
 - Pro dlouhodobě běžící agenty, collectory a boty na macOS preferuj `launchd` před tray aplikací. Tray je jen special-case, když je výslovně potřeba GUI ovládání přes menu bar.
 - **Když je port obsazený, vezmi jiný — nikdy nekillni cizí proces.** Souběžně mám rozjeto víc serverů z různých projektů. Když `lsof -i:PORT` ukáže obsazený port, prostě zvol vyšší volný (`8001`, `8002`...) a sděl uživateli na jakém portu server běží. Žádný `kill -9 $(lsof -ti:PORT)`, žádný `pkill -f uvicorn`. Killovat smíš jen procesy, které jsi sám spustil v aktuální session.
+- **Porty 8080–8089 jsou rezervované pro mail-agent instance.** Nikdy v tomto rozsahu nespouštěj weby, vite dev servery, ani jiné procesy. Když scaffolduješ nový web/server, vyber port mimo tento rozsah (např. 5173, 3000, 8090+).
 
 ## Odkazy na soubory (autolink)
 
 - Když požádám o úpravu souboru a vložím cestu / název souboru, v odpovědi vždy automaticky přidej klikací odkaz na ten soubor ve tvaru `file:///...`.
 - Vždy přidej i plnou cestu v monospace (kvůli snadnému kopírování a kompatibilitě napříč prostředími).
+
+## Formát času a datumů
+
+- Časy a datumy zobrazované uživateli (logy, reporty, UI, výstupy) formátuj jako **`dd-mm-yyyy HH:MM CET`** v lokálním čase **Europe/Prague**.
+- Interně časy ukládej dál v UTC (ISO) — převod na CET dělej až při zobrazení.
+- Platí globálně napříč projekty, pokud projekt výslovně nevyžaduje jiný formát.
 
 ## Konfigurace a CLAUDE.md soubory- Existují pouze dva typy CLAUDE.md: **globální** (`~/.claude/CLAUDE.md`) a **projektový** (v kořeni projektu)
 

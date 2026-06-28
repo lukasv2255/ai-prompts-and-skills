@@ -1,6 +1,6 @@
 ---
 name: ubytovani-template-instance
-description: Vygeneruje novou klientskou instanci z template `web-redesign-ubytovani-template-v3` (TanStack Start + React). Bere jako parametr URL preview-v2 stránky (`http://127.0.0.1:8000/preview-v2/{slug}`), z níž vytáhne `window.__LEAD__` JSON s názvy, kontaktem, ceníkem, fotkami. Naklonuje template do nové složky `web-redesign-{slug}/` a kompletně ho rebrandne. Ruční vstupy slouží jen jako fallback pro chybějící pole. Použij když uživatel říká "udělej v3 z této URL", "vygeneruj instanci z preview-v2", "nasaď [název chalupy] do template v3".
+description: Vygeneruje novou klientskou instanci z template `web-redesign-ubytovani-template-v3` (TanStack Start + React) a **nasadí obě varianty (`simple` i `design`) na Railway**. Bere jeden povinný argument — URL preview-v2 stránky (`http://127.0.0.1:8000/preview-v2/{slug}`) a volitelný přepínač `simple|design|both` (default `both`). Z URL vytáhne `window.__LEAD__` JSON s názvy, kontaktem, ceníkem, fotkami. Naklonuje obě varianty templatu do `web-redesign-{slug}/{simple,design}/`, aplikuje stejný branding v obou a obě nasadí na Railway jako samostatné služby (`{slug}-simple`, `{slug}-design`) skrz `lovable-railway-deploy` workflow. Ruční vstupy slouží jen jako fallback pro chybějící pole. Použij když uživatel říká "udělej instanci z této URL", "vygeneruj instanci z preview-v2", "nasaď [název chalupy] do template v3".
 ---
 
 # Ubytování template — generátor klientské instance
@@ -9,15 +9,29 @@ Skill, který z URL preview-v2 stránky vygeneruje **novou** klientskou instanci
 
 ## Invokace
 
-**Primární vstup = URL parametr.** Uživatel typicky řekne jednu z variant:
+**Primární vstup = URL + volitelně varianta.** Skill má jeden povinný argument (URL preview-v2 stránky) a jeden volitelný (přepínač varianty `simple`, `design` nebo `both`). **Default = `both`** — skill vygeneruje a nasadí obě varianty najednou.
 
-- `/ubytovani-template-instance http://127.0.0.1:8000/preview-v2/chalupa-cerna-cz`
-- "udělej v3 z `http://127.0.0.1:8000/preview-v2/chalupa-cerna-cz`"
-- "vygeneruj instanci z této URL: ..."
+- `/ubytovani-template-instance http://127.0.0.1:8000/preview-v2/chalupa-cerna-cz` → **obě** varianty (default)
+- `/ubytovani-template-instance http://127.0.0.1:8000/preview-v2/chalupa-cerna-cz both` → **obě** varianty
+- `/ubytovani-template-instance http://127.0.0.1:8000/preview-v2/chalupa-cerna-cz simple` → jen `simple/`
+- `/ubytovani-template-instance http://127.0.0.1:8000/preview-v2/chalupa-cerna-cz design` → jen `design/`
+- "udělej instanci z `http://127.0.0.1:8000/preview-v2/chalupa-cerna-cz`" → **obě** varianty
 
-URL musí mít formát `http(s)://{host}:{port}/preview-v2/{slug}`. Slug z URL slouží jak k pojmenování nové složky, tak jako `VITE_LEAD_SLUG` v `lead-data.ts`.
+URL musí mít formát `http(s)://{host}:{port}/preview-v2/{slug}`. Slug z URL slouží jak k pojmenování nové složky, tak jako `VITE_LEAD_SLUG` v `lead-data.ts`. Varianta určuje **které podsložce** templatu se klonuje a do **které podsložky** instance se výsledek uloží:
+
+| Varianta | Zdroj | Cíl | Railway projekt |
+|---|---|---|---|
+| `simple` | `web-redesign-ubytovani-template-v3/simple/` | `web-redesign-{slug}/simple/` | `{slug}-simple` |
+| `design` | `web-redesign-ubytovani-template-v3/design/` | `web-redesign-{slug}/design/` | `{slug}-design` |
+| `both` | obě výše | obě výše | obě výše (sekvenčně) |
+
+**V režimu `both`** se obě varianty zpracovávají postupně — klonování, rebrand, build, deploy. Skill v reportu vrátí dvě URL pro porovnání.
 
 **Sekundární vstup (fallback):** Pokud uživatel nepošle URL, ale jen klientské podklady (název, kontakt, fotky), použij ruční dotazy (viz dále) a vygeneruj instanci stejným postupem, jen JSON sestav ručně.
+
+## Pre-autorizace deploye
+
+Tento skill **automaticky nasazuje na Railway** v rámci Fáze 5 — uživatel tuto autorizaci dal explicitně při návrhu skillu, takže **neptej se před každým `railway up`**. Globální pravidlo "nikdy nedeploynout bez explicitního pokynu" je v rámci tohoto skillu **přebito** invokací samotnou (uživatel invokací skillu autorizuje deploy obou variant). Pokud uživatel z nějakého důvodu deploy nechce, musí to **explicitně** říct v invokaci (např. "bez deploye" / "jen vygeneruj"). Bez takové výslovné negace = deploy proběhne.
 
 ## Kdy použít
 
@@ -29,24 +43,40 @@ URL musí mít formát `http(s)://{host}:{port}/preview-v2/{slug}`. Slug z URL s
 
 ## Co skill nemění
 
-- Designový systém (barvy `walnut/forest/sepia/ivory/parchment`, fonty, layout, fotorámeček, pásky, dekorace `botanical-branch.png` a `mountain-sketch.png`).
-- `DeerLogo` v navigaci — pokud klient nedodá vlastní logo, zůstává jelen (template má jelena v jméně i v případě "Zelený Jelen", ale jako generický horský motiv funguje pro většinu chalup; pokud klient nechce jelena, **explicitně se zeptej** a nahraď jiným SVG nebo textovým monogramem).
-- Strukturu sekcí (Nav, Hero, Story, Interior, GuestBook, OwnerTips, LocalMap, Footer).
-- **Rezervační systém** — `ReservationSection.tsx` z `design/` je referenční. Pokud klonuješ `simple/`, nahraď tamní lokální `ReservationWidget` touto implementací (viz sekce „Rezervační systém — implementace v instanci" níže). Logika (flatpickr, hotelová konvence blokování, kolize check) a popisky se nemění.
+- **Design varianta** (`design/`): paleta `walnut/forest/sepia/ivory/parchment`, fonty, layout, fotorámeček, pásky, dekorace `botanical-branch.png` a `mountain-sketch.png`. `DeerLogo` v navigaci zůstává, pokud klient nedodá vlastní logo (pokud klient nechce jelena, **explicitně se zeptej**).
+- **Simple varianta** (`simple/`): paleta `foreground/primary/muted/card/border/input`, bootstrap-like utility styling. Žádný walnut/forest, žádné `font-hand`/`font-display` třídy.
+- Strukturu sekcí — pro `design/`: Nav, Hero, Story, Interior, GuestBook, OwnerTips, LocalMap, Footer. Pro `simple/`: Header, Hero, Intro, Gallery, Vybavení+Okolí, Reviews, Ceník, Rezervace, Footer.
+- **Rezervační systém** — **obě varianty mají vlastní hotový `ReservationSection.tsx` přímo v templatu** (`design/src/components/` v paper-card paletě, `simple/src/components/` v utility tokenech). Skill je už **NEPŘEGENEROVÁVÁ** — jen je naklonuje s instancí a nastaví slug. Obě verze sdílí stejnou logiku (flatpickr, hotelová konvence blokování, kolize check, admin panel se statistikami) i stejné popisky labels (Datum příjezdu/odjezdu, Pokoj, Jméno, Telefon, E-mail, validační hlášky) — liší se jen paletou. Pokud chceš změnit chování rezervace, uprav `ReservationSection.tsx` přímo v příslušné podsložce templatu (jsou to dva nezávislé zdroje — změna v jednom se nepropisuje do druhého).
 
 ## Workflow — vytvoření nové instance z URL
 
-Tohle je **hlavní postup**. Skill běží v cestě, kde existuje sourozenecký template (typicky `~/Můj disk/web-redesign/` nebo `~/claude-code/`). Postup má 4 fáze:
+Tohle je **hlavní postup**. Skill běží v cestě, kde existuje sourozenecký template (typicky `~/Můj disk/web-redesign/` nebo `~/claude-code/`). Postup má 5 fází:
+
+```
+Fáze 1: parsing URL + příprava cest         (jednou)
+Fáze 2: extrakce lead JSON + assets         (jednou)
+Fáze 3: klonování template                  (per varianta, sekvenčně)
+Fáze 4: rebrand instance                    (per varianta, sekvenčně)
+Fáze 5: Railway deploy                      (per varianta, sekvenčně) — NEW
+```
+
+V režimu `both` (default) skill projde fázemi 3–5 dvakrát — jednou pro `simple`, jednou pro `design`. Lead JSON a stažené assets se z fáze 2 sdílí.
 
 ### Fáze 1 — parsing URL a příprava cest
 
 1. **Validuj URL** — musí matchovat regex `^https?://[^/]+/preview-v2/([a-z0-9-]+)/?$`. Pokud ne, zeptej se uživatele.
 2. **Extrahuj slug** — poslední část path (např. `chalupa-cerna-cz`).
-3. **Odvoď cesty:**
-   - `TEMPLATE_DIR` = sourozenecký adresář `web-redesign-ubytovani-template-v3` (pokud uživatel pustí skill z jiné cesty, najdi ho přes `find` nebo se zeptej).
-   - `INSTANCE_DIR` = `{parent_of_template}/web-redesign-{slug_bez_-cz}/`. Konvence: slug `chalupa-cerna-cz` → složka `web-redesign-chalupacerna` (odstranit `-cz` suffix a všechny pomlčky). Pokud uživatel preferuje jinou konvenci nebo už složku má, zeptej se.
-4. **Kolize?** Pokud `INSTANCE_DIR` existuje, **NIKDY ho automaticky nemaž ani nepřepiš**. Zeptej se uživatele:
-   - "Adresář `{INSTANCE_DIR}` existuje. Mám (a) přerušit, (b) přepsat (ztratíš změny), (c) přidat suffix `-v2`?"
+3. **Urči varianty k vygenerování** — z přepínače `simple|design|both` v invokaci. Default = `both`. Sestav seznam `VARIANTS = ["simple", "design"]` (pro `both`) nebo `["simple"]` / `["design"]`.
+4. **Odvoď cesty:**
+   - `TEMPLATE_ROOT` = `web-redesign-ubytovani-template-v3/` (najdi přes sourozeneckou složku nebo `find`; pokud nelze, zeptej se).
+   - `INSTANCE_ROOT` = `{parent_of_TEMPLATE_ROOT}/web-redesign-{slug_bez_-cz_bez_pomlcek}/`. Konvence: slug `chalupa-cerna-cz` → `web-redesign-chalupacerna` (odstranit `-cz` suffix a všechny pomlčky).
+   - Pro každý `variant` v `VARIANTS`:
+     - `TEMPLATE_SRC[variant]` = `{TEMPLATE_ROOT}/{variant}/`
+     - `INSTANCE_DIR[variant]` = `{INSTANCE_ROOT}/{variant}/`
+   - Tj. obě varianty žijí vedle sebe v jedné klientské složce: `web-redesign-{slug}/simple/` a `web-redesign-{slug}/design/`.
+5. **Kolize?** Pro každý `variant`: pokud `INSTANCE_DIR[variant]` existuje, **NIKDY ji automaticky nemaž ani nepřepiš**. Zeptej se uživatele souhrnně (jeden dotaz pro všechny kolidující varianty):
+   - "Adresáře `{INSTANCE_DIR[simple]}` a/nebo `{INSTANCE_DIR[design]}` existují. Mám (a) přerušit, (b) přepsat (ztratíš změny), (c) přeskočit existující a vygenerovat jen chybějící?"
+   - Pozn.: `INSTANCE_ROOT` může už existovat (např. když jedna varianta už byla vygenerována dřív); to je v pořádku — kolize se kontroluje na úrovni podsložky `{variant}/`.
 
 ### Fáze 2 — extrakce lead JSON
 
@@ -72,9 +102,9 @@ print(json.dumps(data, ensure_ascii=False, indent=2))
 
 Ulož JSON i do `/tmp/lead-{slug}.json` pro pozdější referenci.
 
-### Fáze 3 — klonování template
+### Fáze 3 — klonování template (per varianta)
 
-**Preferovaná metoda — čistá kopie bez node_modules / .git:**
+**Tuto fázi opakuj pro každý `variant` v `VARIANTS`.** Preferovaná metoda — čistá kopie bez node_modules / .git:
 
 ```bash
 rsync -a \
@@ -84,24 +114,59 @@ rsync -a \
   --exclude='dist' \
   --exclude='.vite' \
   --exclude='bun.lock' \
-  "{TEMPLATE_DIR}/" "{INSTANCE_DIR}/"
+  --exclude='.tanstack' \
+  "{TEMPLATE_SRC[variant]}/" "{INSTANCE_DIR[variant]}/"
 ```
 
 Pak v instanci:
 
 ```bash
-cd "{INSTANCE_DIR}"
-git init -q
+cd "{INSTANCE_DIR[variant]}"
 npm install   # nebo bun install — ať použije stejný PM jako template (zkontroluj přítomnost bun.lock / package-lock.json)
 ```
 
-**Alternativa** (pokud template je git repo se shared historií): `git clone {TEMPLATE_DIR} {INSTANCE_DIR}` + `rm -rf .git && git init`. Nepoužívej pokud template není v gitu.
+**Pozn.:** `git init` v `{INSTANCE_DIR[variant]}` typicky NEPOTŘEBUJEŠ — preferuj jeden git repo na úrovni `INSTANCE_ROOT` = `web-redesign-{slug}/`, který drží obě varianty pohromadě. Pokud `INSTANCE_ROOT` ještě není git repo a uživatel to chce, inicializuj ho tam (`cd {INSTANCE_ROOT} && git init -q`).
 
-### Fáze 4 — rebrand instance
+### Fáze 4 — rebrand instance (per varianta)
 
-Pokračuj editací souborů v `{INSTANCE_DIR}` podle sekcí níže ("Mapování JSON → template" + "Workflow — kroky v kódu"). **Nikdy nemodifikuj `{TEMPLATE_DIR}` během tohoto skillu** — template je read-only zdroj.
+**Tuto fázi opakuj pro každý `variant` v `VARIANTS`.** Editace souborů v `{INSTANCE_DIR[variant]}` podle sekcí níže ("Mapování JSON → template" + "Workflow — kroky v kódu"). Stejná lead data, stejné assety — jiná struktura komponent (`design/` má `Nav/Hero/Story/Interior/GuestBook/OwnerTips/LocalMap/Footer`, `simple/` má `Header/Hero/Intro/Gallery/Vybavení+Okolí/Reviews/Ceník/Rezervace/Footer`).
 
-Na konec spusť kontrolu (Grep zbylých referencí + build) v `{INSTANCE_DIR}`, ne v template.
+**Nikdy nemodifikuj `{TEMPLATE_ROOT}` ani jeho podsložky** — template je read-only zdroj.
+
+**Rezervační systém už řešit nemusíš** — `simple/` i `design/` mají `ReservationSection.tsx`, `lead-data.ts` i správný `vite.config.ts` (dev proxy + nitro routeRules) přímo v templatu. Po klonování stačí v `src/lib/lead-data.ts` přepsat default slug na `{slug}` z URL. Detaily a ověření viz sekce "Rezervační systém — implementace v instanci" níže.
+
+Na konec fáze pro každou variantu spusť kontrolu (Grep zbylých referencí + build) v `{INSTANCE_DIR[variant]}`, ne v template.
+
+### Fáze 5 — Railway deploy (per varianta)
+
+**Tuto fázi opakuj pro každý `variant` v `VARIANTS`.** Postup je 1:1 jako ve skillu `lovable-railway-deploy` — neopakuj jeho obsah, jen ho aplikuj v `{INSTANCE_DIR[variant]}`. Klíčové kroky:
+
+1. **Backend doména** — sdílená pro obě varianty. Najdi ji jednou (typicky `https://ubytovani-api-production.up.railway.app`) a ověř, že je v `vite.config.ts` → `nitro.routeRules["/api/**"].proxy`. Tu samou URL používají obě varianty.
+2. **Pro každý `variant`:**
+   ```bash
+   cd "{INSTANCE_DIR[variant]}"
+   # 1. Nitro preset node-server + start script (kroky 1–2 z lovable-railway-deploy)
+   # 2. Lokální smoke test (krok 3): npm run build && PORT=809X node .output/server/index.mjs → HTTP 200
+   # 3. Sync lockfile (krok 3b/3c podle PM)
+   # 4. Railway init + deploy:
+   railway init --name "{slug-bez--cz}-{variant}"
+   railway up --ci
+   # 5. Doména:
+   railway service "{slug-bez--cz}-{variant}"
+   railway domain
+   # 6. Verifikace (krok 7): curl -L https://...up.railway.app/ → HTTP 200
+   # 7. Smoke test /api proxy (krok 8): curl .../api/rezervace/{slug} → JSON
+   ```
+3. **Pojmenování Railway projektů:**
+   - `simple` → projekt `{slug-bez--cz}-simple` (např. `penzionslunecnice-simple`)
+   - `design` → projekt `{slug-bez--cz}-design` (např. `penzionslunecnice-design`)
+4. **Pokud kterýkoli krok selže** — zastav, zaloguj chybu, **nepokračuj** dalším deployem druhé varianty, dokud uživatel chybu nepotvrdí nebo neopraví. Typické příčiny (z `lovable-railway-deploy` gotchas):
+   - `bun install --frozen-lockfile` exit 1 — regeneruj `bun.lock` (krok 3b)
+   - `npm ci` Missing lru-cache@... — regeneruj `package-lock.json` načisto (krok 3c)
+   - 404 na `/api` v produkci — chybí `nitro.routeRules`, doplň a redeploy
+5. **Diagnostika FAILED deploye** — `railway logs --deployment` ukazuje **aktivní** deploy, ne ten co spadl. Skutečné build logy přes GraphQL podle deployment ID (viz `lovable-railway-deploy` sekce "Diagnostika").
+
+**Výstup fáze 5:** dvě veřejné URL — `https://{slug}-simple-production.up.railway.app` a `https://{slug}-design-production.up.railway.app`. Obě zapiš do finálního reportu uživateli.
 
 ---
 
@@ -267,38 +332,82 @@ Všechna místa k úpravě v `index.tsx`:
 - Podpis `S láskou, rodina Žďárských ♡` → `S láskou, rodina [Příjmení] ♡`.
 - Copyright dole: `APARTMÁNY ZELENÝ JELEN` → název klienta velkými písmeny.
 
-## Kontrola na konec
+## Kontrola na konec (per varianta)
 
-Vše spouštěj v `{INSTANCE_DIR}`, ne v template.
+Vše spouštěj v `{INSTANCE_DIR[variant]}`, ne v template. Pro každý `variant` v `VARIANTS`:
 
-1. **Grep zbylé reference** — `Grep "Zelený Jelen|Žďárských|České hory|Pavl|Stachy|Suchý Vrch|Stašský|Kovářův|Horní Lipka|zelenyjelen" {INSTANCE_DIR}/src`. Mělo by být 0 výsledků (kromě možného `DeerLogo` SVG komentáře).
-2. **Build** — `npm run build` (nebo `bun run build`, podle PM) musí projít bez warningů o chybějících assets.
-3. **Dev server** — `npm run dev` + screenshot všech sekcí přes Playwright MCP. Vizuálně zkontroluj:
+1. **Grep zbylé reference** — `Grep "Zelený Jelen|Žďárských|České hory|Pavl|Stachy|Suchý Vrch|Stašský|Kovářův|Horní Lipka|zelenyjelen" {INSTANCE_DIR[variant]}/src`. Mělo by být 0 výsledků (kromě možného `DeerLogo` SVG komentáře v `design/`).
+2. **Build** — `npm run build` (nebo `bun run build`, podle PM) musí projít bez warningů o chybějících assets. Tohle je zároveň povinný předpoklad pro Fázi 5 deploye.
+3. **Dev server** (volitelně) — `npm run dev` + screenshot všech sekcí přes Playwright MCP. Vizuálně zkontroluj:
    - Hero fotka nemá divný ořez (`object-cover` může něco useknout)
    - Ručně kreslená mapa není rozmazaná
    - Texty se nikde nelámou divně (claim v Hero, OwnerTips nadpis)
-4. **Lighthouse** — pokud klient bude deployovat, spusť `npm run build && npx serve -s dist` + Lighthouse. Mobilní skóre by mělo být ≥85.
-5. **Reportuj uživateli:**
-   - Cestu k nové instanci (`{INSTANCE_DIR}`)
-   - Co všechno bylo vytaženo z lead JSON
-   - **Co chybí** (placeholder fotky, prázdná pole jako telefon, prázdné `reviews[]`) — to musí klient ještě dodat
-   - Příkaz pro spuštění dev serveru a URL kde běží
+4. **Smoke test produkčního buildu** (povinné před `railway up`) — viz `lovable-railway-deploy` krok 3.
+
+## Finální report
+
+Po dokončení všech variant uživateli vrátit jedinou zprávou:
+
+- **Cesty:** `{INSTANCE_DIR[simple]}` a `{INSTANCE_DIR[design]}`
+- **Railway URL:** `https://{slug}-simple-production.up.railway.app` a `https://{slug}-design-production.up.railway.app`
+- **Backend:** sdílený `https://ubytovani-api-production.up.railway.app` (nebo jiná detekovaná doména)
+- **Co bylo vytaženo z lead JSON:** brand, hero, story, units, contact, gallery (kolik fotek), surroundings, reviews (počet)
+- **Co chybí** (placeholder fotky `i.imgur.com` / `upload.wikimedia.org`, prázdná pole `phone`, prázdné `reviews[]`, chybějící `watercolor-map.png`, chybějící `owner-illustration.png`) — to musí klient dodat
+- **Příkazy pro lokální dev** (per varianta):
+  - `cd "{INSTANCE_DIR[simple]}" && npm run dev`
+  - `cd "{INSTANCE_DIR[design]}" && npm run dev`
+- **Co se zlomilo při deployi** (jestli něco) — odkaz na build log URL z Railway dashboardu
+
+### Finální výstup = rozesílatelný nabídkový e-mail
+
+Po technickém reportu výše **vždy** vygeneruj jako poslední blok kompletní **nabídkový e-mail klientovi** — hotový k odeslání, s oběma odkazy zasazenými do textu. Tohle je primární deliverable: uživatel ho rovnou kopíruje/odesílá. Žádné placeholdery typu `{slug}` — dosaď reálné produkční URL.
+
+Použij tuto šablonu (texty a ceny drž 1:1, jen dosaď URL):
+
+```
+Dobrý den,
+
+cena za kompletně nový web včetně rezervačního systému je:
+
+4 900 Kč jednorázově — tvorba a nasazení webu, rezervační systém
+490 Kč měsíčně — správa webu:
+
+Hosting a zabezpečení webu
+Zálohování a aktualizace
+Drobné obsahové úpravy
+Technická podpora při problémech
+Přehled návštěvnosti a výkonu webu
+
+Vaše doména zůstává u stávajícího registrátora — jen u něj v administraci vložíte jeden DNS záznam, který přesměruje doménu na můj hosting. Poradím vám přesně, kam kliknout, trvá to 5 minut.
+
+Pro představu jsem připravil dvě verze návrhu — můžete si vybrat, která vám sedne víc, nebo z nich vyjdeme při finální personalizaci:
+
+design (modernější, výraznější vzhled): https://{slug}-design-production.up.railway.app
+simple (čistší, minimalistická varianta): https://{slug}-simple-production.up.railway.app
+
+S pozdravem,
+Lukáš Vozdecký
+buildai.cz
+```
+
+Pozn.: pokud se generuje **jen jedna** varianta, ponech v e-mailu jen příslušný řádek s odkazem a větu „připravil jsem dvě verze" uprav na jednu.
 
 ## Cesty (cross-platform)
 
 - **Template root** (read-only zdroj): repo `web-redesign-ubytovani-template-v3/` má **dvě varianty** v podsložkách:
   - `web-redesign-ubytovani-template-v3/design/` — bohatá "paper-card" varianta (walnut/forest/sepia paleta, flatpickr, kompletní rezervační systém s API proxy).
-  - `web-redesign-ubytovani-template-v3/simple/` — minimalistická bootstrap-like varianta (foreground/primary/muted tokeny, lokální react-day-picker + SQLite widget jako placeholder).
-- Pokud uživatel neupřesní, **zeptej se** kterou variantu chce klonovat. Default = `design` pro plnou implementaci, `simple` pro rychlý prototyp.
-- **Instance root** (cíl skillu): `{parent_of_repo}/web-redesign-{slug_simplified}/`.
-- **Assets**: `src/assets/` (relativní vůči instance root).
-- **Hlavní soubor**: `src/routes/index.tsx`.
+  - `web-redesign-ubytovani-template-v3/simple/` — minimalistická bootstrap-like varianta (foreground/primary/muted tokeny). Má vlastní hotový `ReservationSection.tsx` napojený na centrální API (utility tokeny), stejně jako `design/` — jen v jiné paletě.
+- Variantu si vybere uživatel přes přepínač `simple|design` v invokaci skillu (viz Invokace výše).
+- **Instance root** (klientská složka): `{parent_of_repo}/web-redesign-{slug_simplified}/` — sdílená pro obě varianty.
+- **Instance dir** (cíl skillu pro konkrétní variantu): `{INSTANCE_ROOT}/{variant}/`, tj. např. `web-redesign-penzionslunecnice/simple/` a `web-redesign-penzionslunecnice/design/` žijí vedle sebe.
+- **Assets**: `src/assets/` (relativní vůči `INSTANCE_DIR`, ne vůči `INSTANCE_ROOT`).
+- **Hlavní soubor**: `src/routes/index.tsx` v rámci `INSTANCE_DIR`.
 
 Nikdy nepoužívej absolutní cesty s `/Users/lukas/` v kódu, jen v Bash příkazech.
 
 ## Rezervační systém — implementace v instanci
 
-Cílový rezervační systém je referenčně implementovaný v `design/` variantě. Pokud klient klonuje z `simple/`, lokální widget je jen placeholder — **nahraď ho stejnou implementací jako v `design/`**, aby instance volala produkční FastAPI backend.
+**Obě varianty templatu (`simple/` i `design/`) už obsahují hotový, identicky fungující `ReservationSection.tsx`** napojený na centrální FastAPI backend — `design/` v paper-card paletě, `simple/` v utility tokenech. Skill ho **neimplementuje ani nepřegenerovává** — naklonuje ho spolu se zbytkem templatu. Jediný zásah při rebrandu = přepsat default slug v `src/lib/lead-data.ts`.
 
 ### Architektura
 
@@ -310,56 +419,25 @@ Cílový rezervační systém je referenčně implementovaný v `design/` varian
   - **Dev** (vite): `vite.config.ts` → `vite.server.proxy["/api"]` → `http://127.0.0.1:8000`.
   - **Prod** (nitro/Railway): `vite.config.ts` → `nitro.routeRules["/api/**"]` → `https://ubytovani-api-production.up.railway.app/api/**`. Bez tohohle by Nitro v SSR nevěděl kam `/api` zařídit.
 
-### Pokud klonuješ z `simple/` — postup integrace
+### Rebrand rezervace = jen slug
 
-`simple/` má jiný widget (`ReservationWidget.tsx`) + lokální SQLite (`reservations.ts`, `reservations-db.ts`). Plná náhrada za referenční systém:
+Obě varianty templatu už mají rezervační systém kompletně hotový a funkční — `ReservationSection.tsx`, `lead-data.ts` i správně nakonfigurovaný `vite.config.ts` (dev proxy + prod nitro routeRules). Po naklonování templatu **neimplementuješ ani nepřegenerováváš nic** — jediný zásah:
 
-1. **Smaž lokální systém v instanci** (v instanci, ne v template):
-   ```bash
-   rm src/components/ReservationWidget.tsx src/lib/reservations.ts src/lib/reservations-db.ts
-   ```
-2. **Přidej deps**:
-   ```bash
-   npm install flatpickr
-   ```
-   (`better-sqlite3` může v `package.json` zůstat — nevadí. Jen ho instance nepoužívá.)
-3. **Vytvoř `src/lib/lead-data.ts`** se slug klienta (z preview-v2 URL, **včetně `-cz` suffixu**):
+1. **Přepiš default slug v `src/lib/lead-data.ts`** na `{slug}` z preview-v2 URL (**včetně `-cz` suffixu** — primární klíč v API DB):
    ```ts
    export const leadData = {
      slug: (import.meta.env.VITE_LEAD_SLUG as string | undefined) ?? "{slug-z-url}",
    };
    ```
-4. **Vytvoř `src/components/ReservationSection.tsx`** — zkopíruj jako vzor `web-redesign-ubytovani-template-v3/design/src/components/ReservationSection.tsx`. Vizuálně přizpůsob paletě cílové instance:
-   - Pokud instance vychází z `simple/`, použij utility tokeny `foreground/primary/muted/card/border/input` místo `walnut/forest/sepia/ivory/parchment/paper-card/tape/font-hand/font-display`.
-   - Validační hlášky, info panel pro majitele, popisky labels (Datum příjezdu/odjezdu, Pokoj, Jméno a příjmení, Telefon, E-mail) **zachovej beze změny** — jsou součástí UX.
-5. **Uprav `vite.config.ts`** — přidej dev proxy a prod nitro routeRules:
-   ```ts
-   nitro: {
-     preset: "node-server",
-     routeRules: {
-       "/api/**": {
-         proxy: "https://ubytovani-api-production.up.railway.app/api/**",
-       },
-     },
-   },
-   vite: {
-     server: {
-       proxy: {
-         "/api": { target: "http://127.0.0.1:8000", changeOrigin: true },
-       },
-     },
-   },
-   ```
-6. **Nahraď v `src/routes/index.tsx`**:
-   - Import: `import { ReservationSection } from "@/components/ReservationSection";`
-   - Sekce: nahraď `<ReservationWidget showAdmin />` za `<ReservationSection />`, přidej header s textem **"napište nám termín" → "Zarezervujte si pobyt"** + krátký popisek "Vyberte si termín v kalendáři a vyplňte krátkou poptávku. Termín se okamžitě zablokuje pro ostatní hosty."
+
+To je vše. `ReservationSection.tsx` čte slug výhradně z `leadData` — žádný branding uvnitř komponenty není, takže se nemění. `vite.config.ts` ukazuje na sdílený backend, který je stejný pro všechny instance.
 
 ### Ověření
 
-Po integraci:
+Po klonování + nastavení slugu:
 1. **Backend musí běžet** na :8000, jinak fetch selže s ECONNREFUSED. Pokud neběží, upozorni uživatele — neimplementuj fallback.
 2. `curl http://localhost:{port}/api/rezervace/{slug}` → HTTP 200 + JSON array (proxy funguje).
-3. Načtení homepage zobrazí dvě karty: formulář + tabulku rezervací s existujícími záznamy z DB.
+3. Načtení homepage zobrazí rezervační sekci: formulář + admin panel se statistikami a tabulkou rezervací z DB.
 4. Vyber termín v kalendáři → flatpickr disabluje plně obsazené dny (noc & ráno).
 
 ## Anti-patterns
@@ -370,5 +448,8 @@ Po integraci:
 - **Neměň** designové tokeny v `src/styles.css` bez explicitního souhlasu — barevný systém je vyladěný.
 - **Negeneruj** fotky AI obrázkovým modelem, pokud klient neřekne výslovně. Reálné fotky objektu jsou jediný zdroj autenticity.
 - **Nepřekládej** sekce do angličtiny. Template je čistě česky, klienti jsou české ubytko.
-- **Nedělej lokální DB v instanci** (better-sqlite3 / lokální SQLite tabulka rezervací). Rezervace patří do centrálního FastAPI backendu — instance jen volá `/api/rezervace/{slug}` přes vite/nitro proxy. Pokud `simple/` template má lokální SQLite widget, je to placeholder a má se nahradit (viz výše).
+- **Nedělej lokální DB v instanci** (better-sqlite3 / lokální SQLite tabulka rezervací). Rezervace patří do centrálního FastAPI backendu — instance jen volá `/api/rezervace/{slug}` přes vite/nitro proxy. Obě varianty templatu už mají správný `ReservationSection.tsx` napojený na API — nesahej na něj, jen nastav slug.
 - **Neměň slug formát** mezi preview-v2 a `lead-data.ts`. Pokud preview-v2 URL končí `-cz`, slug v `lead-data.ts` musí mít `-cz` taky — backend DB to čeká.
+- **Nepřemýšlej Railway projekty mezi variantami** — `simple` a `design` jdou do **samostatných** Railway projektů (`{slug}-simple`, `{slug}-design`). Nikdy je nelinkuj na stejnou službu, jen by se přepisovaly.
+- **Nezruš deploy** druhé varianty když první spadne — zastav skill, oznam chybu uživateli a počkej na potvrzení. Polovičný deploy (jen jedna varianta) je horší výsledek než zastavený proces.
+- **Nesahaj na backend FastAPI** v rámci tohoto skillu — proxy URL v `nitro.routeRules` ukazuje na **existující** nasazený backend. Pokud backend ještě není nasazený, **přeruš** skill a řekni uživateli ať ho nejdřív nasadí samostatně.
