@@ -9,24 +9,51 @@ Tyto instrukce plati pro vsechny projekty. Projektove instrukce maji byt v `AGEN
 - Kdyz uzivatel odpovi `go` jako reakci na informaci, ze je potreba restartovat proces nebo agenta, rovnou proved restart. Zjisti spravny prikaz z kontextu projektu.
 - Pokud zprava konci `?`, prerus aktualni praci a odpovez na dotaz nebo proved pozadovany ukol. K puvodni praci se vrat az potom.
 - Pokud zprava konci `?` a neni vylozene receno "uprav kod/implementuj" — nezacinej menit soubory; nejdriv odpovez a pripadne se doptaj 1 otazkou na cilove chovani/rozsah.
+- Pokud je zprava oznamovaci veta (nekonci `?`), ber ji primarne jako dotaz na stav/analyzu. Nic neprovadej automaticky; maximalne navrhni dalsi krok a zeptej se na explicitni pokyn.
 - Bud strucny. Jeden spravny priklad je lepsi nez tri alternativy.
+- Nedavej dlouhe prubezne rozbory toho, co delas. Prubezne statusy maji byt kratke: co se deje, pripadne jeden duvod nebo vysledek. Detaily dej az na vyzadani nebo kdyz jsou nutne pro rozhodnuti.
+- Nikdy nenabizej prikazy k vyzkouseni — vzdy je proved sam (Bash, curl, grep...) a reportuj vysledek. Misto "zkus: curl ..." rovnou curl spust.
+- Nikdy po mne nechtej zaznamy z logu (paste logu apod.); vzdy si je opatruj sam pres dostupne nastroje/integrace. Pokud k logum nemas pristup, vyzadej si jen minimalni pristup (napr. URL/projekt), ne samotne logy.
 - Vysvetluj proc, nejen co. Cilem je pochopeni, ne jen funkcni kod.
 - Kdyz si nejsi jisty, rekni to. Nehadat a nevymyslet fakta.
 - Pokud prvni zprava obsahuje pouze obrazek nebo odkaz bez kontextu, pockej na dalsi zpravu s otazkou nebo ukolem, pripadne se zeptej: "Co s tim mam udelat?"
 - Pokud uzivatel posle screenshot bez textu, vzdy se podivej na UI na obrazku a identifikuj chybu nebo problem, ktery se tyka veci aktualne resenych v session. Neckej na otazku.
-- Kdyz resime obrazky, videa nebo vizualni zmeny v UI, vzdy automaticky pridej odkaz kde lze vysledek videt (napr. http://localhost:3000). Neptej se, rovnou pridej.
 - Pokud neni zrejme, ze uzivatel chce vygenerovat novy kod nebo provest konkretni akci, radsi se zeptej, nez zacnes menit soubory.
+- Delej presne to co je napsano — nepridavej novou logiku, moduly ani kod pokud o tom neni explicitni zminka. "Pridej panel" = pridej panel, ne novy backend modul.
 - Kdyz uzivatel napise "nauc se", zapis poznatek do globalnich Codex instrukci (`~/.codex/AGENTS.md`, zdroj `codex/AGENTS.md`). To je globalni pamet, kterou Codex nacita.
 - Kdyz uzivatel napise "dokumentuj", zaznamenej poznatek do projektove dokumentace podle kontextu: `tasks/lessons.md`, `docs/project_notes/bugs.md` nebo `decisions.md`.
 
-## Odkazy na soubory (autolink)
+## Vizualni kontroly a UI
+
+- Kdyz resime obrazky, videa nebo vizualni zmeny v UI, vzdy automaticky pridej odkaz kde lze vysledek videt (napr. http://localhost:3000). Neptej se, rovnou pridej.
+- Kdykoli chce uzivatel videt, jak vypada nejaka webova stranka / UI, vzdy dej funkcni klikaci odkaz na `http://localhost:<port>`. Kdyz server nebezi, sam ho spust (nebo naserviruj staticky build na volnem portu) a teprve pak posli odkaz. Nikdy neodkazuj na soubor na disku ani `file://` — vzdy localhost.
+- Nedavej odkazy, ktere se otevirajou v preview panelu. Vzdy naserviruj na localhostu jako realny server, at se odkaz otevre jako nove okno prohlizece. Zadne embedded preview odkazy.
+- Nedelej zadne vizualni kontroly sam (Playwright, screenshoty, preview snapshoty), pokud o to uzivatel vyslovne nepozada. Staci spustit server na localhostu a poslat mu odkaz — vizualni kontrolu si udela sam.
+
+## Odkazy na soubory a URL (autolink)
 
 - Kdyz uzivatel pozada o upravu souboru a vlozi cestu nebo nazev, v odpovedi pridej i plnou cestu v monospace (kvuli snadnemu kopirovani napric prostredimi).
+- Kdyz v odpovedi uvadis URL (http/https), vzdy ji uved klikatelne (idealne jako markdown odkaz) a zaroven ji uved i jako ciste URL v monospace pro snadne kopirovani.
+
+## Formaty vystupu
+
+### Cas a datumy
+
+- Casy a datumy zobrazovane uzivateli (logy, reporty, UI, vystupy) formatuj jako `dd-mm-yyyy HH:MM CET` v lokalnim case Europe/Prague.
+- Interne casy ukladej dal v UTC (ISO) — prevod na CET delej az pri zobrazeni.
+- Plati globalne napric projekty, pokud projekt vyslovne nevyzaduje jiny format.
+
+### Mailove texty a zpravy k odeslani
+
+- Mailove texty / texty k odeslani uzivatel kopiruje primo z chatu. Kdykoli pripravujes mail, zpravu na LinkedIn, SMS nebo jakykoli text urceny k odeslani jinemu cloveku, vzdy ho do chatu vypis jako plain text v code blocku (triple backtick), bez markdown bulletu (`-`, `*`, `1.`).
+- Misto bulletu pouzij em dash (`—`) nebo dlouhe pomlcky a hard newlines. Duvod: markdown bullety se v mailovych klientech (Gmail, Outlook) renderuji jako sloupce vedle sebe a rozbiji layout.
+- Tucny text radeji vubec — at to vypada stejne po vlozeni. Bonus: pripoj 1-2 radky instrukce „v Gmailu vloz pres Ctrl+Shift+V (paste without formatting)".
 
 ## Python - cesty ve skriptech
 
-- Nepouzivej relativni `Path("data/...")` v produkcnich skriptech - rozbije se, jakmile se skript presune do podslozky.
+- Nepouzivej relativni `Path("data/...")` nebo `Path("output/...")` v produkcnich skriptech - rozbije se, jakmile se skript presune do podslozky (napr. `src/`).
 - Vzdy kotvi cesty pres `__file__`: `_ROOT = Path(__file__).resolve().parent.parent`.
+- Pokud v projektu najdes relativni cesty bez `__file__` kotvy, oprav je ihned — nezeptej se, jen oprav.
 - Vyjimka: `--out` argumenty z CLI zustavaji relativni k CWD.
 
 ## Kdo je uzivatel
@@ -74,25 +101,29 @@ Pravidla pro cesty:
 - Destruktivni prikazy jako `rm -rf`, `git reset --hard`, force push, formatovani disku nebo hromadne `chmod -R 777` vyzaduji vyslovny souhlas.
 - Soubory nemaz ani neobnovuj bez vyslovneho pokynu: zadny automaticky `git restore` smazanych souboru; nejdriv upozorni a akci proved az po explicitnim "smaz" / "obnov".
 
-## Spousteni procesu a serveru
-
-- Pokud je zrejme, ze je potreba spustit test, server, bota nebo collector, spust ho sam a necekej na potvrzeni.
-- Pokud proces zavisi na externi sluzbe, kratce upozorni a pak pokracuj. Priklad: "Vyuzaduje bezici databazi."
-- Nenechavej bezet procesy potrebne pro ukol bez kontroly vystupu; po spusteni over, ze se chovaji ocekavane.
-- Pro dlouhodobe bezici agenty, collectory a boty na macOS preferuj `launchd` pred tray aplikaci. Tray je jen special-case, kdyz je vyslovne potreba GUI ovladani pres menu bar.
-- Kdyz je port obsazeny, vezmi jiny - nikdy nekilluj cizi proces. Soubezne bezi vic serveru z ruznych projektu. Killovat smis jen procesy, ktere jsi sam spustil v aktualni session (zadny `pkill -f uvicorn`, zadny `kill -9 $(lsof -ti:PORT)`).
-
 ## Railway deploy
 
 - Nikdy neprovadej deploy ani redeploy na Railway sam - vzdy se zeptej a pockej na explicitni pokyn.
 - Plati pro: `railway up`, force redeploy, nastaveni env promennych pres CLI/API, restart sluzby, zmeny na Volume.
 
+## Spousteni procesu a serveru
+
+- Pokud je zrejme, ze je potreba spustit test, server, bota nebo collector, spust ho sam a necekej na potvrzeni.
+- Pokud proces zavisi na externi sluzbe, kratce upozorni a pak pokracuj. Priklad: "Vyzaduje bezici databazi."
+- Nenechavej bezet procesy potrebne pro ukol bez kontroly vystupu; po spusteni over, ze se chovaji ocekavane.
+- Pro dlouhodobe bezici agenty, collectory a boty na macOS preferuj `launchd` pred tray aplikaci. Tray je jen special-case, kdyz je vyslovne potreba GUI ovladani pres menu bar.
+- `launchd` pouzivej jen pro hlavni dlouhodobe bezici funkci projektu/aplikace. Testy, testovaci runnery a jednorazove validace pres `launchd` nespoustej; pouzij terminal/background proces ve workspace a jasne logy.
+- U dlouho bezicich/background procesu (`nohup`, `launchctl`, job queue, collector, runner) nespolehej na aktualni working directory. Pouzij absolutni cestu ke skriptu i logum, nebo v Python skriptu nastav `PROJECT_ROOT = Path(__file__).resolve().parents[...]` a `os.chdir(PROJECT_ROOT)`.
+- Po spusteni background procesu vzdy over realitu, ne jen exit code: PID (`ps`/`pgrep`), skutecne `cwd` procesu (`lsof -p <pid>` na macOS), a aktualizaci spravneho logu. Kdyz `cwd` nebo log ukazuje na stary projekt, proces hned zastav a spust spravne.
+- Kdyz je port obsazeny, vezmi jiny - nikdy nekilluj cizi proces. Soubezne bezi vic serveru z ruznych projektu. Killovat smis jen procesy, ktere jsi sam spustil v aktualni session (zadny `pkill -f uvicorn`, zadny `kill -9 $(lsof -ti:PORT)`).
+- Porty 8080-8089 jsou rezervovane pro mail-agent instance. Nikdy v tomto rozsahu nespoustej weby, vite dev servery, ani jine procesy. Kdyz scaffoldujes novy web/server, vyber port mimo tento rozsah (napr. 5173, 3000, 8090+).
+
 ## Codex konfigurace
 
-- Globalni instrukce Codexu patri do `~/.codex/AGENTS.md`.
+- Globalni instrukce Codexu patri do `~/.codex/AGENTS.md`. Zdroj v repu je `~/ai-prompts-and-skills/codex/AGENTS.md`; live `~/.codex/AGENTS.md` je odvozena kopie + device-specific claude-leverage import na konci (nesymlinkuje se).
 - Projektove instrukce patri do `AGENTS.md` v koreni projektu nebo v blizsim podadresari.
 - Nevytvarej lokalni varianty typu `AGENTS.local.md`, pokud k tomu neni jasny duvod v projektu.
-- Kdyz uzivatel pozada o upravu globalnich Codex instrukci, uprav `~/.codex/AGENTS.md` a vysvetli, co se zmenilo.
+- Kdyz uzivatel pozada o upravu globalnich Codex instrukci, uprav zdroj `~/ai-prompts-and-skills/codex/AGENTS.md` a sync ho do `~/.codex/AGENTS.md` (zachovat claude-leverage import block na konci).
 
 ## Skills
 
@@ -108,3 +139,10 @@ Pravidla pro cesty:
 
 - Playwright MCP preferuj pred Chrome MCP pro automatizaci prohlizece.
 - Telegram MCP neovladej za uzivatele. Neposilej prikazy jako `/check`, `/yes`, `/no`; Telegram ovlada uzivatel sam.
+
+## Task management
+
+- Netrivialni ukol (3+ kroky) → nejdriv kratky plan.
+- Po kazde korekci → zapis pouceni do `tasks/lessons.md` projektu.
+- Na zacatku session → precti `tasks/lessons.md` pokud existuje.
+- Prubezne aktualizuj plan/todo po kazdem dokoncenem kroku.
