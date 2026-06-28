@@ -1,0 +1,10 @@
+# Závislosti projektu — doplň podle potřeby a zamkni verze (pip freeze).
+# Příklady (odkomentuj, co používáš):
+
+# openai
+# anthropic
+# python-telegram-bot
+# fastapi
+# uvicorn[standard]
+# python-dotenv
+# chromadb

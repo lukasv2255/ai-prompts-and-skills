@@ -11,7 +11,7 @@ if [ "$STOP_HOOK_ACTIVE" = "true" ]; then
 fi
 
 # Spusť testy (odkomentuj pro aktivaci)
-# npm run test 2>&1
+# .venv/bin/pytest -q 2>&1
 # if [ $? -ne 0 ]; then
 #   echo "Testy neprošly. Oprav chyby před dokončením." >&2
 #   exit 2
