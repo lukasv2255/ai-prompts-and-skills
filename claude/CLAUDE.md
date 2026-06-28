@@ -1,4 +1,4 @@
-# Tommy — Globální preference
+# Lukáš — Globální preference
 
 > Platí pro všechny projekty. Projektové instrukce jsou v CLAUDE.md každého projektu.
 
@@ -22,8 +22,8 @@
 - **Nedělej žádné vizuální kontroly sám** (Playwright, screenshoty, preview snapshoty), pokud o to výslovně nepožádám. Stačí spustit server na localhostu a poslat mi odkaz — vizuální kontrolu si udělám já.
 - Pokud není zřejmé, že chceš vygenerovat nový kód nebo provést konkrétní akci — raději se zeptej co chceš udělat, než abys začal psát kód nebo měnit soubory
 - **Dělej přesně to co je napsáno** — nepřidávej novou logiku, moduly ani kód pokud o tom není explicitní zmínka. "Přidej panel" = přidej panel, ne nový backend modul.
-- Když napíšu **"nauč se"** — zapiš poznatek do globálního CLAUDE.md (`~/ai-prompts-and-skills/claude/CLAUDE.md`) nebo do `~/.claude/MEMORY.md` jako nová paměť
-- Když napíšu **"dokumentuj"** — zaznamenej aktuální poznatek do projektové dokumentace: `tasks/lessons.md`, `docs/project_notes/bugs.md`, nebo jako paměť do `~/.claude/MEMORY.md` podle kontextu
+- Když napíšu **"nauč se"** — zapiš poznatek do globálního CLAUDE.md (`~/ai-prompts-and-skills/claude/CLAUDE.md`, zrcadlí se do `~/.claude/CLAUDE.md`). To je jediná globální paměť, kterou Claude Code automaticky načítá.
+- Když napíšu **"dokumentuj"** — zaznamenej poznatek do projektové dokumentace podle kontextu: `tasks/lessons.md`, `docs/project_notes/bugs.md` nebo `docs/project_notes/decisions.md`
 - **Mailové texty / texty k odeslání kopíruji přímo z chatu** — kdykoli připravuješ mail, zprávu na LinkedIn, SMS nebo jakýkoli text určený k odeslání jinému člověku, vždy ho do chatu vypiš jako **plain text** v code blocku (` ``` `), bez markdown bulletů (`-`, `*`, `1.`). Místo bulletů použij em dash (`—`) nebo dlouhé pomlčky a hard newlines. Důvod: markdown bullety se v mailových klientech (Gmail, Outlook) renderují jako sloupce vedle sebe a rozbijou layout. Tučný text raději vůbec — ať to vypadá stejně po vložení. Bonus: připoj 1-2 řádky instrukce „v Gmailu vlož přes Ctrl+Shift+V (paste without formatting)".
 
 ## Kdo jsem
@@ -34,12 +34,15 @@
 - Cíl: nasazené, prezentovatelné projekty (portfolio, klienti, zaměstnavatelé)
 - Rychle se učím — nemusíš vysvětlovat základy Pythonu
 
-## Prostředí — dvě zařízení
+## Prostředí — dvě zařízení + sdílený disk
 
-Pracuji na **dvou počítačích**:
+Pracuji na **dvou počítačích** a projekty držím na **sdíleném Google Drive**
+(tak se synchronizují mezi oběma stroji):
 
-- **Mac** — primární, cesta projektů: `~/claude-code/`
-- **Windows** — druhé PC, cesta projektů: `C:\Users\<username>\claude-code\`
+- **Mac** — primární. Google Drive je mountnutý jako `~/Můj disk/` (`/Users/lukas/Můj disk/...`).
+  Některé starší/lokální projekty mohou být i v `~/claude-code/`.
+- **Windows** — druhé PC, stejný Google Drive; lokálně případně `C:\Users\<username>\claude-code\`.
+- Projekt hledej primárně na Google Drive (`~/Můj disk/`), pak v `~/claude-code/`.
 
 **Pravidla pro cesty v kódu a skillech:**
 
@@ -96,8 +99,9 @@ Pracuji na **dvou počítačích**:
 - Interně časy ukládej dál v UTC (ISO) — převod na CET dělej až při zobrazení.
 - Platí globálně napříč projekty, pokud projekt výslovně nevyžaduje jiný formát.
 
-## Konfigurace a CLAUDE.md soubory- Existují pouze dva typy CLAUDE.md: **globální** (`~/.claude/CLAUDE.md`) a **projektový** (v kořeni projektu)
+## Konfigurace a CLAUDE.md soubory
 
+- Existují pouze dva typy CLAUDE.md: **globální** (`~/.claude/CLAUDE.md`) a **projektový** (v kořeni projektu)
 - **Nikdy nevytvářej** `CLAUDE.local.md` ani žádnou lokální variantu vázanou na konkrétní počítač — je to zbytečné a žádná nastavení ani skills se takhle nevytvářejí
 - Kdykoliv požádám o zapsání do **globálního CLAUDE.md**, znamená to: uprav soubor `~/ai-prompts-and-skills/claude/CLAUDE.md`, poté zkontroluj jestli se změna zrcadlí do `~/.claude/CLAUDE.md` (přes symlink nebo jiný mechanismus), a potvrď mi výsledek
 

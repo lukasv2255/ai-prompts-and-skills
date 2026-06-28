@@ -1,4 +1,4 @@
-# Tommy - globalni preference pro Codex
+# Lukas - globalni preference pro Codex
 
 Tyto instrukce plati pro vsechny projekty. Projektove instrukce maji byt v `AGENTS.md` v koreni konkretniho projektu nebo v blizsim podadresari.
 
@@ -16,6 +16,18 @@ Tyto instrukce plati pro vsechny projekty. Projektove instrukce maji byt v `AGEN
 - Pokud uzivatel posle screenshot bez textu, vzdy se podivej na UI na obrazku a identifikuj chybu nebo problem, ktery se tyka veci aktualne resenych v session. Neckej na otazku.
 - Kdyz resime obrazky, videa nebo vizualni zmeny v UI, vzdy automaticky pridej odkaz kde lze vysledek videt (napr. http://localhost:3000). Neptej se, rovnou pridej.
 - Pokud neni zrejme, ze uzivatel chce vygenerovat novy kod nebo provest konkretni akci, radsi se zeptej, nez zacnes menit soubory.
+- Kdyz uzivatel napise "nauc se", zapis poznatek do globalnich Codex instrukci (`~/.codex/AGENTS.md`, zdroj `codex/AGENTS.md`). To je globalni pamet, kterou Codex nacita.
+- Kdyz uzivatel napise "dokumentuj", zaznamenej poznatek do projektove dokumentace podle kontextu: `tasks/lessons.md`, `docs/project_notes/bugs.md` nebo `decisions.md`.
+
+## Odkazy na soubory (autolink)
+
+- Kdyz uzivatel pozada o upravu souboru a vlozi cestu nebo nazev, v odpovedi pridej i plnou cestu v monospace (kvuli snadnemu kopirovani napric prostredimi).
+
+## Python - cesty ve skriptech
+
+- Nepouzivej relativni `Path("data/...")` v produkcnich skriptech - rozbije se, jakmile se skript presune do podslozky.
+- Vzdy kotvi cesty pres `__file__`: `_ROOT = Path(__file__).resolve().parent.parent`.
+- Vyjimka: `--out` argumenty z CLI zustavaji relativni k CWD.
 
 ## Kdo je uzivatel
 
@@ -28,10 +40,13 @@ Tyto instrukce plati pro vsechny projekty. Projektove instrukce maji byt v `AGEN
 
 ## Prostredi - dve zarizeni
 
-Uzivatel pracuje na dvou pocitacich:
+Uzivatel pracuje na dvou pocitacich a projekty drzi na sdilenem Google Drive
+(tak se synchronizuji mezi obema stroji):
 
-- Mac: primarni stroj, projekty typicky pod `~/claude-code/`.
-- Windows: druhe PC, projekty typicky pod `C:\Users\tommy\claude-code\`.
+- Mac: primarni stroj. Google Drive je mountnuty jako `~/Můj disk/` (`/Users/lukas/Můj disk/...`).
+  Nektere starsi/lokalni projekty mohou byt i v `~/claude-code/`.
+- Windows: druhe PC, stejny Google Drive; lokalne pripadne `C:\Users\<username>\claude-code\`.
+- Projekt hledej primarne na Google Drive (`~/Můj disk/`), pak v `~/claude-code/`.
 
 Pravidla pro cesty:
 
@@ -57,6 +72,7 @@ Pravidla pro cesty:
 - Pred git operacemi zkontroluj, co se bude commitovat nebo pushovat.
 - Pred vytvorenim nebo upravou `.env` vzdy zkontroluj, jestli uz existuje. Prepsany `.env` casto nejde obnovit z gitu.
 - Destruktivni prikazy jako `rm -rf`, `git reset --hard`, force push, formatovani disku nebo hromadne `chmod -R 777` vyzaduji vyslovny souhlas.
+- Soubory nemaz ani neobnovuj bez vyslovneho pokynu: zadny automaticky `git restore` smazanych souboru; nejdriv upozorni a akci proved az po explicitnim "smaz" / "obnov".
 
 ## Spousteni procesu a serveru
 
@@ -64,6 +80,12 @@ Pravidla pro cesty:
 - Pokud proces zavisi na externi sluzbe, kratce upozorni a pak pokracuj. Priklad: "Vyuzaduje bezici databazi."
 - Nenechavej bezet procesy potrebne pro ukol bez kontroly vystupu; po spusteni over, ze se chovaji ocekavane.
 - Pro dlouhodobe bezici agenty, collectory a boty na macOS preferuj `launchd` pred tray aplikaci. Tray je jen special-case, kdyz je vyslovne potreba GUI ovladani pres menu bar.
+- Kdyz je port obsazeny, vezmi jiny - nikdy nekilluj cizi proces. Soubezne bezi vic serveru z ruznych projektu. Killovat smis jen procesy, ktere jsi sam spustil v aktualni session (zadny `pkill -f uvicorn`, zadny `kill -9 $(lsof -ti:PORT)`).
+
+## Railway deploy
+
+- Nikdy neprovadej deploy ani redeploy na Railway sam - vzdy se zeptej a pockej na explicitni pokyn.
+- Plati pro: `railway up`, force redeploy, nastaveni env promennych pres CLI/API, restart sluzby, zmeny na Volume.
 
 ## Codex konfigurace
 

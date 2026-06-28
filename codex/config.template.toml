@@ -1,4 +1,4 @@
-# Global Codex defaults for Tommy.
+# Global Codex defaults for Lukas.
 # Machine-specific auth, history, cache, logs and state must stay outside version control.
 
 sandbox_mode = "workspace-write"

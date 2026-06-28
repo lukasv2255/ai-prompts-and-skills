@@ -13,7 +13,7 @@ missing=()
 
 if [ ${#missing[@]} -gt 0 ]; then
   echo "⚠️  Projekt nemá Claude šablonu. Chybí: ${missing[*]}"
-  echo "Zkopíruj šablonu z: C:/Users/tommy/claude-code/claude-md/"
+  echo "Zkopíruj šablonu z: C:/Users/<username>/claude-code/claude-md/"
   exit 2
 fi
 

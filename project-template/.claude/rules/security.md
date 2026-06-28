@@ -1,9 +1,9 @@
 ---
 paths:
-  - "src/auth/**"
-  - "src/api/**"
-  - "app/api/**"
-  - "src/lib/db/**"
+  - "**/server.py"
+  - "**/db.py"
+  - "**/api/**"
+  - "**/auth/**"
 ---
 
 # Bezpečnostní pravidla
@@ -11,26 +11,26 @@ paths:
 ## Absolutní zákazy
 
 - Nikdy necommituj `.env` soubory
-- Nikdy neloguj hesla, tokeny, nebo PII data
-- Nikdy nepoužívej `eval()` nebo `new Function()`
-- Nikdy nevkládej uživatelský vstup přímo do SQL (použij parametrizované dotazy)
+- Nikdy neloguj hesla, tokeny ani PII (jména, e-maily, GPS, ID účtů)
+- Nikdy nepoužívej `eval()` / `exec()` na uživatelském vstupu
+- Nikdy nevkládej uživatelský vstup přímo do SQL — vždy parametrizované dotazy
 
 ## Auth a sessions
 
 - Kontroluj autentizaci PŘED každou DB operací
-- Kontroluj autorizaci (ownership) na každém resource endpointu
-- Session tokeny: httpOnly cookies, secure flag v produkci
+- Kontroluj autorizaci (ownership) na každém endpointu s uživatelskými daty
+- Session cookies: podepsané, `httpOnly`, `secure` flag v produkci
+- Omezené role (demo, read-only) zamykej i na backendu, ne jen v UI
 
-## Citlivé oblasti (nebezpečné zóny)
+## Tokeny třetích stran (OAuth)
 
-`src/auth/` — autentizace a autorizace, dvojitě kontroluj každou změnu
-`src/lib/db/` — databázové dotazy, SQL injection riziko
-`app/api/` — API endpointy, vždy validuj vstup
+- Access/refresh tokeny jen v DB, nikdy do gitu ani logů
+- Ošetři refresh — access tokeny expirují
 
-## OWASP Top 10 — co kontrolovat
+## Co kontrolovat
 
-1. SQL Injection → parametrizované dotazy
-2. XSS → escapuj output, nepoužívej `dangerouslySetInnerHTML`
-3. Broken Auth → kontroluj token platnost a scope
-4. Sensitive Data → nešifrovaná data v DB nebo logu
-5. Security Misconfiguration → debug mode v produkci
+1. SQL injection → parametrizované dotazy
+2. Únik tajemství → `.env`, žádné klíče v kódu ani logu
+3. Broken auth → platnost a scope session/tokenu
+4. Citlivá data → minimalizuj, co odchází do třetích stran (včetně AI)
+5. Misconfiguration → debug mode vypnutý v produkci
