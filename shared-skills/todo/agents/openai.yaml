@@ -1,0 +1,4 @@
+interface:
+  display_name: "Todo"
+  short_description: "Structured timestamped todo notes"
+  default_prompt: "Use $todo to add a timestamped todo note with concise bullets and private detail."
