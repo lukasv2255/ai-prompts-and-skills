@@ -1,0 +1,4 @@
+interface:
+  display_name: "Workflow Router"
+  short_description: "Router workflow a skillu podle ukolu."
+  default_prompt: "Rekni, co se prave chystas delat, a ja navrhnu workflow, poradi kroku a skilly, ktere na to pouzit."
