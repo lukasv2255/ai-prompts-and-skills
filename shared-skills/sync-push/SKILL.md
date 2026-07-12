@@ -13,17 +13,17 @@ zarizeni.
 
 ## Cesta k repozitari
 
-Nehardcoduj jmeno uzivatele. Preferuj home directory:
+Repozitar je na Google Disku (synchronizuje se mezi stroji):
 
-- macOS / Linux: `~/ai-prompts-and-skills`
-- Windows: `~/ai-prompts-and-skills` nebo odpovidajici cesta z home directory
+- Windows: `C:/Users/tommy/Můj disk/AI-prompts-and-skills`
+- macOS: odpovidajici cesta ke Google Disku; jmeno slozky `AI-prompts-and-skills` zustava stejne
 
-Prakticky:
+Prakticky (Windows):
 
 ```bash
-git -C "$HOME/ai-prompts-and-skills" add -A
-git -C "$HOME/ai-prompts-and-skills" commit -m "sync: update prompts and skills"
-git -C "$HOME/ai-prompts-and-skills" push
+git -C "C:/Users/tommy/Můj disk/AI-prompts-and-skills" add -A
+git -C "C:/Users/tommy/Můj disk/AI-prompts-and-skills" commit -m "sync: update prompts and skills"
+git -C "C:/Users/tommy/Můj disk/AI-prompts-and-skills" push
 ```
 
 Kdyz neni co commitovat, jen to oznam.

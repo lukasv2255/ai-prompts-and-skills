@@ -13,24 +13,23 @@ na Macu nebo Windows.
 
 ## Cesta k repozitari
 
-Nehardcoduj jmeno uzivatele. Preferuj home directory:
+Repozitar je na Google Disku (synchronizuje se mezi stroji):
 
-- macOS / Linux: `~/ai-prompts-and-skills`
-- Windows: `~/ai-prompts-and-skills` nebo odpovidajici cesta z home directory
+- Windows: `C:/Users/tommy/Můj disk/AI-prompts-and-skills`
+- macOS: odpovidajici cesta ke Google Disku; jmeno slozky `AI-prompts-and-skills` zustava stejne
 
-Prakticky:
+Prakticky (Windows):
 
 ```bash
-git -C "$HOME/ai-prompts-and-skills" pull
+git -C "C:/Users/tommy/Můj disk/AI-prompts-and-skills" pull
 ```
 
-Kdyz shell nebo prostredi nepouziva `$HOME`, odvod cestu z domovske slozky daneho
-uzivatele misto natvrdo zapsaneho username.
+Na jinem stroji odvod cestu z umisteni Google Disku podle daneho OS.
 
 ## Co udelat po pullu
 
 - oznam, co se stahlo
-- pripomen, ze symlinky propisuji zmeny do `~/.claude/`, `~/.agents/skills/` nebo dalsich napojenych mist
+- pripomen, ze zmeny je potreba propsat do `~/.claude/skills/` (na Windows jsou to reálné kopie, ne symlinky)
 
 ## Poznamky
 
