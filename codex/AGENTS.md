@@ -145,4 +145,5 @@ Pravidla pro cesty:
 - Netrivialni ukol (3+ kroky) → nejdriv kratky plan.
 - Po kazde korekci → zapis pouceni do `tasks/lessons.md` projektu.
 - Na zacatku session → precti `tasks/lessons.md` pokud existuje.
+- Pri zapisu novych polozek do `tasks/todo.md` vzdy uved datum i cas ve formatu `dd-mm-yyyy HH:MM CET`, aby byl presny chronologicky prehled.
 - Prubezne aktualizuj plan/todo po kazdem dokoncenem kroku.

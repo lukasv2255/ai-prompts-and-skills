@@ -307,6 +307,7 @@ Ten samý vzorec funguje s `pokoj` granularitou — drž `morning`/`evening` map
 6. Nastav `OWNER_TOKEN` env proměnnou (`.env` lokálně, Railway/Vercel dashboard pro produkci)
 7. Otevři `http://localhost:5174/rezervace?token=OWNER_TOKEN` → owner panel se objeví
 8. Přidej `data/` do `.gitignore`
+9. Notifikační maily: vytvoř `src/lib/mail.ts`, zapoj 2 maily do `createRezervace` (viz § Notifikační maily), nastav `RESEND_API_KEY` / `MAIL_FROM` / `OWNER_EMAIL` v `.env`, přidej `.env` + `.env.*` do `.gitignore`
 
 ## Pasti specifické pro TanStack Start
 - **`routeTree.gen.ts` se regeneruje** — needitovat ručně. Po přidání `src/routes/rezervace.tsx` HMR sám aktualizuje route tree.
@@ -315,26 +316,146 @@ Ten samý vzorec funguje s `pokoj` granularitou — drž `morning`/`evening` map
 - **SSR + `window`** — owner token čte `window.location.search`. Bez `typeof window !== "undefined"` checku spadne hydratace.
 - **Tailwind v4** (Lovable šablona) — používá `@theme inline` s CSS proměnnými, ne `tailwind.config.js`. Vlastní barvy (`bg-success`, `bg-busy`) musí být registrované přes `--color-success` v `styles.css`.
 
-## Tracking maily (Resend)
-Stejný princip jako u FastAPI varianty — viz [SKILL.md § Krok 3](./SKILL.md). V TS je rozhraní:
+## Notifikační maily (Resend) — notifikace majiteli + potvrzení hostovi
+
+Po vytvoření rezervace hostem se posílají **dva maily**: (1) notifikace majiteli o nové
+rezervaci, (2) potvrzení hostovi na e-mail z formuláře. Blokace majitelem žádný mail nespouští.
+
+> **Ověřená doména:** `buildai.cz` (Resend, region eu-west-1). Z ní lze posílat z libovolné
+> adresy `@buildai.cz`. Owner mail pro notifikace: `lukas.vozdecky@buildai.cz`.
+
+### Krok A — `src/lib/mail.ts`
+Žádná nová závislost (jen `fetch`). Když chybí `RESEND_API_KEY` / `MAIL_FROM`, běží log-only.
+
 ```ts
 // src/lib/mail.ts
-export async function sendEmail(opts: { to: string; subject: string; html: string; replyTo?: string }) {
+// Odeslání mailu přes Resend. Když chybí RESEND_API_KEY nebo MAIL_FROM,
+// běží v log-only režimu (nic se neodešle, jen se zaloguje) — vhodné pro dev.
+export async function sendEmail(opts: {
+  to: string;
+  subject: string;
+  html: string;
+  replyTo?: string;
+}): Promise<boolean> {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.MAIL_FROM;
+
   if (!apiKey || !from) {
-    console.log(`MAIL log-only → komu=${opts.to} předmět=${opts.subject}`);
+    console.log(
+      `[MAIL log-only] komu=${opts.to} předmět="${opts.subject}" (RESEND_API_KEY / MAIL_FROM nenastaveno)`,
+    );
     return false;
   }
-  const resp = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from, to: [opts.to], subject: opts.subject, html: opts.html, reply_to: opts.replyTo }),
-  });
-  return resp.ok;
+
+  try {
+    const resp = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from,
+        to: [opts.to],
+        subject: opts.subject,
+        html: opts.html,
+        reply_to: opts.replyTo,
+      }),
+    });
+    if (!resp.ok) {
+      console.error(`[MAIL] Resend ${resp.status}: ${await resp.text().catch(() => "")}`);
+      return false;
+    }
+    return true;
+  } catch (e) {
+    console.error("[MAIL] odeslání selhalo:", e);
+    return false;
+  }
 }
 ```
-A volej z `createRezervace` handleru **po** `INSERT` (mailové selhání nesmí shodit uloženou rezervaci — wrap v try/catch).
+
+### Krok B — volání z `createRezervace` handleru (po `INSERT`)
+Import: `import { sendEmail } from "./mail";`. Vlož **za** `INSERT`, **před** `return`.
+Mailové selhání nesmí shodit uloženou rezervaci → každý mail v samostatném try/catch.
+
+```ts
+    // Maily — jen u rezervací od hostů (ne blokace majitelem) a jen pokud host
+    // vyplnil e-mail. Selhání mailu nesmí shodit rezervaci.
+    if (!jeMajitel && data.email) {
+      const esc = (s: string) =>
+        String(s ?? "").replace(
+          /[&<>"']/g,
+          (c) =>
+            ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] as string,
+        );
+
+      // 1) Notifikace majiteli
+      const ownerEmail = process.env.OWNER_EMAIL ?? "";
+      if (ownerEmail) {
+        try {
+          await sendEmail({
+            to: ownerEmail,
+            replyTo: data.email,
+            subject: `Nová rezervace — ${data.pokoj} (${data.datum_od} → ${data.datum_do})`,
+            html: `
+              <h2>Nová rezervace</h2>
+              <p><strong>Apartmán:</strong> ${esc(data.pokoj)}</p>
+              <p><strong>Příjezd:</strong> ${esc(data.datum_od)}<br>
+                 <strong>Odjezd:</strong> ${esc(data.datum_do)}</p>
+              <p><strong>Jméno:</strong> ${esc(jmeno)}<br>
+                 <strong>E-mail:</strong> ${esc(data.email)}<br>
+                 <strong>Telefon:</strong> ${esc(data.telefon ?? "—")}</p>
+              <p>Termín byl automaticky potvrzen a zablokován v kalendáři (instant-book).</p>
+            `,
+          });
+        } catch (e) {
+          console.error("[rezervace] notifikace majiteli selhala:", e);
+        }
+      }
+
+      // 2) Potvrzení hostovi
+      try {
+        await sendEmail({
+          to: data.email,
+          replyTo: process.env.OWNER_EMAIL ?? undefined,
+          subject: `Potvrzení rezervace — ${data.pokoj}`,
+          html: `
+            <h2>Děkujeme za vaši rezervaci</h2>
+            <p>Dobrý den ${esc(jmeno)},</p>
+            <p>vaše rezervace byla úspěšně přijata a potvrzena.</p>
+            <p><strong>Apartmán:</strong> ${esc(data.pokoj)}<br>
+               <strong>Příjezd:</strong> ${esc(data.datum_od)}<br>
+               <strong>Odjezd:</strong> ${esc(data.datum_do)}</p>
+            <p>V případě dotazů odpovězte přímo na tento e-mail.</p>
+          `,
+        });
+      } catch (e) {
+        console.error("[rezervace] potvrzení hostovi selhalo:", e);
+      }
+    }
+```
+
+### Krok C — `.env`
+```bash
+# Resend — odesílání notifikací o rezervacích
+# API klíč vytvoř na https://resend.com/api-keys (Permission: Sending access) a vlož sem:
+RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxx
+
+# Odesílatel — musí být na ověřené doméně (zde buildai.cz)
+MAIL_FROM="Haas Apartments <rezervace@buildai.cz>"
+
+# Adresa majitele — sem chodí notifikace o nových rezervacích
+OWNER_EMAIL=lukas.vozdecky@buildai.cz
+```
+
+> **POZOR — klíč nikdy necommituj.** `RESEND_API_KEY` patří jen do `.env` (musí být v `.gitignore`,
+> přidej `.env` + `.env.*` pokud chybí). Když se Resend klíč dostane na GitHub, secret scanning ho
+> automaticky zneplatní → rozbije odesílání. Ve skillu / git-tracked souborech vždy jen placeholder.
+
+**Pasti:**
+- **Vite dev musí načítat `.env` do `process.env`.** Server functions čtou `process.env.X`, ne `import.meta.env`. U Lovable šablony to zařídí Nitro vite plugin (`nitro/dist/vite.mjs` načítá `.env` přes dotenv) → funguje. Po editaci `.env` **restartuj dev server**.
+- **Reply-to kříží role:** majitel dostane reply-to = host (může rovnou odepsat hostovi), host dostane reply-to = majitel.
+- **Doručitelnost na gmail/seznam** vyžaduje ověřenou doménu (SPF/DKIM) — proto `@buildai.cz`, ne nějaká neověřená adresa.
 
 ## Reference implementace
 `/Users/lukas/Můj disk/web-redesign/web-redesign-chalupacerna/redesign-whiz/`:
