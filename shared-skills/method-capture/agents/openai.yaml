@@ -1,0 +1,4 @@
+interface:
+  display_name: "Method Capture"
+  short_description: "Prevede dobry postup na reusable workflow."
+  default_prompt: "Vezmi tenhle postup nebo session a preved ji na reusable skill, checklist nebo SOP."

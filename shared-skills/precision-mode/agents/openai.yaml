@@ -1,0 +1,4 @@
+interface:
+  display_name: "Precision Mode"
+  short_description: "Zamkne scope a nejkratsi bezpecny postup."
+  default_prompt: "Pouzij precision-mode a stanov minimalni bezpecny scope, acceptance criteria a prvni kroky."

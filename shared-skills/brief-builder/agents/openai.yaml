@@ -1,0 +1,4 @@
+interface:
+  display_name: "Brief Builder"
+  short_description: "Prevede nejasne zadani na presny brief."
+  default_prompt: "Vezmi moje zadani a udelej z nej presny pracovni brief, scope a dalsi krok."

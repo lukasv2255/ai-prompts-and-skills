@@ -1,0 +1,4 @@
+interface:
+  display_name: "Completion Audit"
+  short_description: "Overi, jestli je prace opravdu hotova."
+  default_prompt: "Zkontroluj, jestli je tahle prace opravdu hotova, overena a pripravena k odevzdani nebo deployi."
