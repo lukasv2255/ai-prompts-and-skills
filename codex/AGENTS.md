@@ -115,6 +115,7 @@ Pravidla pro cesty:
 - `launchd` pouzivej jen pro hlavni dlouhodobe bezici funkci projektu/aplikace. Testy, testovaci runnery a jednorazove validace pres `launchd` nespoustej; pouzij terminal/background proces ve workspace a jasne logy.
 - U dlouho bezicich/background procesu (`nohup`, `launchctl`, job queue, collector, runner) nespolehej na aktualni working directory. Pouzij absolutni cestu ke skriptu i logum, nebo v Python skriptu nastav `PROJECT_ROOT = Path(__file__).resolve().parents[...]` a `os.chdir(PROJECT_ROOT)`.
 - Po spusteni background procesu vzdy over realitu, ne jen exit code: PID (`ps`/`pgrep`), skutecne `cwd` procesu (`lsof -p <pid>` na macOS), a aktualizaci spravneho logu. Kdyz `cwd` nebo log ukazuje na stary projekt, proces hned zastav a spust spravne.
+- Kdyz v projektu restartujes lokalni dashboard nebo podobny dlouho bezici lokalni server s perzistentni cache, udelej restart vzdy s vycistenou relevantni cache, aby se po zmene kodu nebo filtru nenaserviroval stary stav.
 - Kdyz je port obsazeny, vezmi jiny - nikdy nekilluj cizi proces. Soubezne bezi vic serveru z ruznych projektu. Killovat smis jen procesy, ktere jsi sam spustil v aktualni session (zadny `pkill -f uvicorn`, zadny `kill -9 $(lsof -ti:PORT)`).
 - Porty 8080-8089 jsou rezervovane pro mail-agent instance. Nikdy v tomto rozsahu nespoustej weby, vite dev servery, ani jine procesy. Kdyz scaffoldujes novy web/server, vyber port mimo tento rozsah (napr. 5173, 3000, 8090+).
 
