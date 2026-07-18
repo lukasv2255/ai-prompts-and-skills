@@ -116,6 +116,7 @@ Pravidla pro cesty:
 - U dlouho bezicich/background procesu (`nohup`, `launchctl`, job queue, collector, runner) nespolehej na aktualni working directory. Pouzij absolutni cestu ke skriptu i logum, nebo v Python skriptu nastav `PROJECT_ROOT = Path(__file__).resolve().parents[...]` a `os.chdir(PROJECT_ROOT)`.
 - Po spusteni background procesu vzdy over realitu, ne jen exit code: PID (`ps`/`pgrep`), skutecne `cwd` procesu (`lsof -p <pid>` na macOS), a aktualizaci spravneho logu. Kdyz `cwd` nebo log ukazuje na stary projekt, proces hned zastav a spust spravne.
 - Kdyz v projektu restartujes lokalni dashboard nebo podobny dlouho bezici lokalni server s perzistentni cache, udelej restart vzdy s vycistenou relevantni cache, aby se po zmene kodu nebo filtru nenaserviroval stary stav.
+- Po kazde nove implementaci v projektu, ktery pouziva cache, pred finalnim overenim vycisti vsechnu relevantni cache. Pokud prvni render cache znovu vytvari, neoveruj smazani render endpointem; over pouze neexistenci cache a prvni render nech az na nasledne funkcni overeni.
 - Kdyz je port obsazeny, vezmi jiny - nikdy nekilluj cizi proces. Soubezne bezi vic serveru z ruznych projektu. Killovat smis jen procesy, ktere jsi sam spustil v aktualni session (zadny `pkill -f uvicorn`, zadny `kill -9 $(lsof -ti:PORT)`).
 - Porty 8080-8089 jsou rezervovane pro mail-agent instance. Nikdy v tomto rozsahu nespoustej weby, vite dev servery, ani jine procesy. Kdyz scaffoldujes novy web/server, vyber port mimo tento rozsah (napr. 5173, 3000, 8090+).
 
@@ -142,6 +143,8 @@ Pravidla pro cesty:
 - Telegram MCP neovladej za uzivatele. Neposilej prikazy jako `/check`, `/yes`, `/no`; Telegram ovlada uzivatel sam.
 
 ## Task management
+
+- V trading dashboardech rozlisuj celkovy pocet trade zaznamu od outcome tabulek: hlavni Winners/Losers cte `stopped`, mini tabulky mohou cist vlastni fieldy jako `mimo_level_stopped` nebo `with_the_move_stopped`. `stopped = NULL` proto neznamena unresolved, pokud ma trade vysledek v mini tabulce. Filtr bandu jako `past_atr` se musi ridit jen viditelnym selektorem; prazdny selektor znamena vsechny bandy a backend nesmi dosazovat skryty default.
 
 - Netrivialni ukol (3+ kroky) → nejdriv kratky plan.
 - Po kazde korekci → zapis pouceni do `tasks/lessons.md` projektu.

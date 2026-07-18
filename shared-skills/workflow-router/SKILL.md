@@ -26,6 +26,7 @@ Pouzij pro nejasne, rizikove nebo vetsi ukoly.
 - `brief-builder`: prevod vagnich poznamek na pracovni brief
 - `task-router`: volba workflow podle rizika, ceny a slozitosti
 - `precision-mode`: target lock, evidence, pressure test, proof
+- `test-plan`: rozhodni CO a JAK testovat (matice vrstva→nastroj) jeste pred psanim testu
 - `agent-chain`: navrh viceagentoveho workflow
 - `completion-audit`: overeni, ze je prace opravdu hotova
 - `method-capture`: prevod dobreho postupu do reusable skillu
@@ -148,6 +149,22 @@ Pouzij:
 3. pokud jde o DB -> `railway-db` nebo `db-migrate`
 4. po oprave `code-review`
 5. pred releasem `completion-audit`
+
+### Kdyz uzivatel testuje slozitejsi implementaci
+
+Pouzij, kdyz featura saha na vic vrstev (LLM vystup, DB/side-efekty, invarianty):
+
+1. `test-plan` — rozloz zmenu na vrstvy a priraď nastroj (matice), jeste NEZ piseš testy
+2. deterministicke vrstvy -> unit testy (assert)
+3. LLM vystup -> `responder-llm-judge` (gating regex + advisory judge, zkalibruj drive nez verim)
+4. side-efekty a invarianty -> spy + mock nad realnym call-site
+5. `completion-audit`, kdyz ma vystup jit do produkce nebo klientovi
+
+Pozor na:
+
+- `assert` na LLM vystup (flaky) a LLM judge na to, co umi regex (drahe, sumi)
+- idempotenci testovat tam, kde guard fyzicky zije (casto v callerovi, ne ve funkci)
+- testy zelene jednotlive, ale cervene naraz -> nepokryta izolace (globalni stav)
 
 ### Kdyz uzivatel deployuje
 
