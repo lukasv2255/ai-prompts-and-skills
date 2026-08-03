@@ -10,12 +10,19 @@ description: >
   - "najdi posty ke komentáři"
   - "co se děje na CZ AI twitteru"
   - "najdi příležitosti ke komentování"
+  - "/x replies" / "kdo mi reagoval" / "zkontroluj reakce na moje posty"
 
 ---
 
 # x-check — monitoring CZ AI Twitteru
 
-Prohledá profily českých AI/tech účtů a vrátí 3–5 čerstvých postů s návrhy komentářů.
+Dva módy:
+- **`/x check`** — prohledá profily CZ AI/tech účtů a vrátí čerstvé posty s návrhy komentářů (sekce níže).
+- **`/x replies`** — sleduje reakce velkých účtů na moje vlastní posty/replies, zaznamenává, jaké téma je zaujalo, a plní mapu účtů (sekce „Reply tracking mód").
+
+Projektové soubory (v repu AI-brand, `writing/twitter/`):
+- `big-accounts-map.md` — mapa velkých účtů, jejich oblíbené teze a reply hooky
+- `reply-tracking.md` — log reakcí velkých účtů na můj obsah
 
 ---
 
@@ -101,3 +108,98 @@ Likes: X | Proč komentovat: [1 věta]
 - **Playwright MCP** = vlastní headless browser bez session → nefunguje pro Twitter
 - `lang:cs` search filter nefunguje spolehlivě kombinovaný s anglickými termíny
 - Přímé profily CZ účtů jsou spolehlivější než search
+
+---
+
+# Reply tracking mód (`/x replies`)
+
+Cíl: zjistit, **kdo z velkých sledovaných účtů reagoval na moje posty/replies a jaké téma je zaujalo**.
+Reakce od velkého účtu = signál, že tenhle úhel u něj funguje → zapiš do mapy a příště na něm stav.
+
+## Postup
+
+### 1. Načti kontext
+- Přečti `writing/twitter/big-accounts-map.md` → seznam sledovaných handlů + jejich teze.
+- Přečti `writing/twitter/reply-tracking.md` → co už je zaznamenané (ať neduplikuješ).
+
+### 2. Získej tab ID (Chrome MCP)
+```
+tabs_context_mcp (createIfEmpty: true)
+```
+Chrome MCP jede přes přihlášený účet → handle uživatele není potřeba.
+
+### 3. Projdi notifikace
+`navigate` na `https://x.com/notifications/mentions` → počkej → JS extrakce.
+Mentions filtruje jen reakce na můj obsah (ne obecné notifikace).
+
+### 4. Extrakce reakcí
+```javascript
+const items = [];
+document.querySelectorAll('article[data-testid="tweet"]').forEach((el) => {
+  const text = el.querySelector('[data-testid="tweetText"]')?.innerText || '';
+  const userEl = el.querySelector('[data-testid="User-Name"]');
+  const nameParts = userEl?.innerText?.split('\n') || [];
+  const time = el.querySelector('time')?.getAttribute('datetime') || '';
+  const link = el.querySelector('a[href*="/status/"]')?.href || '';
+  const handle = (nameParts.find(p => p.startsWith('@')) || '');
+  if (text.length > 5) items.push({ name: nameParts[0], handle, text: text.slice(0, 300), time, link });
+});
+JSON.stringify(items.slice(0, 25));
+```
+Tip: pro follow eventy projdi i `https://x.com/notifications`.
+
+### 5. Cross-reference proti mapě
+- Nech jen reakce, jejichž `handle` je v `big-accounts-map.md` (velké účty). Ostatní ignoruj.
+- U každé zjisti kontext: na který **můj** post/reply reagoval a **jaké bylo téma** mého obsahu
+  (pokud není z notifikace jasné, otevři `link` a zjisti vlákno).
+
+### 6. Zápis
+Pro každou novou reakci od velkého účtu:
+- **`reply-tracking.md`** → nový řádek do tabulky: `datum | @účet | téma mého obsahu | na co reagoval | typ reakce (reply/like/QT/follow) | poznatek`.
+- **`big-accounts-map.md`** → do sekce daného účtu, „Doložené reakce", přidej řádek s datem a tématem.
+- Když se stejné téma reakce u účtu objeví 2×+, povyš ho na „Oblíbená teze" a uprav „Reply hook".
+
+### 7. Výstup uživateli
+Krátký souhrn:
+```
+Nové reakce od velkých účtů:
+- @tangero (dd-mm-yyyy): reply na tvůj post o [téma] → potvrdilo hook „potvrzení jejich teze"
+Aktualizoval jsem: reply-tracking.md, big-accounts-map.md (@tangero)
+```
+Pokud žádná nová reakce od velkých účtů: řekni to a nic nezapisuj.
+
+---
+
+# Reply Router — jak stavět reply, aby reagovali zpět
+
+Router = rozhodovací vrstva mezi „chci reagovat na tenhle post" a „napiš reply".
+Cíl: reply vždy zapadne do specializace cílového účtu, takže má důvod odpovědět nebo follownout.
+
+## Vstup
+Cílový účet (na jehož post chci reagovat) **nebo** účet, který reagoval mně.
+
+## Logika
+
+1. **Lookup účtu v `big-accounts-map.md`.**
+   - Nalezen → načti jeho „Oblíbená teze" + „Reply hook".
+   - Nenalezen → fallback na obecná pravidla komentáře (sekce výše) a přidej ho do mapy.
+
+2. **Vyber úhel podle vztahu mého obsahu k jeho tezi** (od nejsilnějšího):
+   1. Moje zkušenost **potvrzuje** jeho dlouhodobou tezi → nejsilnější (Zandl case).
+   2. Přináším **konkrétní datový bod** k jeho tématu (číslo, benchmark, screenshot).
+   3. **Jemný protiklad s důkazem** — „u mě naopak, tady je proč" (víc diskuze, víc rizika).
+   4. **Doplňující nuance**, která v postu chybí.
+
+3. **Napiš reply v jeho jazyce:**
+   - Použij slovník jeho oboru (dev / SEO / frontend / video…).
+   - Konkrétní historka nebo číslo, ne obecné nadšení.
+   - Česky, max 2 věty, žádný em-dash, žádné „skvělý postřeh".
+
+4. **Po odeslání** zapiš reply do `myposts.md`/kontextu a čekej na `/x replies`, který zaznamená, jestli reagoval zpět → tím se mapa učí.
+
+## Výběr cíle (kam vůbec investovat reply)
+Prioritizuj účty, kde už mám doloženou reakci (mapa) > velký dosah + jasná teze > okrajové AI účty (nízká priorita, např. @JiriCoufal77).
+
+## Zpětná vazba (proč to celé funguje)
+`/x replies` → doloží reakci → povýší téma na tezi → router příště sáhne po ověřeném hooku.
+Bez logu bys stavěl reply od nuly pokaždé; s logem se strategie u každého účtu zpřesňuje.

@@ -1,78 +1,90 @@
 ---
 name: method-capture
-description: Preved uspesny postup, session, fix, analyzu nebo prompt na reusable skill, checklist, SOP nebo kratky workflow. Pouzij kdyz uzivatel rika "udelej z toho skill", "tohle chceme opakovat", "zachyt ten postup", "preved to na reusable workflow", "vytvor z toho checklist", nebo kdyz se v session ukazalo neco, co stoji za standardizaci.
+description: Turn a strong prior output, session, workflow, prompt, or example into an original reusable skill, slash command, checklist, agent prompt, or evaluation rubric.
 ---
 
 # Method Capture
 
-Vytahni z konkretniho prikladu opakovatelny postup. Nekopiruj jen povrchovou formulaci. Zachyt mechaniku, rozhodovaci body a kontrolni kroky tak, aby se to dalo pouzit priste bez zbytecne improvizace.
+Analyze this material or goal: `$ARGUMENTS`
 
-## Cile
+Extract the repeatable operating method behind a good result. Do not copy phrasing from the source material. Preserve the mechanism, judgment, and checks, then express them as a clean reusable workflow.
 
-- pojmenovat, co na postupu skutecne fungovalo
-- oddelit podstatu od nahodnych detailu konkretni session
-- prevest to na pouzitelny vystup pro dalsi opakovani
-- vypsat, kdy se to ma pouzit a kdy ne
+## What to inspect
 
-## Vstupy
+Use any available inputs:
 
-Pracuj s tim, co je k dispozici:
+- The final output the user liked.
+- The original brief or prompt.
+- Session notes, decisions, or attempts.
+- A weaker output for contrast.
+- The target environment where the method will be reused.
+- Constraints such as tone, tools, file structure, safety rules, cost, or audience.
 
-- finalni vysledek
-- puvodni zadani
-- rozhodnuti v session
-- chyby, kterym se postup vyhnul
-- slabsi predchozi pokusy, pokud existuji
+If important inputs are missing, infer cautiously and label assumptions.
 
-Kdyz neco chybi, oznac predpoklad. Nevymejslej historii, ktera neexistuje.
+## Capture process
 
-## Postup
+### 1. Name the real win
 
-1. Pojmenuj, co bylo skutecne uzitecne.
-2. Sepis rozhodovaci logiku a poradi kroku.
-3. Odfiltruj jednorazove detaily, ktere nepatri do obecneho postupu.
-4. Vyber nejvhodnejsi vystup:
-   - skill
-   - checklist
-   - SOP
-   - task prompt
-   - review rubrika
-5. Pridat aktivacni pravidla:
-   - kdy pouzit
-   - kdy nepouzit
-   - jaky vstup zlepsi vysledek
-6. Pridat quality gate:
-   - co musi byt splneno
-   - kde to typicky selze
-   - jak overit, ze je postup pouzitelny
+Identify what made the result better:
 
-## Pravidla
+- Accuracy, completeness, speed, originality, structure, tone, design taste, risk control, evidence quality, or practical usefulness.
+- Which qualities must be preserved in future outputs?
+- Which parts are surface style and which parts are the underlying method?
 
-- Neopisuj slepe konkretni wording ze session.
-- Uloz princip, ne ukecany prepis.
-- Kdyz je vystup skill, drzej ho kratky a spustitelny.
-- Kdyz jde jen o jednorazovy trik bez opakovane hodnoty, rekni to a nedel z toho zbytecne skill.
+### 2. Reconstruct the hidden workflow
 
-## Vystupni format
+Infer the repeatable steps:
 
-### Captured method
+- How the target was scoped.
+- What evidence or context was required.
+- Which constraints shaped the result.
+- Which checks prevented weak output.
+- What judgment calls improved the final quality.
+- Which shortcuts are safe and which are dangerous.
 
-- **Co fungovalo:**
-- **Klicove kroky:**
-- **Rozhodovaci body:**
-- **Kdy to pouzit:**
-- **Kdy to nepouzit:**
-- **Rizika / failure modes:**
-- **Jak overit pouzitelnost:**
+### 3. Define activation rules
 
-### Reusable artifact
+Specify:
 
-Vytvor jeden konkretni vystup:
+- When the method should run automatically.
+- When the user should invoke it manually.
+- When it should not be used.
+- What inputs improve performance.
 
-- skill draft
-- checklist
-- SOP
-- task prompt
-- review rubrika
+### 4. Package the method
 
-Vyber jen jeden hlavni format. Kdyz je potreba, kratce rekni proc.
+Create the most useful reusable artifact:
+
+- Claude Code `SKILL.md`
+- Claude app slash command prompt
+- Subagent prompt
+- Checklist
+- Review rubric
+- Evaluation prompt
+- Team SOP
+
+Use original wording. Do not preserve source-specific names unless they are necessary for the user's workflow.
+
+### 5. Add quality controls
+
+Include:
+
+- Acceptance criteria.
+- Failure modes.
+- Required evidence.
+- Verification steps.
+- One stress-test prompt.
+- One example invocation.
+
+## Output format
+
+Return:
+
+1. **Extracted method**
+2. **When to use it**
+3. **Reusable artifact**
+4. **Acceptance criteria**
+5. **Failure modes**
+6. **Verification / evaluation prompt**
+7. **Example invocation**

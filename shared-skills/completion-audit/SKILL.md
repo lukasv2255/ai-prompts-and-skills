@@ -1,63 +1,84 @@
 ---
 name: completion-audit
-description: Over, jestli je prace opravdu hotova a pripravena k odevzdani, merge nebo deployi. Pouzij kdyz uzivatel rika "zkontroluj, jestli je to hotove", "muze to do produkce", "je to pripraveny pro klienta", "udelej finalni check", nebo po vetsim zasahu do kodu, dat nebo konfigurace.
+description: Independently verify whether an answer, implementation, file, plan, or generated artifact is actually complete. Use before claiming that work is done or when quality matters.
 ---
 
 # Completion Audit
 
-Audituj vysledek skepticky, ale vecne. Neber dokoncenost na slovo. Over, co se opravdu zmenilo a co je skutecne potvrzene.
+Audit this claim, result, or deliverable: `$ARGUMENTS`
 
-## Co kontrolovat
+Do not accept completion at face value. Verify against the original requirement, available evidence, and the strongest checks you can run.
 
-### 1. Shoda se zadanim
+## Audit stance
 
-- je splneno puvodni zadani
-- jsou pritomne vsechny pozadovane vystupy
-- nebyl potichu rozsiren nebo zmenen scope
+- Be fair, but skeptical.
+- Look for missing requirements, fragile assumptions, silent failures, and untested claims.
+- Prefer direct evidence over confidence.
+- If you cannot check something, say so clearly.
+- Do not rewrite the work unless a narrow fix is obvious and safe; otherwise report the issue and recommended correction.
 
-### 2. Dukazy
+## Audit checklist
 
-- existuji zmenene soubory
-- sedi cesty, nazvy a artefakty
-- tvrzeni v odpovedi odpovidaji tomu, co je v souborech nebo vystupech
+### Requirements match
 
-### 3. Overeni
+- What did the user actually ask for?
+- Are all requested outputs present?
+- Are format, language, tone, file type, and constraints satisfied?
+- Are there hidden dependencies or missing inputs?
 
-Pro kod a data kontroluj:
+### Evidence check
 
-- testy
-- build
-- lint
-- typecheck
-- prikazy
-- sample input/output
-- realne chovani po zmene
+- What files, sources, logs, screenshots, tests, docs, or outputs support the result?
+- Are referenced paths and artifacts real?
+- Are current facts verified when freshness matters?
+- Are assumptions labeled?
 
-Kdyz neco nejde overit, rekni to presne.
+### Technical verification
 
-### 4. Rizika
+For code or data work, run or inspect the best available checks:
 
-Hledej:
+- Tests, build, typecheck, lint, formatting.
+- Relevant commands and sample inputs.
+- File diffs and generated outputs.
+- Edge cases, error handling, migrations, config, environment assumptions.
 
-- neoverene domnenky
-- chybejici krok v deployi nebo migraci
-- zmenu popsanych oprav, ktere nejsou opravdu zapsane
-- vedlejsi efekty
-- bezpecnostni nebo datove riziko
+### Content verification
 
-## Vystupni format
+For writing, strategy, research, design, or prompts, check:
 
-### Audit verdict
+- Specificity and usefulness.
+- Internal consistency.
+- Audience fit.
+- Unsupported claims.
+- Missing caveats.
+- Practical next steps.
+- Whether the output is reusable without extra explanation.
 
-- **Verdict:** verified / partly verified / not verified
-- **Pokryti zadani:**
-- **Co bylo overeno:**
-- **Co se nepodarilo overit:**
-- **Problemy:**
-- **Dalsi nutny krok:**
+### Risk check
 
-## Pravidla
+Look for:
 
-- Kdyz je to v poradku, rekni to jasne.
-- Kdyz neco chybi, rekni presne co.
-- Neopravuj siroce. Audit ma primarne hodnotit, ne prepisovat pul projektu.
+- Security or privacy leaks.
+- Overbroad edits.
+- Broken compatibility.
+- Hallucinated facts or fake sources.
+- Legal/financial/medical overclaiming.
+- Brand or reputation risk.
+
+## Verdict scale
+
+- **verified** — requirements are met and key checks passed.
+- **partly verified** — usable, but some important checks are missing or risks remain.
+- **not verified** — evidence is insufficient, checks failed, or requirements are materially unmet.
+
+## Output format
+
+Return:
+
+- **Verdict**
+- **Requirement coverage**
+- **Evidence inspected**
+- **Checks run**
+- **Issues found**
+- **Unverified areas**
+- **Recommended fix or next check**

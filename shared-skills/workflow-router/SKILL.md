@@ -26,7 +26,6 @@ Pouzij pro nejasne, rizikove nebo vetsi ukoly.
 - `brief-builder`: prevod vagnich poznamek na pracovni brief
 - `task-router`: volba workflow podle rizika, ceny a slozitosti
 - `precision-mode`: target lock, evidence, pressure test, proof
-- `test-plan`: rozhodni CO a JAK testovat (matice vrstva→nastroj) jeste pred psanim testu
 - `agent-chain`: navrh viceagentoveho workflow
 - `completion-audit`: overeni, ze je prace opravdu hotova
 - `method-capture`: prevod dobreho postupu do reusable skillu
@@ -52,7 +51,6 @@ Pouzij kdyz system sbira, presouva nebo zobrazuje data.
 
 - `db-migrate`
 - `frontend-live-dashboard`
-- `railway-db`
 - `git-data-sync`
 
 ### 5. Deploy, provoz a runtime problemy
@@ -64,7 +62,6 @@ Pouzij pri nasazeni, redeployi, runtime chybach a dlouho bezicich procesech.
 - `debug-railway-env`
 - `launchd-agent`
 - `tray-app`
-- `tray-start`
 
 ### 6. Kanaly, notifikace a komunikace
 
@@ -84,12 +81,8 @@ Pouzij pro ingest obsahu, RAG a pripravu AI znalostni vrstvy.
 
 Pouzij kdyz je potreba push, pull nebo synchronizace pracovniho prostredi.
 
-- `git-push`
-- `git-push-pull`
-- `sync-pull-mac`
-- `sync-pull-pc`
-- `sync-push-mac`
-- `sync-push-pc`
+- `sync-pull`
+- `sync-push`
 
 ### 9. Marketing a launch
 
@@ -146,25 +139,9 @@ Pouzij:
 
 1. `precision-mode`
 2. pokud jde o Railway nebo env problemy -> `debug-railway-env`
-3. pokud jde o DB -> `railway-db` nebo `db-migrate`
+3. pokud jde o DB -> `db-migrate`
 4. po oprave `code-review`
 5. pred releasem `completion-audit`
-
-### Kdyz uzivatel testuje slozitejsi implementaci
-
-Pouzij, kdyz featura saha na vic vrstev (LLM vystup, DB/side-efekty, invarianty):
-
-1. `test-plan` — rozloz zmenu na vrstvy a priraď nastroj (matice), jeste NEZ piseš testy
-2. deterministicke vrstvy -> unit testy (assert)
-3. LLM vystup -> `responder-llm-judge` (gating regex + advisory judge, zkalibruj drive nez verim)
-4. side-efekty a invarianty -> spy + mock nad realnym call-site
-5. `completion-audit`, kdyz ma vystup jit do produkce nebo klientovi
-
-Pozor na:
-
-- `assert` na LLM vystup (flaky) a LLM judge na to, co umi regex (drahe, sumi)
-- idempotenci testovat tam, kde guard fyzicky zije (casto v callerovi, ne ve funkci)
-- testy zelene jednotlive, ale cervene naraz -> nepokryta izolace (globalni stav)
 
 ### Kdyz uzivatel deployuje
 
@@ -192,10 +169,9 @@ Pouzij:
 
 1. `brief-builder`
 2. `railway-collector-app`
-3. `railway-db`
-4. `frontend-live-dashboard`
-5. `db-migrate` nebo `git-data-sync`, pokud je potreba presun nebo zaloha dat
-6. `security-review` pred nasazenim
+3. `frontend-live-dashboard`
+4. `db-migrate` nebo `git-data-sync`, pokud je potreba presun nebo zaloha dat
+5. `security-review` pred nasazenim
 
 ## Projektove mapy
 
@@ -241,11 +217,10 @@ Typicke workflow:
 
 1. `brief-builder`
 2. `railway-collector-app` nebo `fastapi-ingest-api`
-3. `railway-db`
-4. `frontend-live-dashboard`
-5. `db-migrate`
-6. `security-review`
-7. `railway-deploy` nebo `railway-redeploy`
+3. `frontend-live-dashboard`
+4. `db-migrate`
+5. `security-review`
+6. `railway-deploy` nebo `railway-redeploy`
 
 Pouzij ve fazich:
 
