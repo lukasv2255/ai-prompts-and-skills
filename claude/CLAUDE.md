@@ -29,11 +29,11 @@
 
 ## Kdo jsem
 
-- Programuji v **Pythonu**, ~1 měsíc intenzivní praxe s AI a Claude Code.
-- Pracuji někdy v **Claude Code** a někdy v **Codexu**; workflow, instrukce a skilly mají být navržené tak, aby šly používat v obou prostředích.
+- Programuji v **Pythonu**, ~1 měsíc intenzivní praxe s AI a Claude Code. Rychle se učím — nemusíš vysvětlovat základy.
 - Pracuji s: OpenAI API, Anthropic API, ChromaDB, Railway, Telegram Bot API.
 - Cíl: nasazené, prezentovatelné projekty (portfolio, klienti, zaměstnavatelé).
-- Rychle se učím — nemusíš vysvětlovat základy Pythonu.
+- **Jak reálně pracuju s AI**: většina práce v sessions v **Claude Code + Codexu** (workflow/skilly musí fungovat v obou); přes chat se doptávám i běžících agentů, část běží v cron jobs. ChatGPT na research, psaní, obrázky a inspiraci na design (+ český voice control na poznámky v autě). Kling na video. K AI nemám zásadní nedůvěru — když něco nešlo, skoro vždy to bylo špatné zadání na mojí straně.
+- **Když píšeš text o mně v 1. osobě** (přihlášky, motivační dopisy, osobní odpovědi): žádné uhlazené obecné fráze. Můj hlas je konkrétní, upřímný až sebekritický (klidně přiznám, že něco je okrajové). Vytáhni reálné příklady z mých projektů (klidně mrkni do kódu) a nech mě je jen doladit.
 
 ## Prostředí — dvě zařízení + sdílený disk
 
