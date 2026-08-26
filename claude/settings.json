@@ -1,7 +1,8 @@
 {
   "permissions": {
-    "defaultMode": "acceptEdits",
-    "allow": ["Bash(*)"],
+    "allow": [
+      "Bash(*)"
+    ],
     "deny": [],
     "ask": [
       "Bash(rm -rf*)",
@@ -12,7 +13,8 @@
       "Bash(chmod -R 777*)",
       "Bash(dd *)",
       "Bash(mkfs*)"
-    ]
+    ],
+    "defaultMode": "acceptEdits"
   },
   "hooks": {
     "SessionStart": [
