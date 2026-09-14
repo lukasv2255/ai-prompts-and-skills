@@ -11,6 +11,7 @@
 - Pokud je zpráva **oznamovací věta** (nekončí `?`) — ber ji primárně jako dotaz na **stav / analýzu**. Nic neprováděj automaticky; maximálně navrhni další krok a zeptej se na explicitní pokyn.
 - Buď stručný — jeden správný příklad je lepší než tři alternativy.
 - **Nikdy nenabízej příkazy k vyzkoušení** — vždy je proveď sám (Bash, curl, grep...) a reportuj výsledek. Místo "zkus: curl ..." rovnou curl spusť.
+- **Vždy se nejdřív pokus věc vyřešit sám** — stáhnout soubor, nainstalovat balíček, spustit příkaz, dohledat dokument. Nikdy neříkej "stáhni to a napiš stazeno", "nainstaluj X a dej vědět", "udělej to ručně a pak pokračuju". Zkus všechny cesty, které máš k dispozici (Bash, API, MCP, curl, alternativní zdroj), a teprve když opravdu žádná nefunguje, řekni **proč** to nejde a co konkrétně potřebuješ — jednou, stručně, ne jako výchozí postup.
 - Vysvětluj **proč**, nejen co — cílem je pochopení, ne jen funkční kód.
 - Když si nejsi jistý, řekni to — nehavluj.
 - **Dělej přesně to co je napsáno** — nepřidávej novou logiku, moduly ani kód pokud o tom není explicitní zmínka. "Přidej panel" = přidej panel, ne nový backend modul.
@@ -22,10 +23,30 @@
 ## Vizuální kontroly a UI
 
 - **Kdykoliv chci vidět, jak vypadá webová stránka / UI**, vždy mi dej funkční klikací odkaz na `http://localhost:<port>`. Když server neběží, sám ho spusť (nebo naserviruj statický build na volném portu) a teprve pak pošli odkaz.
+- **Statický HTML náhled servíruj vždy přes `~/ai-prompts-and-skills/shared-skills/_shared/serve.sh <složka> [soubor]`, ne ručním `python3 -m http.server`.** Skript drží pravidlo *jedna složka = jeden stálý port* a běžící server pro tutéž složku znovupoužije, takže regenerace neplodí nový port a nehromadí se duplicitní servery. Vypíše hotovou URL — tu pošli. (Dev servery s vlastním workflow — vite, uvicorn… — spouštěj dál po svém.)
 - **Nikdy** mě neodkazuj na soubor na disku ani `file://` — vždy localhost.
 - **Nedávej odkazy, které se otevírají v preview panelu.** Vždy naserviruj na localhostu jako reálný server, ať se odkaz otevře jako nové okno prohlížeče. Žádné `mcp__*_preview` ani embedded preview odkazy.
 - **Nedělej žádné vizuální kontroly sám** (Playwright, screenshoty, preview snapshoty), pokud o to výslovně nepožádám. Stačí spustit server na localhostu a poslat mi odkaz — vizuální kontrolu si udělám já.
 - Když řešíme **obrázky, videa nebo vizuální změny v UI** — vždy automaticky přidej odkaz kde lze výsledek vidět (např. `http://localhost:3000`). Neptej se, rovnou přidej.
+
+## Web buildai.cz — kam jdou HTML ze všech projektů
+
+**Jeden web pro všechny projekty.** Pracuju vždy stejně: nejdřív edituju a generuju
+HTML v adresáři konkrétního projektu, a teprve hotovou verzi vystavím na web.
+
+- **Defaultní web:** `~/Můj disk/AI-brand/AI-brand-me/web/site/`. Sem se kopírují hotová
+  HTML ze všech projektů jako `<projekt>.html`.
+- **Adresa:** `buildai.cz/<projekt>` (bez přípony). `web/site/springwalk.html`
+  je `buildai.cz/springwalk`. Název souboru určuje adresu, nepřejmenovávat.
+- **Nasazení:** z `web/site/` přes Railway (vlastní `Dockerfile` a `railway.json`),
+  spouští se pushem na `main`, naběhne do půl minuty. Ručně žádný `railway up`.
+- **Zdroj a web jsou dva různé soubory.** Report v adresáři projektu a jeho verze
+  v `web/site/` se rozcházejí. Když říkám „na webu to není", znamená to skoro vždy tohle.
+- **Když řeknu „dej to na web" nebo „commit a push na web"** → spusť skill **`na-web`**,
+  ten zvládne porovnání verzí, kontrolu osobních údajů, anonymizaci, push i ověření.
+- **Web je veřejný.** Osobní údaje klientů a jejich zákazníků (jména, adresy, kontakty,
+  spisové značky, čísla účtů, částky, názvy protistran, screenshoty z cizích systémů)
+  se před vystavením anonymizují. Plná verze zůstává v repu, ten je privátní.
 
 ## Kdo jsem
 

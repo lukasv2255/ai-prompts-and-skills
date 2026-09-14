@@ -1,0 +1,17 @@
+/* Brand kit: ai-brand (výchozí) — editorial paleta z projektu AI-brand.
+   Přepínač: skill vloží obsah tohoto souboru mezi značky BRAND:START / BRAND:END
+   v template.html. Nová značka = nový soubor brands/<slug>.css se stejnými proměnnými. */
+:root{
+  --bg:#F5F0E8;
+  --surface:#FBF8F2;
+  --text:#121212;
+  --muted:#4B4B4B;
+  --primary:#1A4D2E;
+  --accent:#D4A574;
+  --border:#E5E0D8;
+  --sidebar:#14351F;
+  --sidebar-text:#EDE7DB;
+  --font-head:'DM Serif Display',Georgia,serif;
+  --font-body:'Outfit',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}

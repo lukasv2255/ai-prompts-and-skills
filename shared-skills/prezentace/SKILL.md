@@ -35,8 +35,13 @@ Není to dokument ani deck s 12 slajdy. Je to **plakát s argumentem**.
    ```
    Když je web JS-renderovaný (Wix, Webflow), vytáhni tokeny přes Playwright
    `getComputedStyle` nad viditelnými elementy.
-6. **Servíruj na localhostu** (`python3 -m http.server <port>`, port mimo 8080–8089),
-   pošli klikací odkaz. Nikdy `file://`, nikdy preview panel.
+6. **Servíruj na localhostu** přes sdílený skript — jedna složka = jeden stálý
+   port a běžící server se znovupoužije, takže regenerace neplodí nový port:
+   ```bash
+   ~/ai-prompts-and-skills/shared-skills/_shared/serve.sh <složka> prezentace.html
+   ```
+   Skript vypíše hotovou URL — tu pošli. Nikdy `file://`, nikdy preview panel,
+   nikdy `python3 -m http.server` ručně (nechává za sebou duplicitní servery).
 7. **Print styl** pro export do PDF přes Cmd+P: `@page{size:landscape}` +
    `print-color-adjust:exact` na barevné plochy.
 

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{TITLE}}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+/* BRAND:START — nahraď obsahem brands/<slug>.css */
+:root{
+  --bg:#F5F0E8; --surface:#FBF8F2; --text:#121212; --muted:#4B4B4B;
+  --primary:#1A4D2E; --accent:#D4A574; --border:#E5E0D8; --sidebar:#14351F;
+  --sidebar-text:#EDE7DB;
+  --font-head:'DM Serif Display',Georgia,serif;
+  --font-body:'Outfit',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+/* BRAND:END */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:var(--font-body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+
+/* layout */
+.shell{display:grid;grid-template-columns:264px 1fr;min-height:100vh}
+aside{position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;
+  background:var(--sidebar);color:var(--sidebar-text);padding:34px 26px}
+main{max-width:760px;padding:56px 48px 120px}
+
+/* sidebar */
+aside .kicker{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;opacity:.55;margin:0 0 6px}
+aside h1{font-family:var(--font-head);font-weight:400;font-size:1.5rem;line-height:1.2;margin:0 0 6px}
+aside .meta{font-size:.82rem;opacity:.6;margin:0 0 30px}
+nav a{display:flex;align-items:baseline;gap:10px;color:var(--sidebar-text);text-decoration:none;
+  font-size:.95rem;padding:7px 0;opacity:.72;border:0;transition:opacity .15s}
+nav a .n{font-family:var(--font-mono);font-size:.72rem;opacity:.5;width:16px}
+nav a:hover{opacity:1}
+nav a.active{opacity:1;font-weight:500;color:#fff}
+nav a.active .n{color:var(--accent);opacity:1}
+
+/* content: prezentační režim, vidět je vždy jen jedna sekce */
+section{display:none;margin-bottom:40px}
+section.on{display:block}
+
+/* přepínání dopředu/dozadu pod obsahem */
+.steps{display:flex;gap:10px;align-items:center;margin-top:36px;padding-top:18px;
+  border-top:1px solid var(--border)}
+.steps button{font:inherit;font-size:.85rem;font-weight:600;cursor:pointer;border:0;
+  background:var(--sidebar);color:var(--sidebar-text);padding:8px 14px;border-radius:4px}
+.steps button:hover{background:var(--primary);color:#fff}
+.steps button[disabled]{opacity:.32;cursor:default}
+.steps .pos{margin-left:auto;color:var(--muted);font-size:.82rem;font-variant-numeric:tabular-nums}
+h2{font-family:var(--font-head);font-weight:400;font-size:1.7rem;line-height:1.15;margin:0 0 14px}
+.lead{font-size:1.02rem;font-weight:500;margin:0 0 16px}
+h3{font-size:1.05rem;font-weight:600;color:var(--primary);margin:26px 0 10px}
+p{margin:0 0 12px}
+ul{margin:0 0 14px;padding-left:20px}li{margin-bottom:5px}
+ol{margin:0 0 14px;padding-left:20px}
+strong{font-weight:600}
+em{color:var(--muted);font-style:italic}
+
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 8px}
+.chip{font-size:.78rem;padding:3px 11px;border-radius:2px;border:1px solid var(--border);
+  background:var(--surface);white-space:nowrap}
+.chip b{font-weight:600}
+
+/* table */
+.tablewrap{overflow-x:auto;margin:0 0 14px;border:1px solid var(--border);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{text-align:left;padding:9px 13px;border-bottom:1px solid var(--border);vertical-align:top}
+th{background:var(--bg);font-weight:600;white-space:nowrap;font-size:.82rem}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600}
+
+/* callout (bez očního pruhu) */
+.note{border:1px solid var(--border);background:var(--surface);padding:12px 16px;margin:0 0 14px;font-size:.94rem}
+.note b{color:var(--primary)}
+code{font-family:var(--font-mono);font-size:.85em;background:var(--surface);
+  border:1px solid var(--border);border-radius:3px;padding:1px 4px}
+
+/* technicka roleta, sbalena defaultne */
+details.tech{border:1px solid var(--border);background:var(--surface);margin:2px 0 14px}
+details.tech>summary{cursor:pointer;list-style:none;padding:9px 14px;font-size:.82rem;
+  letter-spacing:.04em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px;user-select:none}
+details.tech>summary::-webkit-details-marker{display:none}
+details.tech>summary::before{content:"+";font-family:var(--font-mono);color:var(--accent);font-size:1rem;line-height:1}
+details.tech[open]>summary::before{content:"\2212"}
+details.tech[open]>summary{border-bottom:1px solid var(--border)}
+details.tech .body{padding:12px 14px 2px;font-size:.9rem}
+details.tech .body p:last-child,details.tech .body ul:last-child{margin-bottom:10px}
+
+@media(max-width:820px){
+  .shell{grid-template-columns:1fr}
+  aside{position:static;height:auto;overflow:visible;padding:22px 20px}
+  aside .meta{margin-bottom:16px}
+  nav{display:flex;flex-wrap:wrap;gap:2px 16px}
+  nav a{padding:4px 0}
+  main{padding:32px 20px 80px}
+}
+@media print{
+  @page{margin:14mm}
+  .shell{display:block}
+  aside{position:static;height:auto;background:none;color:var(--text);padding:0 0 20px;
+    border-bottom:2px solid var(--primary)}
+  nav{display:none} main{max-width:none;padding:20px 0}
+  /* do tisku jde celý report, ne jen otevřená sekce */
+  section{display:block!important;page-break-inside:avoid;padding-top:22px;
+    border-top:1px solid var(--border)}
+  section:first-of-type{border-top:0;padding-top:0}
+  details.tech{page-break-inside:avoid} .steps{display:none}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<aside>
+  <p class="kicker">Report</p>
+  <h1>{{DOC_TITLE}}</h1>
+  <p class="meta">{{META}}</p>
+  <nav id="nav">
+    {{NAV}}
+  </nav>
+</aside>
+
+<main>
+{{SECTIONS}}
+
+<div class="steps">
+  <button id="prev">&larr; Zpět</button>
+  <button id="next">Dál &rarr;</button>
+  <span class="pos" id="pos"></span>
+</div>
+</main>
+</div>
+
+<script>
+// prezentační režim: vidět je vždy jen jedna sekce, přepíná se navigací nebo šipkami
+const links = [...document.querySelectorAll('#nav a')];
+const sections = [...document.querySelectorAll('main section')];
+const ids = sections.map(s => s.id);
+const prev = document.getElementById('prev');
+const next = document.getElementById('next');
+const pos = document.getElementById('pos');
+let i = 0;
+
+function go(n, scroll = true) {
+  i = Math.max(0, Math.min(sections.length - 1, n));
+  sections.forEach((s, k) => s.classList.toggle('on', k === i));
+  links.forEach((a) => a.classList.toggle('active',
+    a.getAttribute('href').slice(1) === ids[i]));
+  pos.textContent = (i + 1) + ' / ' + sections.length;
+  prev.disabled = i === 0;
+  next.disabled = i === sections.length - 1;
+  history.replaceState(null, '', '#' + ids[i]);
+  if (scroll) {
+    // na uzke obrazovce je navigace nad obsahem: skoc na zacatek textu, ne na vrchol stranky
+    const m = document.querySelector('main');
+    const uzke = window.matchMedia('(max-width:820px)').matches;
+    window.scrollTo(0, uzke && m ? m.getBoundingClientRect().top + window.scrollY : 0);
+  }
+}
+
+// navigace i odkazy uvnitř textu (např. "viz Krok 0") přepínají sekci
+document.addEventListener('click', (e) => {
+  const a = e.target.closest('a[href^="#"]');
+  if (!a) return;
+  const k = ids.indexOf(a.getAttribute('href').slice(1));
+  if (k === -1) return;
+  e.preventDefault();
+  go(k);
+});
+prev.onclick = () => go(i - 1);
+next.onclick = () => go(i + 1);
+document.addEventListener('keydown', (e) => {
+  if (e.target.closest('input, textarea')) return;
+  if (['ArrowRight', 'PageDown'].includes(e.key)) { e.preventDefault(); go(i + 1); }
+  if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); go(i - 1); }
+});
+
+go(Math.max(0, ids.indexOf(location.hash.slice(1))), false);
+</script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+/* Brand kit: springwalk — paleta advokátní kanceláře Spring Walk.
+   Zdroj barev: springwalk.cz (style.min.css) + logo, viz
+   AI-brand/AI-brand-me/job-springwalk/brand-kit/barvy.md.
+   Logo je dvojbarevné: oranžový blok #DE492A + námořní modrý blok #193A5C. */
+:root{
+  --bg:#f6f6f6;
+  --surface:#ffffff;
+  --text:#323543;
+  --muted:#7a7c85;
+  --primary:#de492a;
+  --accent:#94a3b3;
+  --border:#e5e7ec;
+  --sidebar:#193a5c;
+  --sidebar-text:#e8ecf2;
+  --font-head:'Montserrat',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
+  --font-body:'Nunito Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
