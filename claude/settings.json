@@ -14,7 +14,7 @@
       "Bash(dd *)",
       "Bash(mkfs*)"
     ],
-    "defaultMode": "acceptEdits"
+    "defaultMode": "bypassPermissions"
   },
   "hooks": {
     "SessionStart": [
@@ -81,5 +81,8 @@
         ]
       }
     ]
-  }
+  },
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "light",
+  "agentPushNotifEnabled": true
 }
