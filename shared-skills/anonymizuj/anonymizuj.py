@@ -42,6 +42,22 @@ def varianty(puvodni: str, nahrada: str):
     return {(p, n) for p, n in dvojice if p}
 
 
+def na_hranici(klic: str) -> str:
+    """Obali klic hranici slova, aby se netrefil doprostred jineho slova.
+
+    Bez toho udela zaznam "Hruba" -> "Simkova" ze slova "zhruba" nesmysl
+    "zsimkova". Hranice se pridava jen na tu stranu, kde klic zacina nebo
+    konci pismenem ci cislici — u klice "CentroFinance, s.r.o." by jinak
+    tecka na konci hranici nikdy nesplnila.
+    """
+    vzor = re.escape(klic)
+    if klic[:1].isalnum():
+        vzor = r"(?<!\w)" + vzor
+    if klic[-1:].isalnum():
+        vzor = vzor + r"(?!\w)"
+    return vzor
+
+
 def nahrad(text: str, mapa: dict) -> str:
     """Jeden pruchod pres vsechny klice naraz — nahrazeny text uz se znovu nemapuje."""
     tabulka = {}
@@ -50,7 +66,7 @@ def nahrad(text: str, mapa: dict) -> str:
             tabulka.setdefault(p, n)
     if tabulka:
         klice = sorted(tabulka, key=len, reverse=True)   # delsi tvar vyhrava
-        vzor = re.compile("|".join(re.escape(k) for k in klice))
+        vzor = re.compile("|".join(na_hranici(k) for k in klice))
         text = vzor.sub(lambda m: tabulka[m.group(0)], text)
     for vzor, nahrada in mapa.get("regex", []):
         text = re.sub(vzor, nahrada, text)
@@ -62,7 +78,8 @@ def zkontroluj(text: str, mapa: dict):
     zbylo = []
     for puvodni, nahrada in mapa.get("nahradit", {}).items():
         for p, _ in varianty(puvodni, nahrada):
-            if p and p in text:
+            # tataz hranice jako pri nahrazovani, jinak by "zhruba" hlasilo "hruba"
+            if p and re.search(na_hranici(p), text):
                 zbylo.append(p)
     povolene = [re.compile(v) for v in mapa.get("povolene", [])]
     for vzor in mapa.get("zakazane", []):

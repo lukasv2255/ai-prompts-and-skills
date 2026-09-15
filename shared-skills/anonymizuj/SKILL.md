@@ -134,8 +134,10 @@ se vedle mapy držet malý skript, který zavolá engine a doplní poznámku a `
 
 - **Nespoléhej na `grep` s velkým písmenem jako na důkaz čistoty.** To je přesně
   ta chyba, kvůli které tenhle skill vznikl.
-- **Nenahrazuj krátké řetězce bez kontroly.** Klíč `Beta` nebo `AK` se trefí i
-  doprostřed nesouvisejících slov. Raději delší tvar, nebo regex s hranicí slova.
+- **Hlídej krátké klíče uvnitř jiných slov.** Engine nahrazuje jen na hranici slova,
+  takže `Hrubá` už neudělá z „zhruba" nesmysl „zsimkova" — ale hranice nepomůže, když
+  je klíč sám celým slovem v jiném významu (`Beta`, `Novák` jako obecné jméno, zkratka
+  `AK`). Takové klíče projdi po nahrazení očima, nebo použij delší tvar.
 - **Nepřepisuj zdroj.** Anonymizuje se do kopie.
 - **Neanonymizuj do ztráty smyslu.** Když dokument po zásahu neukazuje, co uměl
   ukázat, je lepší ho nevystavovat vůbec než vystavit prázdný.
