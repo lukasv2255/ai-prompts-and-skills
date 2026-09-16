@@ -139,6 +139,5 @@ do `<details class="tech">` — sbalené defaultně, **přímo v sekci, kam pat�
 
 ## Reference
 
-Vzorová hotová instance layoutu: `job-springwalk/report-tomas-v2-mockup.html`
-(projekt AI-brand). Pravidla vznikla tamtéž; `job-springwalk/report-skill-pravidla.md`
-je jejich zrcadlo pro čtení v kontextu projektu, zdroj pravdy je tenhle soubor.
+Vzorová hotová instance layoutu: `job-springwalk/docs/reporty/report-tomas-v2-mockup.html`
+(projekt AI-brand). Pravidla vznikla tamtéž, zdroj pravdy je tenhle soubor.
