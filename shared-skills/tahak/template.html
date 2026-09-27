@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITUL}}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F5F0E8; --surface:#FBF8F2; --text:#121212; --muted:#4B4B4B;
+    --primary:#1A4D2E; --accent:#D4A574; --border:#E5E0D8;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font-family:Outfit,system-ui,sans-serif;font-weight:300;line-height:1.6}
+  .wrap{max-width:960px;margin:0 auto;padding:48px 24px 96px}
+  h1{font-family:'DM Serif Display',Georgia,serif;font-weight:400;
+     font-size:44px;line-height:1.1;margin:0 0 8px}
+  code{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.88em}
+  h2{font-family:'DM Serif Display',Georgia,serif;font-weight:400;
+     font-size:28px;margin:48px 0 4px}
+  h2:first-of-type{margin-top:0}
+  .who{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted);margin:0 0 40px}
+
+  .kpi{border:1px solid var(--border);background:var(--surface);
+       padding:22px 24px;margin-top:16px;display:grid;
+       grid-template-columns:52px 1fr;gap:0 20px;align-items:start}
+  .kpi .num{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:700;
+            color:var(--accent);line-height:1.1}
+  .kpi .what{font-size:19px;font-weight:600;margin:0;line-height:1.35}
+
+  details{border:1px solid var(--border);background:var(--bg);margin-top:14px}
+  summary{cursor:pointer;padding:10px 16px;font-size:14px;color:var(--muted);
+          font-family:'JetBrains Mono',monospace;list-style:none}
+  summary::-webkit-details-marker{display:none}
+  summary::before{content:'▸ ';color:var(--accent)}
+  details[open] summary::before{content:'▾ '}
+  details ul{margin:0;padding:0 16px 14px 36px;font-size:16px}
+  details li{margin:0 0 6px}
+  details li b{font-weight:600}
+  details .empty{margin:0;padding:0 16px 14px;font-size:15px;color:#B0A796}
+
+  @media (max-width:640px){
+    .wrap{padding:32px 16px 64px}
+    h1{font-size:34px}
+    .kpi{grid-template-columns:1fr;padding:18px 16px}
+    .kpi .num{margin-bottom:6px}
+  }
+  @media print{ details > *{display:block} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>{{TITUL}}</h1>
+<p class="who">{{UCASTNICI}}</p>
+
+<!-- Tři sekce. Úvod a Průběžně mají kartu s pomlčkou místo čísla,
+     v Závěru jsou číslované body od 1. Prázdnou sekci smaž celou. -->
+<h2>Úvod</h2>
+<div class="kpi">
+  <div class="num">—</div>
+  <div>
+    <p class="what">{{UVOD}}</p>
+    <details>
+      <summary>Podrobnosti</summary>
+      <p class="empty">Zatím nic.</p>
+    </details>
+  </div>
+</div>
+
+<h2>Průběžně</h2>
+<div class="kpi">
+  <div class="num">—</div>
+  <div>
+    <p class="what">{{PRUBEZNE}}</p>
+    <details>
+      <summary>Podrobnosti</summary>
+      <p class="empty">Zatím nic.</p>
+    </details>
+  </div>
+</div>
+
+<h2>Závěr</h2>
+<div class="kpi">
+  <div class="num">1</div>
+  <div>
+    <p class="what">{{BOD}}</p>
+    <details>
+      <summary>Podrobnosti</summary>
+      <p class="empty">Zatím nic.</p>
+    </details>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

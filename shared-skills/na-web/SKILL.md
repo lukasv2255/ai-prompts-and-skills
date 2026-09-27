@@ -3,7 +3,8 @@ name: na-web
 description: >
   Vystaví hotový HTML dokument z projektového adresáře na web buildai.cz. Zkopíruje
   ho do `web/site/hosted/<projekt>.html`, prověří osobní údaje a nabídne anonymizaci,
-  commitne, pushne a počká, až je stránka živá.
+  **sám doladí stránku pro čtení na telefonu**, commitne, pushne a počká, až je
+  stránka živá.
 
   Použij kdykoliv uživatel říká:
   - "dej to na web"
@@ -81,16 +82,60 @@ konkrétní datum za měsíc. Do dokumentu přidej callout, že jde o anonymizov
 
 Plná verze zůstává ve zdrojovém adresáři v repu (ten je privátní).
 
-### 3. Zkontroluj mobil
+### 3. Dolaď na mobil — sám, bez ptaní
 
-Report se čte na telefonu. Než to pustíš ven, ověř v CSS:
+Většina těchhle stránek se čte na telefonu. **Tohle nekontroluj a nehlas jako nález —
+rovnou to oprav.** Ptát se má smysl jen tehdy, když by oprava změnila vzhled na
+desktopu nebo sáhla do obsahu.
 
-- `meta viewport` je na místě,
-- navigace na mobilu nepoužívá `flex-wrap` nad blokovými skupinami (rozbije je, ony se
-  stanou jedním flex itemem) — použij `grid`,
-- dotykové cíle mají aspoň 44 px,
-- tabulky jsou v `.tablewrap{overflow-x:auto}`,
-- `overflow-wrap:break-word` na `body`.
+Oprav to **ve zdroji i v kopii pro web zároveň**, ať se ty dva soubory nerozejdou.
+Jediné, co smí být rozdílné, je `noindex` meta z kroku 4 — na konci to ověř:
+
+```bash
+diff <(grep -v 'name="robots"' web/site/hosted/<projekt>.html) <zdroj> \
+  && echo "zdroj a web shodné"
+```
+
+| Co | Proč | Jak |
+|---|---|---|
+| `meta viewport` | bez něj telefon vykreslí desktop a zmenší ho | `<meta name="viewport" content="width=device-width, initial-scale=1.0">` |
+| Dotykové cíle | pod 44 px se do nich netrefíš palcem | `min-height:44px` + `display:flex;align-items:center` |
+| Tabulky | široká tabulka roztáhne celou stránku | zabal do `<div class="tablewrap">`, `.tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch}` |
+| Dlouhá slova, URL, kódy | přetečou do šířky | `body{overflow-wrap:break-word}` |
+| Zoom textu na iOS | Safari svévolně zvětší písmo na šířku | `html{-webkit-text-size-adjust:100%}` |
+| Výřez a zaoblené rohy | text končí pod hranou displeje | `padding-left:max(16px,env(safe-area-inset-left))`, totéž vpravo, `padding-bottom:calc(… + env(safe-area-inset-bottom))` |
+| Lepivá lišta | odkaz skočí pod lištu | `section{scroll-margin-top:<výška lišty + 10px>}` |
+| Scrollbar v liště | na desktopu ošklivý pruh přes štítky | `nav{scrollbar-width:none}` + `nav::-webkit-scrollbar{display:none}` |
+| `flex-wrap` nad blokovými skupinami | skupina se stane jedním flex itemem a rozbije se | použij `grid` |
+
+**Kde je vodorovně rolovací lišta sekcí, přidej scrollspy.** Bez něj na telefonu
+nepoznáš, kde v dokumentu jsi, a aktivní štítek ujede mimo obrazovku:
+
+```html
+<script>
+(function(){
+  var links=[].slice.call(document.querySelectorAll('nav a')), map={}, current=null;
+  links.forEach(function(a){ map[a.getAttribute('href').slice(1)]=a; });
+  new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(!e.isIntersecting) return;
+      var a=map[e.target.id];
+      if(!a||a===current) return;
+      links.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on'); current=a;
+      a.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});
+    });
+  },{rootMargin:'-62px 0px -70% 0px'}).observe
+  || 0;
+  document.querySelectorAll('section[id]').forEach(function(s){});
+})();
+</script>
+```
+
+**Co nedělat:** nepředělávej layout, nepřepisuj barvy, neměň obsah. Tyhle úpravy jsou
+mechanické — po nich má stránka na desktopu vypadat stejně jako předtím.
+
+Na konci vypiš uživateli tabulku „co bylo / co je", ať ví, co se změnilo.
 
 ### 4. Viditelnost a zápis do evidence
 

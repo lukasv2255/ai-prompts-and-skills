@@ -107,6 +107,7 @@ Pracuji na **dvou počítačích** a projekty držím na **sdíleném Google Dri
 - Příkazy (collector, server, bot...) spouštěj vždy sám — neptej se "mám to spustit?".
 - Pokud proces závisí na externí službě (TWS, databáze, API...), zobraz krátké upozornění (např. "⚠ Vyžaduje běžící TWS") a rovnou spusť — nečekej na potvrzení.
 - Pro dlouhodobě běžící agenty, collectory a boty na macOS preferuj `launchd` před tray aplikací. Tray je jen special-case, když je výslovně potřeba GUI ovládání přes menu bar.
+- **Mac nikdy nevypínám ani neuspávám.** Plánované launchd úlohy (`StartCalendarInterval`) běží v naplánovaný čas, nepočítej s dohánějícím během po probuzení a neřeš workaroundy pro spánek.
 - **Když je port obsazený, vezmi jiný — nikdy nekillni cizí proces.** Souběžně mám rozjeto víc serverů z různých projektů. Když `lsof -i:PORT` ukáže obsazený port, prostě zvol vyšší volný (`8001`, `8002`...) a sděl uživateli na jakém portu server běží. Žádný `kill -9 $(lsof -ti:PORT)`, žádný `pkill -f uvicorn`. Killovat smíš jen procesy, které jsi sám spustil v aktuální session.
 - **Porty 8080–8089 jsou rezervované pro mail-agent instance.** Nikdy v tomto rozsahu nespouštěj weby, vite dev servery, ani jiné procesy. Když scaffolduješ nový web/server, vyber port mimo tento rozsah (např. 5173, 3000, 8090+).
 

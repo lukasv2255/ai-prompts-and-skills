@@ -128,7 +128,7 @@ doslovná" v anonymizované verzi není pravdivá a musí se upravit.
 
 Pusť to znovu, ne ručně. Když projekt překlápí opakovaně (typicky na web), vyplatí
 se vedle mapy držet malý skript, který zavolá engine a doplní poznámku a `noindex`
-— příklad je `job-springwalk/skills/anonymizace/na-web.py` v repu AI-brand.
+— příklad je `skills/anonymizace/na-web.py` v repu springwalk (`~/springwalk`).
 
 ## Čeho se vyvarovat
 

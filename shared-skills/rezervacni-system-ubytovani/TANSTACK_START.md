@@ -2,7 +2,7 @@
 
 Alternativa k FastAPI variantě v [SKILL.md](./SKILL.md). Tato verze cílí na projekty postavené na **TanStack Start** (např. Lovable šablona `@lovable.dev/vite-tanstack-config`) — Vite + React 19 + file-based routing + `createServerFn` pro server-side endpoints.
 
-> Funkční vzor je nasazen v projektu `web-redesign-chalupacerna/redesign-whiz/` — single-tenant (jedna chalupa, jedna jednotka). Tento dokument je extrakt zkušeností z toho nasazení.
+> Funkční vzor je nasazen v projektu `dema/chalupacerna/redesign-whiz/` — single-tenant (jedna chalupa, jedna jednotka). Tento dokument je extrakt zkušeností z toho nasazení.
 
 ## Co se liší proti FastAPI variantě
 - Backend nejsou Flask/FastAPI endpointy, ale **server functions** přes `createServerFn` (TanStack Start RPC) — volají se z klienta jako běžná async funkce, server-only kód je tree-shaken z bundle.
@@ -458,7 +458,7 @@ OWNER_EMAIL=lukas.vozdecky@buildai.cz
 - **Doručitelnost na gmail/seznam** vyžaduje ověřenou doménu (SPF/DKIM) — proto `@buildai.cz`, ne nějaká neověřená adresa.
 
 ## Reference implementace
-`/Users/lukas/Můj disk/web-redesign/web-redesign-chalupacerna/redesign-whiz/`:
+`~/Můj disk/web-redesign/dema/chalupacerna/redesign-whiz/`:
 - `src/lib/reservations-db.ts`
 - `src/lib/reservations.ts`
 - `src/routes/rezervace.tsx`
