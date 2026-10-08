@@ -102,6 +102,19 @@ Pracuji na **dvou počítačích** a projekty držím na **sdíleném Google Dri
 - **Nikdy neprováděj deploy ani redeploy na Railway sám** — vždy se zeptej uživatele a počkej na explicitní pokyn.
 - Platí pro: `railway up`, force redeploy, nastavení env proměnných přes CLI/API, restart služby, změny na Volume.
 
+## Problémy s Macem
+
+- Řešené potíže s počítačem (příznak → diagnostika → příčina → oprava) se zapisují do
+  `~/Můj disk/AI-brand/AI-brand-me/docs/problemy-pocitace.md`. Při novém problému s Macem
+  ho nejdřív přečti, po vyřešení doplň nový záznam nahoru.
+- `log show` v zsh volej přes `/usr/bin/log show`, jinak koliduje s vestavěným `log`.
+- **Continuity Camera (iPhone jako kamera/mikrofon) nejde:** zkontroluj v logu
+  `ContinuityCaptureAgent` stav `magic:1 (usable:1)` a zaseknutí ve
+  `kCMContinuityCaptureStateInit` (`Code=2`). Oprava: `killall ContinuityCaptureAgent`,
+  počkat na `usable:1`, pak klientskou aplikaci **úplně ukončit** — drží si spojení na
+  starého agenta. Na Macu běží víc Chromů (automatizační `--user-data-dir` profily),
+  ověř, ve kterém je hovor.
+
 ## Spouštění procesů a serverů
 
 - Příkazy (collector, server, bot...) spouštěj vždy sám — neptej se "mám to spustit?".
@@ -129,6 +142,7 @@ Pracuji na **dvou počítačích** a projekty držím na **sdíleném Google Dri
 - **Mailové texty / texty k odeslání kopíruji přímo z chatu** — kdykoli připravuješ mail, zprávu na LinkedIn, SMS nebo jakýkoli text určený k odeslání jinému člověku, vždy ho do chatu vypiš jako **plain text** v code blocku (` ``` `), bez markdown bulletů (`-`, `*`, `1.`).
 - Místo bulletů použij em dash (`—`) nebo dlouhé pomlčky a hard newlines. Důvod: markdown bullety se v mailových klientech (Gmail, Outlook) renderují jako sloupce vedle sebe a rozbijou layout.
 - Tučný text raději vůbec — ať to vypadá stejně po vložení. Bonus: připoj 1-2 řádky instrukce „v Gmailu vlož přes Ctrl+Shift+V (paste without formatting)".
+- **Koncepty přes Gmail MCP (`create_draft` / `update_draft`) nesmí obsahovat žádnou URL ani doménu.** Konektor každou adresu — i `<a href>` v HTML, i holé `www.domena.cz` bez `https://` — přepíše na přesměrování `https://www.google.com/url?q=...&source=gmail&ust=...`, a takový odkaz by odešel adresátovi. Adresy v konceptu vynech (odkaž slovně: „stejná jako v mém mailu z 20. 9.") a když je adresát opravdu potřebuje, vypiš je do chatu, ať je vložím ručně. Po vytvoření konceptu ho vždy přečti (`get_draft`) a zkontroluj, že v něm není `google.com/url`.
 
 ## Konfigurace a CLAUDE.md soubory
 
