@@ -45,7 +45,7 @@
           },
           {
             "type": "command",
-            "command": "/Users/lukas/.local/share/claude-leverage/scripts/hooks/block-dangerous-git.sh"
+            "command": "/Users/lukas/ai-prompts-and-skills/claude/hooks/git-guard.sh"
           }
         ]
       },
@@ -84,6 +84,6 @@
   },
   "skipDangerousModePermissionPrompt": true,
   "theme": "light",
-  "agentPushNotifEnabled": true,
-  "switchModelsOnFlag": false
+  "switchModelsOnFlag": false,
+  "agentPushNotifEnabled": true
 }
