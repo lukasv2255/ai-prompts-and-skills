@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@400;600&family=Montserrat:wght@600;700&family=Nunito+Sans:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* BRAND:START — nahraď obsahem ../report-na-web/brands/<slug>.css */
+:root{
+  --bg:#F5F0E8; --surface:#FBF8F2; --text:#121212; --muted:#4B4B4B;
+  --primary:#1A4D2E; --accent:#D4A574; --border:#E5E0D8; --sidebar:#14351F;
+  --sidebar-text:#EDE7DB;
+  --font-head:'DM Serif Display',Georgia,serif;
+  --font-body:'Outfit',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+/* BRAND:END */
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 var(--font-body);-webkit-font-smoothing:antialiased}
+header{background:linear-gradient(45deg,var(--primary) 0%,var(--sidebar) 100%);color:#fff}
+.wrap{max-width:820px;margin:0 auto;padding:0 16px}
+header .wrap{padding-top:28px;padding-bottom:32px}
+header img{height:32px;display:block;margin-bottom:24px}
+h1{font-family:var(--font-head);font-size:24px;margin:0}
+.autor{margin:6px 0 0;opacity:.85}
+main{padding-top:24px;padding-bottom:64px}
+section{background:var(--surface);border:1px solid var(--border);padding:24px;margin-bottom:16px}
+h2{font-family:var(--font-head);color:var(--primary);font-size:19px;margin:0 0 18px}
+.grid{display:grid;grid-template-columns:220px 1fr;gap:28px;align-items:start}
+.grid img{width:100%;height:auto}
+h3{font-family:var(--font-head);font-size:12px;text-transform:uppercase;letter-spacing:.06em;
+   color:var(--sidebar);margin:18px 0 4px;padding-top:12px;border-top:1px solid var(--border)}
+h3:first-child{margin-top:0;padding-top:0;border-top:0}
+p{margin:0 0 6px}
+table{border-collapse:collapse;width:100%}
+td{padding:9px 12px;border-bottom:1px solid var(--border)}
+tr:nth-child(even) td{background:var(--bg)}
+td.h{text-align:right;white-space:nowrap;font-weight:700;color:var(--sidebar)}
+@media (max-width:600px){
+  section{padding:18px 16px}
+  .grid{grid-template-columns:1fr;gap:16px}
+  .grid img{max-width:220px}
+}
+/* tisk / PDF: A4, barvy hlavičky zachované, zhuštěné, aby se výkaz vešel na 2 strany */
+@page{size:A4;margin:12mm 0}
+@page :first{margin-top:0}
+@media print{
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{background:#fff;font-size:12.5px;line-height:1.45}
+  header .wrap{padding-top:16px;padding-bottom:18px}
+  header img{height:24px;margin-bottom:12px}
+  h1{font-size:20px}
+  main{padding-top:12px;padding-bottom:0}
+  section{break-inside:avoid;padding:14px 18px;margin-bottom:10px}
+  h2{font-size:15px;margin-bottom:10px}
+  .grid{grid-template-columns:140px 1fr;gap:18px}
+  h3{font-size:10px;margin:8px 0 2px;padding-top:6px}
+  p{margin-bottom:3px}
+  td{padding:4px 10px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    {{LOGO}}
+    <h1>{{DOC_TITLE}}</h1>
+    <p class="autor">{{AUTOR}}</p>
+  </div>
+</header>
+<main class="wrap">
+
+<!-- BLOK: opakuj pro každý blok s grafem -->
+<section>
+  <h2>1) Název bloku (00 h)</h2>
+  <div class="grid">
+    <img src="blok-1.png" alt="Název bloku: 00 % hotovo">
+    <div>
+      <h3>Hotové</h3>
+      <p>…</p>
+      <p><strong>Dílčí projekt:</strong> …</p>
+      <h3>Zbývá</h3>
+      <p>…</p>
+      <h3>Budoucí projekty</h3>
+      <p>…</p>
+    </div>
+  </div>
+</section>
+<!-- /BLOK -->
+
+<!-- OSTATNÍ: drobné položky bez grafu -->
+<section>
+  <h2>N) Ostatní (00 h)</h2>
+  <table>
+    <tr><td>Položka</td><td class="h">0 h</td></tr>
+  </table>
+</section>
+<!-- /OSTATNÍ -->
+
+</main>
+</body>
+</html>
