@@ -16,4 +16,4 @@ Skill při stavbě reportu vloží obsah zvoleného souboru mezi značky
 3. Fonty: `--font-head` / `--font-body` / `--font-mono`. Když značka používá jiné
    Google Fonts než výchozí, přidej do template `<head>` i jejich `<link>`.
 
-Použití: `/report <zdroj> --brand <slug>` (bez přepínače = `ai-brand`).
+Použití: `/report-na-web <zdroj> --brand <slug>` (bez přepínače = `ai-brand`).

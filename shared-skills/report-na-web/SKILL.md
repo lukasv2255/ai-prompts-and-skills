@@ -1,5 +1,5 @@
 ---
-name: report
+name: report-na-web
 description: >
   Postaví z podkladového (raw) dokumentu čitelný HTML report s pevným bočním panelem
   vlevo a sekcemi vpravo. Strohá referenční verze, ne dlouhý souvislý text. Technické
@@ -10,10 +10,10 @@ description: >
   - "udělej z toho report / HTML report"
   - "přepiš ten dokument do reportu"
   - "report pro <někoho> ze <souboru>"
-  - "/report <zdroj> [--brand <slug>]"
+  - "/report-na-web <zdroj> [--brand <slug>]"
 ---
 
-# report — HTML report s bočním panelem
+# report-na-web — HTML report s bočním panelem
 
 Cíl: z raw dokumentu (markdown, poznámky, existující report) udělat **referenční
 stránku**, kde příjemce skočí na sekci, přečte jednořádkový závěr a případně rozklikne
@@ -44,6 +44,10 @@ Když si nejsi jistý, jestli je tvrzení ve zdroji: **vynech ho**, neriskuj dom
 ---
 
 ## Pravidla stylu (strohá verze)
+
+**Má-li projekt vlastní styl reportu, má přednost.** Před psaním zkontroluj
+`<projekt>/styles/report.md` a schválené ukázky v `<projekt>/styles/ukazky/report/`
+a drž se jejich stavby a komponent.
 
 - **Každá sekce začíná jednořádkovým závěrem** (`<p class="lead">`), ne odstavcem rozjezdu.
 - Dál krátké odrážky nebo tabulka. Bez vysvětlování „proč", bez marketingového tónu.

@@ -181,7 +181,7 @@ Tady se nejvíc lže marketingem, takže cíleně rozliš:
 
 - `research-<produkt>.md` — osnova P2 (vždy).
 - Rozhodovací tabulka nebo seznam otázek na dodavatele — podle kalibrace P4.
-- HTML report (skill `report`) — když to má jít někomu ukázat.
+- HTML report (skill `report-na-web`) — když to má jít někomu ukázat.
 
 ---
 
