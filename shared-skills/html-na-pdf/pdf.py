@@ -1,4 +1,4 @@
-"""Vytiskne výkaz z localhostu do PDF přes headless Chrome.
+"""Vytiskne HTML stránku z localhostu do PDF přes headless Chrome (sdílený skill html-na-pdf).
 
 Použití:
     python3 pdf.py <url> <výstup.pdf>

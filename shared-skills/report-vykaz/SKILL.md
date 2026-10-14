@@ -81,9 +81,9 @@ Není to faktura ani deník úkonů.
    ```bash
    ~/ai-prompts-and-skills/shared-skills/_shared/serve.sh <složka> vykaz-<mesic>.html
    ```
-7. **PDF** z běžícího localhostu (ne file://, jinak chybí fonty a obrázky):
+7. **PDF** přes sdílený skill `html-na-pdf`, z běžícího localhostu (ne file://, jinak chybí fonty a obrázky):
    ```bash
-   python3 ~/ai-prompts-and-skills/shared-skills/report-vykaz/pdf.py <url z kroku 6> <složka>/vykaz-<mesic>.pdf
+   python3 ~/ai-prompts-and-skills/shared-skills/html-na-pdf/pdf.py <url z kroku 6> <složka>/vykaz-<mesic>.pdf
    ```
    Skript vypíše počet stran. Cíl jsou **2 strany A4**; tiskové styly v šabloně
    (`@media print`) jsou na to zhuštěné. Když vyjde víc, zhusti tiskové styly dál,
