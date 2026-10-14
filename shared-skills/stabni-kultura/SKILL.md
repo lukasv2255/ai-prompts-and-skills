@@ -38,7 +38,7 @@ najde od aktuální složky nahoru.
    např. „přesunout do `tools/`“ / „přidat složku do výjimek“). U návrhu přesunu uveď,
    co by se muselo změnit s ním (odkazy na starou cestu v kódu, launchd plistech,
    CLAUDE.md / AGENTS.md) a jestli položka patří k něčemu, co právě běží.
-   Pořadí: D1 s automatizací, D2/D3, D5, D6, nakonec D4. Souhrn s počty na začátku.
+   Pořadí: D1 s automatizací, D2/D3, D5, D6, D7, nakonec D4. Souhrn s počty na začátku.
 6. Skonči a čekej. Nic neprováděj, dokud uživatel nepotvrdí konkrétní návrh
    číslem a písmenem (např. „3A“, „1B a 2A“). Holé „y“ bez čísel nestačí — zeptej se, které.
 

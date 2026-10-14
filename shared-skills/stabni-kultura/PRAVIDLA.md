@@ -12,6 +12,7 @@ Platí pro každý **projekt** (složka aktuálního VS Code workspace) a každo
 | D4 | Co nejvíc statických souborů žije v `docs/` | script najde kandidáty, rozhoduje úsudek |
 | D5 | `docs/` je členěné do podadresářů (klidně s jedním souborem); v kořeni `docs/` jsou jen tři soubory z D2 | script |
 | D6 | Kód (`.py`, `.sh`) je jen v `src/` jednotky — žádné `tools/` ani `scripts/`; vyřazené skripty v `src/archiv/<téma>/`. `src/` je povinné jen tam, kde je kód | script |
+| D7 | `<agenda>/sablony-evolio/` (vzory do Evolia pro jednu agendu) má pevnou strukturu: v kořeni jen `workflow.md` a `pravidla-agendy.md`, pak složka `NN-nazev/` pro každý vzor. Ve vzoru `zdroj.md` a `mapovani-parametru.md` (povinné), další `.md` a `.docx` (`zaklad.docx`, `<vzor>.docx`, pracovní poznámky) a jen podsložky `predloha/`, `hotove/`, `hotove-stare/`, `revize/` | script |
 
 ## Upřesnění
 
@@ -25,7 +26,7 @@ Platí pro každý **projekt** (složka aktuálního VS Code workspace) a každo
   agentů, které obsahují cestu do `docs/`. Obojí je kandidát — jestli jde o čtení, nebo
   zápis, rozhoduje skill přečtením kódu.
 - **D4 nehlásí:** `README.md`, `CLAUDE.md`, `AGENTS.md`, `SKILL.md`, a obsah složek,
-  kde soubory žijí z podstaty jinde: kód a šablony (`web`, `src`, `sablony`, `prompty`,
+  kde soubory žijí z podstaty jinde: kód a šablony (`web`, `src`, `sablony`, `sablony-evolio` — ta má vlastní pravidlo D7, `prompty`,
   `skills`, `styles`…), výstupy automatizací (`reports`, `digests`, `prilohy`, `logs`,
   `data`… — v `docs/` by porušily D1) a `tasks/` (globální konvence `tasks/lessons.md`).
   Extra výjimky pro projekt: klíč `"vyjimky"` v `projekty.json`.

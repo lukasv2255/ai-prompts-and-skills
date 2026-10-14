@@ -51,7 +51,13 @@ META_SOUBORY = {"readme.md", "claude.md", "agents.md", "skill.md", "changelog.md
 # (ty by v docs/ porušily D1). Rozšiřuje se per projekt klíčem "vyjimky" v projekty.json.
 D4_VYJIMKY = {"web", "site", "public", "static", "templates", "sablony", "prompty", "prompts",
               "skills", "styles", "src", "tests", "reports", "reporty", "digests", "prilohy",
-              "logs", "data", "output", "state", "obsah", "tasks"}
+              "logs", "data", "output", "state", "obsah", "tasks", "sablony-evolio"}
+# D7: složka vzorů pro Evolio jedné agendy — pevná struktura, se kterou pracují skilly evolio-sablona*
+SABLONY_EVOLIO = "sablony-evolio"
+SE_KOREN_SOUBORY = {"workflow.md", "pravidla-agendy.md"}
+SE_VZOR_JMENO = re.compile(r"^\d{2}-[a-z0-9-]+$")
+SE_VZOR_POVINNE = {"zdroj.md", "mapovani-parametru.md"}
+SE_VZOR_SLOZKY = {"predloha", "hotove", "hotove-stare", "revize"}
 
 
 def rozbal(cesta: str) -> Path:
@@ -207,6 +213,28 @@ def zkontroluj(projekt: Path, nast: dict, automatizace) -> list[dict]:
                     and not (slozka / "src").is_dir()):
                 nalez("D6", cesta, "kód mimo src/")
 
+    # D7: struktura sablony-evolio/ (kořen: dva .md + složky vzorů; vzor: zdroj, mapování, pracovní podsložky)
+    for se, _ in projdi(projekt):
+        if se.name != SABLONY_EVOLIO:
+            continue
+        polozky = [p for p in se.iterdir() if not p.name.startswith(".")]
+        for chybi in sorted(SE_KOREN_SOUBORY - {p.name for p in polozky if p.is_file()}):
+            nalez("D7", se / chybi, "chybí povinný soubor složky vzorů")
+        for p in polozky:
+            if p.is_file() and p.name not in SE_KOREN_SOUBORY:
+                nalez("D7", p, "v kořeni sablony-evolio/ smí být jen workflow.md a pravidla-agendy.md")
+            elif p.is_dir() and not SE_VZOR_JMENO.match(p.name):
+                nalez("D7", p, "složka vzoru se jmenuje NN-nazev (číslo, malá písmena, pomlčky)")
+            elif p.is_dir():
+                obsah = [q for q in p.iterdir() if not q.name.startswith(".")]
+                for chybi in sorted(SE_VZOR_POVINNE - {q.name for q in obsah if q.is_file()}):
+                    nalez("D7", p / chybi, "chybí povinný soubor vzoru")
+                for q in obsah:
+                    if q.is_dir() and q.name not in SE_VZOR_SLOZKY:
+                        nalez("D7", q, "neznámá podsložka vzoru (povolené: %s)" % ", ".join(sorted(SE_VZOR_SLOZKY)))
+                    elif q.is_file() and q.suffix.lower() not in {".md", ".docx"}:
+                        nalez("D7", q, "ve složce vzoru jsou jen .md a .docx (zbytek do predloha/ nebo hotove/)")
+
     do_docs, skripty = automatizace
     for zdroj, cesta in do_docs:
         if cesta.startswith(str(projekt) + "/") or f"/{projekt.name}/" in cesta:
@@ -258,7 +286,7 @@ def main():
         celkem += len(nalezy)
         stav = "✅" if not nalezy else f"❌ {len(nalezy)}"
         print(f"\n## {Path(projekt).name}  {stav}   ({projekt})")
-        for pravidlo in ("D1", "D2", "D3", "D4", "D5", "D6"):
+        for pravidlo in ("D1", "D2", "D3", "D4", "D5", "D6", "D7"):
             pn = [n for n in nalezy if n["pravidlo"] == pravidlo]
             if not pn:
                 continue
