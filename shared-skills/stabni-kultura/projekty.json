@@ -1,0 +1,23 @@
+{
+  "_popis": "Nastavení projektů pro skill stabni-kultura. Které projekty se kontrolují, určuje aktuální VS Code workspace (*.code-workspace); tady jsou jen jednotky uvnitř projektu ('agendy' = právní agendy i prvky Evolia, cesta relativně k projektu, smí být vnořená jako 'evolio/sablony') a extra výjimky pro D4. Cesty začínají ~ (Mac i Windows).",
+  "projekty": {
+    "~/springwalk": {
+      "agendy": [
+        "ulov-domov",
+        "dok-housing",
+        "fieldcollect",
+        "fincollect",
+        "reditas",
+        "twisto",
+        "evolio",
+        "evolio/emachine",
+        "evolio/kb",
+        "evolio/prompty",
+        "evolio/sablony",
+        "evolio/pohledavky",
+        "evolio/power-reporting",
+        "evolio/pravidla"
+      ]
+    }
+  }
+}
