@@ -165,6 +165,14 @@ Pravidla:
 - Na začátku session → přečti `tasks/lessons.md` pokud existuje.
 - Vždy používej TodoWrite pro sledování průběhu — aktualizuj po každém dokončeném kroku.
 
+## Sessions v Claude desktop appce (i pod jiným účtem)
+
+- V desktop appce střídám dva účty. Nástroj `list_sessions` vidí jen sessions aktuálního účtu, ale **sessions všech účtů leží na disku** a dají se přečíst. Neodpovídej „nevidím“.
+- Metadata: `~/Library/Application Support/Claude/claude-code-sessions/<účet>/<org>/local_<id>.json`
+  (`title`, `cwd`, `lastActivityAt` v ms, `cliSessionId`). **Připnutí = `isStarred: true`.**
+- Přepis: `~/.claude/projects/<zakódovaný-cwd>/<cliSessionId>.jsonl` (sdílený pro všechny účty).
+- Z jiného účtu jde session jen číst, ne do ní psát ani na ni navázat.
+
 ## MCP nástroje
 
 - Playwright MCP preferuj před Chrome MCP pro automatizaci prohlížeče.
