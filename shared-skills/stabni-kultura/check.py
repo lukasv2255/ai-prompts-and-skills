@@ -51,13 +51,19 @@ META_SOUBORY = {"readme.md", "claude.md", "agents.md", "skill.md", "changelog.md
 # (ty by v docs/ porušily D1). Rozšiřuje se per projekt klíčem "vyjimky" v projekty.json.
 D4_VYJIMKY = {"web", "site", "public", "static", "templates", "sablony", "prompty", "prompts",
               "skills", "styles", "src", "tests", "reports", "reporty", "digests", "prilohy",
-              "logs", "data", "output", "state", "obsah", "tasks", "sablony-evolio"}
+              "logs", "data", "output", "state", "obsah", "tasks", "sablony-evolio", "automatizace"}
 # D7: složka vzorů pro Evolio jedné agendy — pevná struktura, se kterou pracují skilly evolio-sablona*
 SABLONY_EVOLIO = "sablony-evolio"
 SE_KOREN_SOUBORY = {"workflow.md", "pravidla-agendy.md"}
 SE_VZOR_JMENO = re.compile(r"^\d{2}-[a-z0-9-]+$")
 SE_VZOR_POVINNE = {"zdroj.md", "mapovani-parametru.md"}
 SE_VZOR_SLOZKY = {"predloha", "hotove", "hotove-stare", "revize"}
+# D8: kostra právní agendy — povinné složky; src/ je volitelné (jen kde je kód, D6)
+KOSTRA_AGENDY = ("backup", "docs", "automatizace", "sablony-evolio", "prompty")
+KOSTRA_VOLITELNE = {"src"}
+# D9: každá automatizace (podsložka automatizace/) má v kořeni tyhle čtyři soubory
+AUTOMATIZACE = "automatizace"
+AUTOMATIZACE_POVINNE = ("README.md", "roadmap.md", "todo.md", "workflow.md")
 
 
 def rozbal(cesta: str) -> Path:
@@ -83,7 +89,8 @@ def nacti_projekty(workspace: Path) -> dict[Path, dict]:
         p = (workspace.parent / os.path.expanduser(f["path"])).resolve()
         if p.is_dir():
             n = nastaveni.get(p, {})
-            projekty[p] = {"agendy": list(n.get("agendy", [])), "vyjimky": list(n.get("vyjimky", []))}
+            projekty[p] = {"agendy": list(n.get("agendy", [])), "prvky": list(n.get("prvky", [])),
+                           "vyjimky": list(n.get("vyjimky", []))}
     return projekty
 
 
@@ -163,7 +170,7 @@ def zkontroluj(projekt: Path, nast: dict, automatizace) -> list[dict]:
 
     # Jednotky = projekt + jeho agendy; jméno jednotky určuje projekt-<jméno>.md
     jednotky = [(projekt, projekt.name.lower())]
-    for a in agendy:
+    for a in agendy + nast.get("prvky", []):
         jednotky.append((projekt / a, Path(a).name.lower()))
 
     povolene = set()
@@ -183,6 +190,18 @@ def zkontroluj(projekt: Path, nast: dict, automatizace) -> list[dict]:
         if not (kde / "backup").is_dir():
             nalez("D3", kde / "backup", "chybí složka backup/")
 
+    # D9: automatizace/<název>/ má vlastní README, roadmap, todo a workflow (roadmap/todo tu nejsou porušení D2)
+    for slozka, _ in projdi(projekt):
+        if slozka.name != AUTOMATIZACE:
+            continue
+        for a in sorted(slozka.iterdir()):
+            if not a.is_dir() or a.name.startswith("."):
+                continue
+            for soubor in AUTOMATIZACE_POVINNE:
+                povolene.add(a / soubor)
+                if not (a / soubor).is_file():
+                    nalez("D9", a / soubor, "chybí povinný soubor automatizace")
+
     koreny_docs = {kde / "docs" for kde, _ in jednotky}
     for slozka, soubory in projdi(projekt):
         casti = slozka.relative_to(projekt).parts
@@ -190,6 +209,8 @@ def zkontroluj(projekt: Path, nast: dict, automatizace) -> list[dict]:
             nalez("D6", slozka, f"složka {casti[-1]}/ — kód patří do src/")
         v_docs = "docs" in casti
         vyjmuto = any(c.lower() in vyjimky for c in casti)
+        # src/<podprojekt>/docs/ smí mít vlastní roadmap/todo (malý projekt v src/ s vlastním výstupem)
+        v_podprojektu = any(c == "src" and casti[i + 2:i + 3] == ("docs",) for i, c in enumerate(casti))
         for s in soubory:
             cesta = slozka / s
             if v_docs and je_skript_nebo_log(s):
@@ -198,7 +219,7 @@ def zkontroluj(projekt: Path, nast: dict, automatizace) -> list[dict]:
                 nalez("D1", cesta, "stavový soubor v docs/ (jméno napovídá průběžný zápis) — ověř, kdo ho píše")
             nizke = s.lower()
             if (nizke in VYHRAZENE or (nizke.startswith("projekt-") and nizke.endswith(".md"))) \
-                    and cesta not in povolene:
+                    and cesta not in povolene and not v_podprojektu:
                 nalez("D2", cesta, "vyhrazený soubor mimo své místo (nebo špatné jméno)")
                 continue
             if v_docs:
@@ -212,6 +233,27 @@ def zkontroluj(projekt: Path, nast: dict, automatizace) -> list[dict]:
                     and "src" not in casti and not any(c.lower() in D6_VYJIMKY for c in casti)
                     and not (slozka / "src").is_dir()):
                 nalez("D6", cesta, "kód mimo src/")
+
+    # D8: kostra právní agendy (backup, docs, automatizace, sablony-evolio, prompty/<prompt>/)
+    for a in agendy:
+        kde = projekt / a
+        if not kde.is_dir():
+            continue
+        for slozka in KOSTRA_AGENDY:
+            if not (kde / slozka).is_dir():
+                nalez("D8", kde / slozka, "chybí složka kostry agendy")
+        for p in kde.iterdir():
+            if p.name.startswith(".") or p.name.lower() in META_SOUBORY:
+                continue
+            if p.is_file():
+                nalez("D8", p, "soubor v kořeni agendy — patří do docs/ (nebo jiné složky kostry)")
+            elif p.name not in KOSTRA_AGENDY and p.name not in KOSTRA_VOLITELNE:
+                nalez("D8", p, "složka mimo kostru agendy (%s, volitelně src)" % ", ".join(KOSTRA_AGENDY))
+        prompty = kde / "prompty"
+        if prompty.is_dir():
+            for p in prompty.iterdir():
+                if not p.name.startswith(".") and p.is_file() and p.name.lower() not in META_SOUBORY:
+                    nalez("D8", p, "v prompty/ jsou jen podadresáře pojmenované podle promptu")
 
     # D7: struktura sablony-evolio/ (kořen: dva .md + složky vzorů; vzor: zdroj, mapování, pracovní podsložky)
     for se, _ in projdi(projekt):
@@ -286,7 +328,7 @@ def main():
         celkem += len(nalezy)
         stav = "✅" if not nalezy else f"❌ {len(nalezy)}"
         print(f"\n## {Path(projekt).name}  {stav}   ({projekt})")
-        for pravidlo in ("D1", "D2", "D3", "D4", "D5", "D6", "D7"):
+        for pravidlo in ("D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9"):
             pn = [n for n in nalezy if n["pravidlo"] == pravidlo]
             if not pn:
                 continue
