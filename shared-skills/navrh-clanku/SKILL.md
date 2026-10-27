@@ -1,6 +1,6 @@
 ---
 name: navrh-clanku
-description: "Zpracuje myšlenku, poznámku nebo zážitek z práce do souboru s návrhem článku a uloží ho do C:\\Users\\tommy\\Můj disk\\AI-brand\\AI-brand-me\\writing\\<oblast>/. Použij kdykoliv uživatel řekne 'zapiš návrh na článek', 'navrhni článek', 'udělej z toho článek', 'zpracuj to jako článek', 'zapiš to do writing', nebo 'to by byl dobrý článek'."
+description: "Zpracuje myšlenku, poznámku nebo zážitek z práce do souboru s návrhem článku a uloží ho do ~/muj-brand/docs/ideas/<oblast>/. Použij kdykoliv uživatel řekne 'zapiš návrh na článek', 'navrhni článek', 'udělej z toho článek', 'zpracuj to jako článek', 'zapiš to do ideas', nebo 'to by byl dobrý článek'."
 ---
 
 # Návrh článku
@@ -11,7 +11,7 @@ a uložíš na správné místo.
 
 ## Kam se ukládá
 
-Kořen: `C:\Users\tommy\Můj disk\AI-brand\AI-brand-me\writing\`
+Kořen: `~/muj-brand/docs/ideas/` (na Windows `%USERPROFILE%\muj-brand\docs\ideas\`)
 
 Soubor: `<oblast>/<slug>.md`
 

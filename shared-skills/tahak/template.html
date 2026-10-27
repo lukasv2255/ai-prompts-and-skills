@@ -48,7 +48,8 @@
     .kpi{grid-template-columns:1fr;padding:18px 16px}
     .kpi .num{margin-bottom:6px}
   }
-  @media print{ details > *{display:block} }
+  /* V tisku (PDF) rozbal všechny podrobnosti — sbalený details by se nevytiskl. */
+  @media print{ details::details-content{content-visibility:visible;display:block} summary{display:none} }
 </style>
 </head>
 <body>

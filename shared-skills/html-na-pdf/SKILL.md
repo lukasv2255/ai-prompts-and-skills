@@ -9,6 +9,7 @@ description: >
   - "udělej z toho PDF" / "vyexportuj report do PDF"
   - "potřebuju PDF verzi nabídky / výkazu / taháku"
   - "kolik stran má to PDF" / "zhusti to na 2 strany"
+  - "pošli to PDF do mobilu" / "dej mi to na telefon přes iMessage"
   - "/html-na-pdf <soubor.html> [výstup.pdf]"
 ---
 
@@ -35,6 +36,13 @@ Jedno místo, kudy vzniká PDF z HTML. Volají ho i jiné skilly (`report-vykaz`
      u karet a tabulek, `print-color-adjust: exact` pro barevná pozadí.
    Když má PDF vyjít na daný počet stran a nevychází, zhusti tiskové styly, obsah nezkracuj.
 4. Pošli cestu k PDF a počet stran.
+5. **Do mobilu** (když uživatel řekne „pošli do mobilu“, „na telefon“, „iMessage“):
+   ```bash
+   python3 ~/ai-prompts-and-skills/shared-skills/html-na-pdf/do_mobilu.py <výstup.pdf> ["text zprávy"]
+   ```
+   Pošle PDF přes iMessage na Lukášův mobil; funguje pak i offline mimo domácí síť.
+   Příjemce je v `IMESSAGE_TO` nebo `~/.config/do-mobilu/prijemce` (mimo git).
+   Jen macOS. Posílá se jen na vlastní číslo, nikdy jinému příjemci.
 
 ## Pravidla
 

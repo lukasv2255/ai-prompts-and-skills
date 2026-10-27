@@ -7,9 +7,8 @@ Tyto instrukce plati pro vsechny projekty. Projektove instrukce maji byt v `AGEN
 - Vzdy odpovidej cesky, pokud uzivatel vyslovne nechce jiny jazyk.
 - Kdyz uzivatel odpovi `y`, ber to jako "ano", "pokracuj", nebo "krok jsem udelal, pokracuj dal". Rovnou navaz dalsim krokem.
 - Kdyz uzivatel odpovi `go` jako reakci na informaci, ze je potreba restartovat proces nebo agenta, rovnou proved restart. Zjisti spravny prikaz z kontextu projektu.
-- Pokud zprava konci `?`, prerus aktualni praci a odpovez na dotaz nebo proved pozadovany ukol. K puvodni praci se vrat az potom.
-- Pokud zprava konci `?` a neni vylozene receno "uprav kod/implementuj" — nezacinej menit soubory; nejdriv odpovez a pripadne se doptaj 1 otazkou na cilove chovani/rozsah.
-- Pokud je zprava oznamovaci veta (nekonci `?`), ber ji primarne jako dotaz na stav/analyzu. Nic neprovadej automaticky; maximalne navrhni dalsi krok a zeptej se na explicitni pokyn.
+- Otázku rozpoznávej podle významu i bez otazníku. Pokud se uživatel pouze ptá na vysvětlení, stav nebo možnosti, odpověz a bez požadavku na provedení neměň soubory.
+- Jasný pokyn k akci (např. „uprav“, „přesuň“, „spusť“) proveď v zadaném rozsahu i bez otazníku. Samotná interpunkce neurčuje, zda jde o otázku nebo příkaz. Při skutečné nejasnosti polož jednu stručnou upřesňující otázku.
 - Bud strucny. Jeden spravny priklad je lepsi nez tri alternativy.
 - Nedavej dlouhe prubezne rozbory toho, co delas. Prubezne statusy maji byt kratke: co se deje, pripadne jeden duvod nebo vysledek. Detaily dej az na vyzadani nebo kdyz jsou nutne pro rozhodnuti.
 - Nikdy nenabizej prikazy k vyzkouseni — vzdy je proved sam (Bash, curl, grep...) a reportuj vysledek. Misto "zkus: curl ..." rovnou curl spust.
@@ -67,13 +66,13 @@ Tyto instrukce plati pro vsechny projekty. Projektove instrukce maji byt v `AGEN
 
 ## Prostredi - dve zarizeni
 
-Uzivatel pracuje na dvou pocitacich a projekty drzi na sdilenem Google Drive
-(tak se synchronizuji mezi obema stroji):
+Uzivatel pracuje na dvou pocitacich, projekty mezi nimi synchronizuje git
+(Google Drive je od 19-10-2026 odpojeny):
 
-- Mac: primarni stroj. Google Drive je mountnuty jako `~/Můj disk/` (`/Users/lukas/Můj disk/...`).
-  Nektere starsi/lokalni projekty mohou byt i v `~/claude-code/`.
-- Windows: druhe PC, stejny Google Drive; lokalne pripadne `C:\Users\<username>\claude-code\`.
-- Projekt hledej primarne na Google Drive (`~/Můj disk/`), pak v `~/claude-code/`.
+- Mac: primarni stroj. Projekty jsou lokalne v domovske slozce (`~/<projekt>`, napr. `~/trading`, `~/muj-brand`).
+- Windows: druhe PC.
+- Archiv starych AI-brand podprojektu a `_old`: `~/muj-brand-archiv/`.
+- Projekt hledej v `~/<projekt>`; `~/Můj disk/` ani `~/claude-code/` se nepouziva.
 
 Pravidla pro cesty:
 
@@ -91,6 +90,13 @@ Pravidla pro cesty:
 - U delsi prace prubezne hlas, co delas a co ses dozvedel.
 - Po kazde smysluplne zmene over, ze vec porad funguje.
 - U netrivialnich ukolu se 3+ kroky nejdrive udelej kratky plan a prubezne ho aktualizuj.
+
+## Automatická volba workflow
+
+- Před zahájením práce sám posuď, zda zadání potřebuje volbu workflow. Uživatel nemusí znát obtížnost úkolu ani názvy skillů.
+- Pokud je cíl nejasný, úkol má více závislých kroků, zahrnuje porovnávání, odhady nebo rozhodnutí s významnými důsledky, automaticky načti a použij `workflow-router`. Nečekej na jeho výslovné vyvolání a neptej se, zda ho smíš použít.
+- Stručně sděl zvolený postup a podstatné předpoklady, potom pokračuj v rozsahu zadání. U odhadů a porovnání nejdřív vymez benchmark, jednotky a pravidla pro duplicity, teprve potom počítej.
+- Jednoduché a jednoznačné úkoly řeš přímo, bez zbytečného průchodu celou sadou skillů. Vyber jen relevantní skilly; použití routeru samo o sobě nerozšiřuje zadání ani neopravňuje k dalším akcím.
 
 ## Bezpecnost
 
@@ -143,8 +149,6 @@ Pravidla pro cesty:
 - Telegram MCP neovladej za uzivatele. Neposilej prikazy jako `/check`, `/yes`, `/no`; Telegram ovlada uzivatel sam.
 
 ## Task management
-
-- V trading dashboardech rozlisuj celkovy pocet trade zaznamu od outcome tabulek: hlavni Winners/Losers cte `stopped`, mini tabulky mohou cist vlastni fieldy jako `mimo_level_stopped` nebo `with_the_move_stopped`. `stopped = NULL` proto neznamena unresolved, pokud ma trade vysledek v mini tabulce. Filtr bandu jako `past_atr` se musi ridit jen viditelnym selektorem; prazdny selektor znamena vsechny bandy a backend nesmi dosazovat skryty default.
 
 - Netrivialni ukol (3+ kroky) → nejdriv kratky plan.
 - Po kazde korekci → zapis pouceni do `tasks/lessons.md` projektu.

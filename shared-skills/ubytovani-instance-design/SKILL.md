@@ -43,7 +43,7 @@ Tento skill **automaticky nasazuje na Railway** v rámci Fáze 5 — uživatel t
 
 ## Workflow — vytvoření nové instance z URL
 
-Tohle je **hlavní postup**. Template leží v `~/Můj disk/web-redesign/sablony/ubytovani-v3/`, nové instance vznikají v `~/Můj disk/web-redesign/dema/{slug}/` (když klient projeví zájem, složka se přesune do `klienti/{slug}/`). Postup má 5 fází:
+Tohle je **hlavní postup**. Template leží v `~/web-redesign/sablony/ubytovani-v3/`, nové instance vznikají v `~/web-redesign/dema/{slug}/` (když klient projeví zájem, složka se přesune do `klienti/{slug}/`). Postup má 5 fází:
 
 ```
 Fáze 1: parsing URL + příprava cest         (jednou)
@@ -60,8 +60,8 @@ Fáze 5: Railway deploy                      (per varianta, sekvenčně) — NEW
 2. **Extrahuj slug** — poslední část path (např. `chalupa-cerna-cz`).
 3. **Varianta** = vždy `design` (`VARIANTS = ["design"]`).
 4. **Odvoď cesty:**
-   - `TEMPLATE_ROOT` = `~/Můj disk/web-redesign/sablony/ubytovani-v3/` (pokud neexistuje, zeptej se).
-   - `INSTANCE_ROOT` = `~/Můj disk/web-redesign/dema/{slug_bez_-cz_bez_pomlcek}/`. Konvence: slug `chalupa-cerna-cz` → `dema/chalupacerna` (odstranit `-cz` suffix a všechny pomlčky).
+   - `TEMPLATE_ROOT` = `~/web-redesign/sablony/ubytovani-v3/` (pokud neexistuje, zeptej se).
+   - `INSTANCE_ROOT` = `~/web-redesign/dema/{slug_bez_-cz_bez_pomlcek}/`. Konvence: slug `chalupa-cerna-cz` → `dema/chalupacerna` (odstranit `-cz` suffix a všechny pomlčky).
    - Pro každý `variant` v `VARIANTS`:
      - `TEMPLATE_SRC[variant]` = `{TEMPLATE_ROOT}/{variant}/`
      - `INSTANCE_DIR[variant]` = `{INSTANCE_ROOT}/{variant}/`
@@ -386,7 +386,7 @@ Pozn.: když existuje i simple demo (`ubytovani-instance-simple`), může e-mail
 - **Template root** (read-only zdroj): repo `sablony/ubytovani-v3/` má **dvě varianty** v podsložkách:
   - `sablony/ubytovani-v3/design/` — bohatá "paper-card" varianta (walnut/forest/sepia paleta, flatpickr, kompletní rezervační systém s API proxy).
   - `sablony/ubytovani-v3/simple/` — varianta simple, má vlastní skill `ubytovani-instance-simple`.
-- **Instance root** (klientská složka): `~/Můj disk/web-redesign/dema/{slug_simplified}/` — sdílená pro obě varianty.
+- **Instance root** (klientská složka): `~/web-redesign/dema/{slug_simplified}/` — sdílená pro obě varianty.
 - **Instance dir**: `{INSTANCE_ROOT}/design/` (vedle může být `simple/` ze skillu `ubytovani-instance-simple`).
 - **Assets**: `src/assets/` (relativní vůči `INSTANCE_DIR`, ne vůči `INSTANCE_ROOT`).
 - **Hlavní soubor**: `src/routes/index.tsx` v rámci `INSTANCE_DIR`.

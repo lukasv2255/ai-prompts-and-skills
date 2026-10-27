@@ -458,7 +458,7 @@ OWNER_EMAIL=lukas.vozdecky@buildai.cz
 - **Doručitelnost na gmail/seznam** vyžaduje ověřenou doménu (SPF/DKIM) — proto `@buildai.cz`, ne nějaká neověřená adresa.
 
 ## Reference implementace
-`~/Můj disk/web-redesign/dema/chalupacerna/redesign-whiz/`:
+`~/web-redesign/dema/chalupacerna/redesign-whiz/`:
 - `src/lib/reservations-db.ts`
 - `src/lib/reservations.ts`
 - `src/routes/rezervace.tsx`

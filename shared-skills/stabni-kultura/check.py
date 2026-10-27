@@ -80,24 +80,39 @@ def najdi_workspace(start: Path) -> Path:
 
 
 def nacti_projekty(workspace: Path) -> dict[Path, dict]:
-    """Projekty = složky VS Code workspace; agendy a výjimky z projekty.json."""
+    """Projekty = složky VS Code workspace; agendy a výjimky z projekty.json.
+
+    Repo s nesouvisejícími projekty (klíče "kod" / "staticke" v projekty.json) se rozpadne
+    na podprojekty: každý se kontroluje zvlášť a samotné repo jen jako kontejner (D10).
+    """
     ws = json.loads(re.sub(r",(\s*[}\]])", r"\1", workspace.read_text(encoding="utf-8")))
     nastaveni = {rozbal(c).resolve(): n or {} for c, n in
                  json.loads(REGISTR.read_text(encoding="utf-8")).get("projekty", {}).items()}
     projekty: dict[Path, dict] = {}
     for f in ws.get("folders", []):
         p = (workspace.parent / os.path.expanduser(f["path"])).resolve()
-        if p.is_dir():
-            n = nastaveni.get(p, {})
-            projekty[p] = {"agendy": list(n.get("agendy", [])), "prvky": list(n.get("prvky", [])),
-                           "vyjimky": list(n.get("vyjimky", []))}
+        if not p.is_dir():
+            continue
+        n = nastaveni.get(p, {})
+        zaklad = {"agendy": list(n.get("agendy", [])), "prvky": list(n.get("prvky", [])),
+                  "vyjimky": list(n.get("vyjimky", [])), "repo": p, "rezim": "kod", "vnorene": set()}
+        podprojekty = {p / c: r for r in ("kod", "staticke") for c in n.get(r, [])}
+        if not podprojekty:
+            projekty[p] = zaklad
+            continue
+        projekty[p] = {**zaklad, "rezim": "kontejner", "podprojekty": set(podprojekty),
+                       "vyjimky_koren": list(n.get("vyjimky_koren", []))}
+        for sp, rezim in podprojekty.items():
+            projekty[sp] = {"agendy": [], "prvky": [], "vyjimky": [], "repo": p, "rezim": rezim,
+                            "vnorene": {q for q in podprojekty if sp in q.parents}}
     return projekty
 
 
-def projdi(koren: Path):
-    """os.walk s vynecháním PRESKOCIT a skrytých složek."""
+def projdi(koren: Path, vynechat: set[Path] = frozenset()):
+    """os.walk s vynecháním PRESKOCIT, skrytých složek a vnořených podprojektů."""
     for dirpath, dirnames, filenames in os.walk(koren):
-        dirnames[:] = [d for d in dirnames if d not in PRESKOCIT and not d.startswith(".")]
+        dirnames[:] = [d for d in dirnames if d not in PRESKOCIT and not d.startswith(".")
+                       and Path(dirpath) / d not in vynechat]
         yield Path(dirpath), filenames
 
 
@@ -159,13 +174,59 @@ def kod_automatizace(skript: Path) -> list[Path]:
     return soubory
 
 
-def zkontroluj(projekt: Path, nast: dict, automatizace) -> list[dict]:
+def zkontroluj_kontejner(repo: Path, nast: dict) -> list[dict]:
+    """D10: v repu s podprojekty smí být mimo podprojekty jen jejich nadřazené složky,
+    meta soubory repa a výjimky z "vyjimky_koren"."""
     nalezy = []
+    podprojekty = nast["podprojekty"]
+    nadrazene = {a for sp in podprojekty for a in sp.parents if repo in a.parents or a == repo}
+    vyjimky = {repo / v for v in nast["vyjimky_koren"]}
+    fronta = [repo]
+    while fronta:
+        slozka = fronta.pop()
+        for p in sorted(slozka.iterdir()):
+            if p.name.startswith(".") or p in podprojekty or p in vyjimky or p.name in PRESKOCIT:
+                continue
+            rel = str(p.relative_to(repo))
+            if p.is_dir() and p in nadrazene:
+                fronta.append(p)
+            elif p.is_dir():
+                nalezy.append({"pravidlo": "D10", "cesta": rel, "co": "složka nepatří k žádnému podprojektu"})
+            elif slozka != repo or Path(p.name.lower()).suffix in KOD_PRIPONY | DOKUMENTY - {".md"}:
+                nalezy.append({"pravidlo": "D10", "cesta": rel, "co": "soubor mimo podprojekty"})
+    return nalezy
+
+
+def zkontroluj_staticky(projekt: Path, nast: dict) -> list[dict]:
+    """Statický podprojekt: dokumenty smí ležet kdekoli, hlásí se jen kód, logy a databáze."""
+    nalezy = []
+    for slozka, soubory in projdi(projekt, nast["vnorene"]):
+        for s in soubory:
+            if not je_skript_nebo_log(s):
+                continue
+            cesta = str((slozka / s).relative_to(nast["repo"]))
+            if "docs" in Path(cesta).parts:
+                nalezy.append({"pravidlo": "D1", "cesta": cesta, "co": "skript / log / databáze v docs/"})
+            elif Path(s.lower()).suffix in KOD_PRIPONY | {".js", ".mjs", ".ts"}:
+                nalezy.append({"pravidlo": "D6", "cesta": cesta, "co": "kód ve statickém podprojektu"})
+            else:
+                nalezy.append({"pravidlo": "D1", "cesta": cesta, "co": "log / databáze ve statickém podprojektu"})
+    return nalezy
+
+
+def zkontroluj(projekt: Path, nast: dict, automatizace) -> list[dict]:
+    if nast["rezim"] == "kontejner":
+        return zkontroluj_kontejner(projekt, nast)
+    if nast["rezim"] == "staticke":
+        return zkontroluj_staticky(projekt, nast)
+    nalezy = []
+    vnorene = nast["vnorene"]
     agendy = nast["agendy"]
     vyjimky = D4_VYJIMKY | {v.lower() for v in nast["vyjimky"]}
 
     def nalez(pravidlo, cesta, co):
-        rel = str(Path(cesta).relative_to(projekt)) if str(cesta).startswith(str(projekt)) else str(cesta)
+        koren = nast["repo"]
+        rel = str(Path(cesta).relative_to(koren)) if str(cesta).startswith(str(koren)) else str(cesta)
         nalezy.append({"pravidlo": pravidlo, "cesta": rel, "co": co})
 
     # Jednotky = projekt + jeho agendy; jméno jednotky určuje projekt-<jméno>.md
@@ -191,7 +252,7 @@ def zkontroluj(projekt: Path, nast: dict, automatizace) -> list[dict]:
             nalez("D3", kde / "backup", "chybí složka backup/")
 
     # D9: automatizace/<název>/ má vlastní README, roadmap, todo a workflow (roadmap/todo tu nejsou porušení D2)
-    for slozka, _ in projdi(projekt):
+    for slozka, _ in projdi(projekt, vnorene):
         if slozka.name != AUTOMATIZACE:
             continue
         for a in sorted(slozka.iterdir()):
@@ -203,7 +264,7 @@ def zkontroluj(projekt: Path, nast: dict, automatizace) -> list[dict]:
                     nalez("D9", a / soubor, "chybí povinný soubor automatizace")
 
     koreny_docs = {kde / "docs" for kde, _ in jednotky}
-    for slozka, soubory in projdi(projekt):
+    for slozka, soubory in projdi(projekt, vnorene):
         casti = slozka.relative_to(projekt).parts
         if casti and casti[-1].lower() in KONKURENCE_SRC and "src" not in casti:
             nalez("D6", slozka, f"složka {casti[-1]}/ — kód patří do src/")
@@ -256,7 +317,7 @@ def zkontroluj(projekt: Path, nast: dict, automatizace) -> list[dict]:
                     nalez("D8", p, "v prompty/ jsou jen podadresáře pojmenované podle promptu")
 
     # D7: struktura sablony-evolio/ (kořen: dva .md + složky vzorů; vzor: zdroj, mapování, pracovní podsložky)
-    for se, _ in projdi(projekt):
+    for se, _ in projdi(projekt, vnorene):
         if se.name != SABLONY_EVOLIO:
             continue
         polozky = [p for p in se.iterdir() if not p.name.startswith(".")]
@@ -279,11 +340,13 @@ def zkontroluj(projekt: Path, nast: dict, automatizace) -> list[dict]:
 
     do_docs, skripty = automatizace
     for zdroj, cesta in do_docs:
-        if cesta.startswith(str(projekt) + "/") or f"/{projekt.name}/" in cesta:
+        if any(cesta.startswith(str(v) + "/") for v in vnorene):
+            continue
+        if cesta.startswith(str(projekt) + "/") or (nast["repo"] == projekt and f"/{projekt.name}/" in cesta):
             nalez("D1", cesta, f"automatizace zapisuje / běží v docs/ ({zdroj})")
     videno = set()
     for zdroj, skript in skripty:
-        if not str(skript).startswith(str(projekt) + "/"):
+        if not str(skript).startswith(str(projekt) + "/") or any(v in skript.parents for v in vnorene):
             continue
         for f in kod_automatizace(skript):
             try:
@@ -310,7 +373,8 @@ def main():
     if args.projekt:
         hledany = args.projekt.rstrip("/")
         projekty = {p: a for p, a in projekty.items()
-                    if p.name == hledany or str(p) == str(rozbal(hledany))}
+                    if hledany in (p.name, a["repo"].name, str(p.relative_to(a["repo"])) if p != a["repo"] else "")
+                    or str(p) == str(rozbal(hledany))}
         if not projekty:
             raise SystemExit(f"Projekt '{args.projekt}' není ve workspace {workspace}")
 
@@ -328,7 +392,7 @@ def main():
         celkem += len(nalezy)
         stav = "✅" if not nalezy else f"❌ {len(nalezy)}"
         print(f"\n## {Path(projekt).name}  {stav}   ({projekt})")
-        for pravidlo in ("D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9"):
+        for pravidlo in ("D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9", "D10"):
             pn = [n for n in nalezy if n["pravidlo"] == pravidlo]
             if not pn:
                 continue

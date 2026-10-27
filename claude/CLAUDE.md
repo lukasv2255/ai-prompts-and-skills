@@ -7,13 +7,15 @@
 - Vždy odpovídej **česky**.
 - Když odpovím **"y"** — znamená to "ano", "pokračuj", nebo "instalaci/krok jsem již udělal, pokračuj dál". Rovnou pokračuj s dalším krokem bez ptaní.
 - Když odpovím **"go"** jako reakci na oznámení že je potřeba restartovat proces nebo agenta — rovnou proveď restart bez ptaní. Zjisti správný příkaz z kontextu projektu (např. `pkill` + spuštění `main.py`) a spusť ho.
-- Pokud zpráva končí **"?"** — okamžitě přeruš aktuální činnost a odpověz na dotaz. Pokud není výslovně požadována změna kódu, nezačínej měnit soubory; nejdřív odpověz a případně polož 1 upřesňující otázku na cílové chování/rozsah.
-- Pokud je zpráva **oznamovací věta** (nekončí `?`) — ber ji primárně jako dotaz na **stav / analýzu**. Nic neprováděj automaticky; maximálně navrhni další krok a zeptej se na explicitní pokyn.
+- Otázku rozpoznávej podle významu i bez otazníku. Pokud se uživatel pouze ptá na vysvětlení, stav nebo možnosti, odpověz a bez požadavku na provedení neměň soubory.
+- Jasný pokyn k akci (např. „uprav“, „přesuň“, „spusť“) proveď v zadaném rozsahu i bez otazníku. Samotná interpunkce neurčuje, zda jde o otázku nebo příkaz. Při skutečné nejasnosti polož jednu stručnou upřesňující otázku.
 - Buď stručný — jeden správný příklad je lepší než tři alternativy.
+- **Když chci něco navrhnout, rozebrat nebo shrnout („navrhni…", „zapiš do roadmapy") a ty to uložíš do souboru, vždy mi obsah vypiš i do chatu** — stručnou verzi (tabulky, body) + odkaz na soubor. Samotné „zapsáno do X" nestačí: návrh si čtu v chatu, ne v souboru. Platí i když wrap-up/next-step box říká, že už nemáš nic psát.
 - **Nikdy nenabízej příkazy k vyzkoušení** — vždy je proveď sám (Bash, curl, grep...) a reportuj výsledek. Místo "zkus: curl ..." rovnou curl spusť.
 - **Vždy se nejdřív pokus věc vyřešit sám** — stáhnout soubor, nainstalovat balíček, spustit příkaz, dohledat dokument. Nikdy neříkej "stáhni to a napiš stazeno", "nainstaluj X a dej vědět", "udělej to ručně a pak pokračuju". Zkus všechny cesty, které máš k dispozici (Bash, API, MCP, curl, alternativní zdroj), a teprve když opravdu žádná nefunguje, řekni **proč** to nejde a co konkrétně potřebuješ — jednou, stručně, ne jako výchozí postup.
 - Vysvětluj **proč**, nejen co — cílem je pochopení, ne jen funkční kód.
 - Když si nejsi jistý, řekni to — nehavluj.
+- **Stav z poznámek není dnešní stav.** Tahák, handover nebo starší poznámka popisuje stav k datu svého vzniku. Než z ní napíšeš, jak to *teď* funguje nebo co mi chybí (hlavně v textu, který posílám jiným lidem), podívej se na datum a na novější práci v repu. Když to nejde ověřit, napiš „podle poznámky z <datum>“, nevydávej to za současnost. (Příklad: tvrzení „sloupce ověřuju generováním dokumentu“ z taháku pro Radima, když už dokumenty přes SQL dotazy běžně generuju, 21-10-2026.)
 - **Dělej přesně to co je napsáno** — nepřidávej novou logiku, moduly ani kód pokud o tom není explicitní zmínka. "Přidej panel" = přidej panel, ne nový backend modul.
 - Pokud není zřejmé, že chceš vygenerovat nový kód nebo provést konkrétní akci — raději se zeptej co chceš udělat, než abys začal psát kód nebo měnit soubory.
 - Pokud první zpráva obsahuje pouze obrázek nebo odkaz bez kontextu — nereaguj hned, počkej na další zprávu s otázkou nebo úkolem. Případně se zeptej: "Co s tím mám udělat?" Výjimka: pokud je to **screenshot v probíhající session**, automaticky se podívej na UI a identifikuj chybu nebo problém související s aktuálně řešenými věcmi.
@@ -29,24 +31,7 @@
 - **Nedělej žádné vizuální kontroly sám** (Playwright, screenshoty, preview snapshoty), pokud o to výslovně nepožádám. Stačí spustit server na localhostu a poslat mi odkaz — vizuální kontrolu si udělám já.
 - Když řešíme **obrázky, videa nebo vizuální změny v UI** — vždy automaticky přidej odkaz kde lze výsledek vidět (např. `http://localhost:3000`). Neptej se, rovnou přidej.
 
-## Web buildai.cz — kam jdou HTML ze všech projektů
-
-**Jeden web pro všechny projekty.** Pracuju vždy stejně: nejdřív edituju a generuju
-HTML v adresáři konkrétního projektu, a teprve hotovou verzi vystavím na web.
-
-- **Defaultní web:** `~/Můj disk/AI-brand/AI-brand-me/web/site/`. Sem se kopírují hotová
-  HTML ze všech projektů jako `<projekt>.html`.
-- **Adresa:** `buildai.cz/<projekt>` (bez přípony). `web/site/springwalk.html`
-  je `buildai.cz/springwalk`. Název souboru určuje adresu, nepřejmenovávat.
-- **Nasazení:** z `web/site/` přes Railway (vlastní `Dockerfile` a `railway.json`),
-  spouští se pushem na `main`, naběhne do půl minuty. Ručně žádný `railway up`.
-- **Zdroj a web jsou dva různé soubory.** Report v adresáři projektu a jeho verze
-  v `web/site/` se rozcházejí. Když říkám „na webu to není", znamená to skoro vždy tohle.
-- **Když řeknu „dej to na web" nebo „commit a push na web"** → spusť skill **`na-web`**,
-  ten zvládne porovnání verzí, kontrolu osobních údajů, anonymizaci, push i ověření.
-- **Web je veřejný.** Osobní údaje klientů a jejich zákazníků (jména, adresy, kontakty,
-  spisové značky, čísla účtů, částky, názvy protistran, screenshoty z cizích systémů)
-  se před vystavením anonymizují. Plná verze zůstává v repu, ten je privátní.
+- Při výslovném požadavku na publikaci na buildai.cz použij `na-web`; nejdřív respektuj pravidla a omezení zdrojového projektu.
 
 ## Kdo jsem
 
@@ -56,15 +41,14 @@ HTML v adresáři konkrétního projektu, a teprve hotovou verzi vystavím na we
 - **Jak reálně pracuju s AI**: většina práce v sessions v **Claude Code + Codexu** (workflow/skilly musí fungovat v obou); přes chat se doptávám i běžících agentů, část běží v cron jobs. ChatGPT na research, psaní, obrázky a inspiraci na design (+ český voice control na poznámky v autě). Kling na video. K AI nemám zásadní nedůvěru — když něco nešlo, skoro vždy to bylo špatné zadání na mojí straně.
 - **Když píšeš text o mně v 1. osobě** (přihlášky, motivační dopisy, osobní odpovědi): žádné uhlazené obecné fráze. Můj hlas je konkrétní, upřímný až sebekritický (klidně přiznám, že něco je okrajové). Vytáhni reálné příklady z mých projektů (klidně mrkni do kódu) a nech mě je jen doladit.
 
-## Prostředí — dvě zařízení + sdílený disk
+## Prostředí — dvě zařízení
 
-Pracuji na **dvou počítačích** a projekty držím na **sdíleném Google Drive**
-(tak se synchronizují mezi oběma stroji):
+Pracuji na **dvou počítačích**, projekty mezi nimi synchronizuje **git** (Google Drive je od 19-10-2026 odpojený):
 
-- **Mac** — primární. Google Drive je mountnutý jako `~/Můj disk/` (`/Users/lukas/Můj disk/...`).
-  Některé starší/lokální projekty mohou být i v `~/claude-code/`.
-- **Windows** — druhé PC, stejný Google Drive; lokálně případně `C:\Users\<username>\claude-code\`.
-- Projekt hledej primárně na Google Drive (`~/Můj disk/`), pak v `~/claude-code/`.
+- **Mac** — primární. Projekty jsou lokálně v domovské složce (`~/<projekt>`, např. `~/trading`, `~/muj-brand`, `~/ai-prompts-and-skills`).
+- **Windows** — druhé PC.
+- Staré AI-brand podprojekty (svetlana, venture, collectio, judikatura-demo) a `_old` jsou archivované v `~/muj-brand-archiv/`.
+- Žádný adresář `~/claude-code/` ani `~/Můj disk/` se nepoužívá.
 
 **Pravidla pro cesty v kódu a skillech:**
 
@@ -81,6 +65,13 @@ Pracuji na **dvou počítačích** a projekty držím na **sdíleném Google Dri
 - Kód musí být čitelný po měsíci bez kontextu.
 - **Ukazuj průběh** — při delším úkolu průběžně reportuj co děláš, ne až na konci.
 - **Testuj po každém kroku** — po každé změně ověř že funguje, nespoj víc kroků bez ověření.
+
+## Automatická volba workflow
+
+- Před zahájením práce sám posuď, zda zadání potřebuje volbu workflow. Uživatel nemusí znát obtížnost úkolu ani názvy skillů.
+- Pokud je cíl nejasný, úkol má více závislých kroků, zahrnuje porovnávání, odhady nebo rozhodnutí s významnými důsledky, automaticky načti a použij `workflow-router`. Nečekej na jeho výslovné vyvolání a neptej se, zda ho smíš použít.
+- Stručně sděl zvolený postup a podstatné předpoklady, potom pokračuj v rozsahu zadání. U odhadů a porovnání nejdřív vymez benchmark, jednotky a pravidla pro duplicity, teprve potom počítej.
+- Jednoduché a jednoznačné úkoly řeš přímo, bez zbytečného průchodu celou sadou skillů. Vyber jen relevantní skilly; použití routeru samo o sobě nerozšiřuje zadání ani neopravňuje k dalším akcím.
 
 ## Python — cesty v skriptech
 
@@ -105,7 +96,7 @@ Pracuji na **dvou počítačích** a projekty držím na **sdíleném Google Dri
 ## Problémy s Macem
 
 - Řešené potíže s počítačem (příznak → diagnostika → příčina → oprava) se zapisují do
-  `~/Můj disk/AI-brand/AI-brand-me/docs/problemy-pocitace.md`. Při novém problému s Macem
+  `~/muj-brand/docs/problemy-pocitace.md`. Při novém problému s Macem
   ho nejdřív přečti, po vyřešení doplň nový záznam nahoru.
 - `log show` v zsh volej přes `/usr/bin/log show`, jinak koliduje s vestavěným `log`.
 - **Continuity Camera (iPhone jako kamera/mikrofon) nejde:** zkontroluj v logu
@@ -124,6 +115,17 @@ Pracuji na **dvou počítačích** a projekty držím na **sdíleném Google Dri
 - **Když je port obsazený, vezmi jiný — nikdy nekillni cizí proces.** Souběžně mám rozjeto víc serverů z různých projektů. Když `lsof -i:PORT` ukáže obsazený port, prostě zvol vyšší volný (`8001`, `8002`...) a sděl uživateli na jakém portu server běží. Žádný `kill -9 $(lsof -ti:PORT)`, žádný `pkill -f uvicorn`. Killovat smíš jen procesy, které jsi sám spustil v aktuální session.
 - **Porty 8080–8089 jsou rezervované pro mail-agent instance.** Nikdy v tomto rozsahu nespouštěj weby, vite dev servery, ani jiné procesy. Když scaffolduješ nový web/server, vyber port mimo tento rozsah (např. 5173, 3000, 8090+).
 
+## Přihlášení skriptů a sond (SSO, cookies)
+
+- **Obnova přihlášení má běžet sama, bez okna.** Headless prohlížeč s vlastním profilem a uloženými SSO cookies
+  (poskytovatel identity) si vyžádá novou session cookie aplikace. Okno s ručním přihlášením (Google, heslo) je
+  až poslední možnost. Když automatika selže, dej mi do chatu hotový příkaz v ` ```bash ` bloku (klikám na Play),
+  neotevírej okno sám od sebe.
+- **Starou session cookie aplikace při obnově nenahrávej** (ani z jaru, ani z profilu): kontrola „cookie existuje“
+  pak projde bez přesměrování na SSO a skript hlásí „přihlášeno“, i když server vrací 401. Přihlášení ověř
+  skutečným requestem; když selže i po obnově, skonči hláškou s příkazem, ne tichým 401.
+  (springwalk `src/*/session.py`, 20-10-2026)
+
 ## Odkazy na soubory (autolink)
 
 - Když požádám o úpravu souboru a vložím cestu / název souboru, v odpovědi vždy automaticky přidej klikací odkaz na ten soubor ve tvaru `file:///...`.
@@ -136,12 +138,14 @@ Pracuji na **dvou počítačích** a projekty držím na **sdíleném Google Dri
 - Časy a datumy zobrazované uživateli (logy, reporty, UI, výstupy) formátuj jako **`dd-mm-yyyy HH:MM CET`** v lokálním čase **Europe/Prague**.
 - Interně časy ukládej dál v UTC (ISO) — převod na CET dělej až při zobrazení.
 - Platí globálně napříč projekty, pokud projekt výslovně nevyžaduje jiný formát.
+- **Časy převzaté z cizích systémů (portály, API, výpisy) bývají v UTC** — než je použiješ v textu nebo mailu, převeď je na Europe/Prague. Příklad: Výkazy v kurýrním portálu Rohlíku ukazují UTC.
 
 ### Mailové texty a zprávy k odeslání
 
 - **Mailové texty / texty k odeslání kopíruji přímo z chatu** — kdykoli připravuješ mail, zprávu na LinkedIn, SMS nebo jakýkoli text určený k odeslání jinému člověku, vždy ho do chatu vypiš jako **plain text** v code blocku (` ``` `), bez markdown bulletů (`-`, `*`, `1.`).
 - Místo bulletů použij em dash (`—`) nebo dlouhé pomlčky a hard newlines. Důvod: markdown bullety se v mailových klientech (Gmail, Outlook) renderují jako sloupce vedle sebe a rozbijou layout.
 - Tučný text raději vůbec — ať to vypadá stejně po vložení. Bonus: připoj 1-2 řádky instrukce „v Gmailu vlož přes Ctrl+Shift+V (paste without formatting)".
+- **Výjimka: posty a komentáře do Basecampu** dávej do chatu **naformátované** (markdown mimo code block): tučný nadpis, odrážky, tučně klíčové části. Basecamp formátování po vložení zachová, takže se kopíruje z vykresleného textu v chatu. Bez instrukce Ctrl+Shift+V.
 - **Koncepty přes Gmail MCP (`create_draft` / `update_draft`) nesmí obsahovat žádnou URL ani doménu.** Konektor každou adresu — i `<a href>` v HTML, i holé `www.domena.cz` bez `https://` — přepíše na přesměrování `https://www.google.com/url?q=...&source=gmail&ust=...`, a takový odkaz by odešel adresátovi. Adresy v konceptu vynech (odkaž slovně: „stejná jako v mém mailu z 20. 9.") a když je adresát opravdu potřebuje, vypiš je do chatu, ať je vložím ručně. Po vytvoření konceptu ho vždy přečti (`get_draft`) a zkontroluj, že v něm není `google.com/url`.
 
 ## Konfigurace a CLAUDE.md soubory
@@ -177,7 +181,6 @@ Pravidla:
 
 - Playwright MCP preferuj před Chrome MCP pro automatizaci prohlížeče.
 - **PRAVIDLO: MCP Telegram vůbec neovládá.** Žádné odesílání příkazů, žádné `/check`, `/yes`, `/no` ani nic jiného. Uživatel ovládá Telegram kompletně sám.
-
 ## Skills
 
 - Všechny skilly jsou v `~/ai-prompts-and-skills/shared-skills/`.

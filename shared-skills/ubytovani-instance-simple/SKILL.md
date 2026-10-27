@@ -5,12 +5,12 @@ description: Vygeneruje demo web ubytování ve variantě `simple` ze šablony `
 
 # Demo web ubytování — varianta simple
 
-Z URL preview-v2 vyrobí **demo** web v `~/Můj disk/web-redesign/dema/{slug}/simple/` a nasadí ho na Railway.
+Z URL preview-v2 vyrobí **demo** web v `~/web-redesign/dema/{slug}/simple/` a nasadí ho na Railway.
 Šablona má veškerý obsah v jediném souboru `src/content.ts` — vzhled (`src/routes/index.tsx`, `src/styles.css`)
 se při rebrandu **nemění**.
 
-Referenční vyplněná instance: `~/Můj disk/web-redesign/klienti/pivnilazneceskyraj/app/src/content.ts`.
-Převod dema na ostrý web (git, volume, heslo do adminu, maily, doména) řeší `~/Můj disk/web-redesign/klienti/NOVY-KLIENT.md`, ne tento skill.
+Referenční vyplněná instance: `~/web-redesign/klienti/pivnilazneceskyraj/app/src/content.ts`.
+Převod dema na ostrý web (git, volume, heslo do adminu, maily, doména) řeší `~/web-redesign/klienti/NOVY-KLIENT.md`, ne tento skill.
 
 ## Invokace
 
@@ -29,8 +29,8 @@ Invokace skillu = souhlas s nasazením na Railway (fáze 6). Neptej se před `ra
 1. URL musí odpovídat `^https?://[^/]+/preview-v2/([a-z0-9-]+)/?$`, jinak se zeptej.
 2. `LEAD_SLUG` = poslední část URL (např. `chalupa-cerna-cz`).
 3. `SLUG` = `LEAD_SLUG` bez `-cz` a bez pomlček (`chalupacerna`) — název složky, Railway projektu i `site.slug`.
-4. `TEMPLATE` = `~/Můj disk/web-redesign/sablony/ubytovani-v3/simple/` (read-only zdroj)
-5. `DIR` = `~/Můj disk/web-redesign/dema/{SLUG}/simple/`
+4. `TEMPLATE` = `~/web-redesign/sablony/ubytovani-v3/simple/` (read-only zdroj)
+5. `DIR` = `~/web-redesign/dema/{SLUG}/simple/`
 6. **Kolize:** existuje-li `DIR`, **nikdy ho nemaž ani nepřepisuj** bez souhlasu. Zeptej se: (a) přerušit, (b) přepsat, (c) nová složka `simple-v2`.
    Pozor: dema založená před 27-09-2026 jsou na starém kódu (centrální API, obsah v `index.tsx`) — přepsáním se převedou na novou šablonu.
 

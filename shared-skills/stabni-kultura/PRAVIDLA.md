@@ -16,8 +16,16 @@ kostra D8 platí jen pro agendy.
 | D7 | `<agenda>/sablony-evolio/` (vzory do Evolia pro jednu agendu) má pevnou strukturu: v kořeni jen `workflow.md` a `pravidla-agendy.md`, pak složka `NN-nazev/` pro každý vzor. Ve vzoru `zdroj.md` a `mapovani-parametru.md` (povinné), další `.md` a `.docx` (`zaklad.docx`, `<vzor>.docx`, pracovní poznámky) a jen podsložky `predloha/`, `hotove/`, `hotove-stare/`, `revize/` | script |
 | D8 | **Kostra právní agendy** (`agendy` v `projekty.json`): `backup/`, `docs/`, `automatizace/`, `sablony-evolio/`, `prompty/` — v `prompty/` jen podadresáře pojmenované podle promptu. Nic jiného v kořeni agendy (volitelně `src/` kvůli D6, `README.md`/`CLAUDE.md`) | script |
 | D9 | **Každá automatizace** (podsložka `automatizace/`, v agendě i v `evolio/emachine/automatizace/`) má v kořeni `README.md` (podrobnosti, měření, testy), `roadmap.md` (verze a další kroky), `todo.md` a `workflow.md` (cílový postup) | script |
+| D10 | **Repo s nesouvisejícími projekty** (`kod` / `staticke` v `projekty.json`): mimo podprojekty jsou jen jejich nadřazené složky, meta soubory repa (`README.md`, `CLAUDE.md`, `Dockerfile`…) a výjimky z `vyjimky_koren` | script |
 
 ## Upřesnění
+
+- **Podprojekty:** repo s víc nesouvisejícími projekty (AI-brand-me) se v `projekty.json`
+  rozdělí na `kod` a `staticke`. Podprojekt s kódem je jednotka s plnými pravidly D1–D9
+  (vlastní `docs/`, `src/`, `backup/`, `projekt-<jméno>.md`). Statický podprojekt drží
+  jen dokumenty kdekoli ve své struktuře; hlásí se v něm jen kód (D6) a logy či databáze
+  (D1). Vnořený podprojekt (`job-rohlik/portal/bot` v `job-rohlik`) se kontroluje jen sám
+  za sebe. Cesty v nálezech jsou relativně ke kořeni repa.
 
 - **Jméno jednotky** v `projekt-<jméno>.md` = název složky malými písmeny
   (`projekt-springwalk.md`, `projekt-ulov-domov.md`).

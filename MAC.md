@@ -8,11 +8,11 @@
 
 | | |
 |---|---|
-| Lokální cesta | `TODO (ověřit)` — Google Drive na Macu bývá `~/Library/CloudStorage/GoogleDrive-<email>/Můj disk/AI-prompts-and-skills` nebo `~/Google Drive/Můj disk/…` |
+| Lokální cesta | `~/ai-prompts-and-skills` (lokálně, mimo Google Drive) |
 | Origin | `https://github.com/lukasv2255/ai-prompts-and-skills.git` |
 | Aktivní větev | **`main`** |
 
-Google Drive je druhá vrstva synchronizace navíc ke gitu. Zdroj pravdy je **git**.
+Synchronizace mezi stroji jen přes **git** (Google Drive je od 19-10-2026 odpojený).
 
 ## Rozdíl proti Windows: symlink místo junction
 

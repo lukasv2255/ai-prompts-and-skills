@@ -27,7 +27,7 @@ Tenhle skill dělá jen ten poslední krok.
 | | Cesta | Role |
 |---|---|---|
 | **Zdroj** | `<projekt>/<cokoliv>.html` | pracovní verze, tady se edituje |
-| **Web** | `~/Můj disk/AI-brand/AI-brand-me/web/site/hosted/<projekt>.html` | co je vystavené |
+| **Web** | `~/muj-brand/web/site/hosted/<projekt>.html` | co je vystavené |
 | **Evidence** | `web/site/hosted/README.md` | odkud který soubor je a kdy se překlápěl |
 | **Adresa** | `https://www.buildai.cz/<projekt>` | bez přípony `.html` |
 

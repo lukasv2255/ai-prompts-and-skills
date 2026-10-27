@@ -13,10 +13,10 @@ na Macu nebo Windows.
 
 ## Cesta k repozitari
 
-Repozitar je na Google Disku (synchronizuje se mezi stroji):
+Repozitar se mezi stroji synchronizuje pres git (GitHub):
 
-- Windows: `C:/Users/tommy/Můj disk/AI-prompts-and-skills`
-- macOS: odpovidajici cesta ke Google Disku; jmeno slozky `AI-prompts-and-skills` zustava stejne
+- macOS: `~/ai-prompts-and-skills`
+- Windows: `C:/Users/tommy/Můj disk/AI-prompts-and-skills` (puvodni cesta na Google Disku, overit po odpojeni Drive)
 
 Prakticky (Windows):
 
@@ -24,7 +24,7 @@ Prakticky (Windows):
 git -C "C:/Users/tommy/Můj disk/AI-prompts-and-skills" pull
 ```
 
-Na jinem stroji odvod cestu z umisteni Google Disku podle daneho OS.
+Na jinem stroji pouzij cestu podle daneho OS vyse.
 
 ## Co udelat po pullu
 

@@ -26,7 +26,7 @@ Poznamenej hash commitu (např. `76895fb`).
 
 ### KROK 2 — Zjisti cestu k template repozitáři
 
-Zeptej se uživatele, nebo hledej v `~/claude-code/` a `~/Můj disk/`:
+Zeptej se uživatele, nebo hledej v `~/web-templates/` a `~/<projekt>`:
 
 ```bash
 find ~ -name "CLAUDE.md" -path "*/mail-agent*" 2>/dev/null | head -5

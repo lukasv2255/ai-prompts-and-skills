@@ -31,7 +31,7 @@ Vzorový výstup: `AI-brand-me/job-zephyr/docs/journaling/dashboard-analyza.html
 
 ## Vstup
 
-- **Projekt** — cesta ke kódu (hledej v `~/Můj disk/`, pak `~/claude-code/`).
+- **Projekt** — cesta ke kódu (hledej v `~/<projekt>`, starší věci v `~/muj-brand-archiv/`).
 - **Klient** — firma / člověk. Když existuje `research.md` (z `deep-research`), použij ho.
   Když neexistuje a klient není zřejmý z kontextu, zeptej se, jestli nejdřív pustit
   `deep-research`. Bez obrazu klienta je mapování na problémy jen hádání.
